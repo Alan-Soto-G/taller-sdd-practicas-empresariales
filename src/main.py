@@ -1,4 +1,4 @@
-"""Composicion de CU-01, CU-02 y CU-03: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001, specs/002 y specs/003."""
+"""Composicion de CU-01 a CU-04: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/004."""
 
 from datetime import datetime, timedelta
 
@@ -16,6 +16,7 @@ from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimul
 from infraestructura.validador_token import ValidadorToken
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigente
+from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from infraestructura.controlador_rest import ControladorRest
@@ -37,11 +38,13 @@ def construir() -> dict[str, object]:
         consultar_regla,
         reloj=datetime.now,
     )
+    registrar_horas = RegistrarHoras(repositorio, bitacora, reloj=datetime.now)
     controlador = ControladorRest(
         validador,
         caso_de_uso,
         publicar_plaza,
         asignar_tutor,
+        registrar_horas,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -81,10 +84,16 @@ def construir() -> dict[str, object]:
         )
     )
 
+    # Antecedentes de specs/004 (CU-04)
+    repositorio.agregar_estudiante(Estudiante("E-1004", "e1004@universidad.edu.co"))
+    repositorio.agregar_practica(Practica("PR-04", "E-1004", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-300"))
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
+    proveedor.emitir("tok-E-1004", "E-1004", "Estudiante", ahora)
     proveedor.emitir("tok-T-200", "T-200", "Tutor", ahora)
+    proveedor.emitir("tok-T-300", "T-300", "Tutor", ahora)
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
     proveedor.emitir(
         "tok-vencido",
@@ -101,6 +110,7 @@ def construir() -> dict[str, object]:
         "publicar_plaza": publicar_plaza,
         "notificador": notificador,
         "asignar_tutor": asignar_tutor,
+        "registrar_horas": registrar_horas,
     }
 
 
