@@ -168,7 +168,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2, ESC-RC, ESC-E2
       Depende de: T-25, T-26
 
-- [ ] T-28 GenerarActa consolida DatosActa y usa el ComponedorActa
+- [x] T-28 GenerarActa consolida DatosActa y usa el ComponedorActa
       Archivos: src/aplicacion/actas/generar_acta.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
       Depende de: T-25, T-26, T-27

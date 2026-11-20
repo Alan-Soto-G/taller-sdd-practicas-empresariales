@@ -1,14 +1,17 @@
-"""Caso de uso CU-07 (lado Worker de actas): consolida la practica, compone el acta, la guarda y reintenta hasta 3 veces (ADR-001, ADR-003, ADR-006, ADR-007, ADR-008)."""
+"""Caso de uso CU-07 (lado Worker de actas): consolida la practica, compone el acta, la guarda y reintenta hasta 3 veces (ADR-001, ADR-003, ADR-006, ADR-007, ADR-008, ADR-011)."""
 
 from collections.abc import Callable
 from datetime import datetime
 
+from aplicacion.actas.datos_acta import DatosActa
 from aplicacion.actas.resultado_generacion import ResultadoGeneracion
 from aplicacion.actas.solicitud_acta import SolicitudActa
+from aplicacion.errores.acta_no_componible import ActaNoComponible
 from aplicacion.errores.almacen_no_disponible import AlmacenNoDisponible
 from aplicacion.errores.correo_no_enviado import CorreoNoEnviado
 from aplicacion.puertos.almacen_actas import AlmacenActas
 from aplicacion.puertos.bitacora import Bitacora
+from aplicacion.puertos.componedor_acta import ComponedorActa
 from aplicacion.puertos.notificador import Notificador
 from aplicacion.puertos.repositorio_practicas import RepositorioPracticas
 from dominio.acta_final import ActaFinal
@@ -28,12 +31,14 @@ class GenerarActa:
         repositorio: RepositorioPracticas,
         bitacora: Bitacora,
         almacen: AlmacenActas,
+        componedor: ComponedorActa,
         notificador: Notificador,
         reloj: Callable[[], datetime] = datetime.now,
     ) -> None:
         self._repositorio = repositorio
         self._bitacora = bitacora
         self._almacen = almacen
+        self._componedor = componedor
         self._notificador = notificador
         self._reloj = reloj
 
@@ -46,8 +51,9 @@ class GenerarActa:
         practica = self._repositorio.obtener_practica(acta.id_practica)
 
         try:
-            ruta = self._almacen.guardar(acta.id, self._componer(acta, practica))
-        except AlmacenNoDisponible as error:
+            pdf = self._componedor.componer(self._consolidar(acta, practica))
+            ruta = self._almacen.guardar(acta.id, pdf)
+        except (ActaNoComponible, AlmacenNoDisponible) as error:
             self._repositorio.guardar_intento(
                 IntentoGeneracion(acta.id, solicitud.intento, ahora, f"fallido: {error.mensaje}")
             )
@@ -64,29 +70,23 @@ class GenerarActa:
         self._avisar(acta, practica)
         return ResultadoGeneracion(acta.id, "generada")
 
-    def _componer(self, acta: ActaFinal, practica: Practica) -> bytes:
-        """Consolida horas, evaluacion y ReglaPractica; documento simulado mientras se decide la libreria de PDF (DT-05)."""
+    def _consolidar(self, acta: ActaFinal, practica: Practica) -> DatosActa:
+        """Consolida horas aprobadas, evaluacion y ReglaPractica de la version de la Practica (ADR-008)."""
         regla = self._repositorio.obtener_regla(practica.version_regla)
-        horas = self._repositorio.sumar_horas_aprobadas(practica.id)
         evaluacion = self._repositorio.obtener_evaluacion_de_practica(practica.id)
-        calificaciones = (
-            ", ".join(f"{nombre}: {valor}" for nombre, valor in evaluacion.calificaciones.items())
-            if evaluacion is not None
-            else "sin evaluación"
+        return DatosActa(
+            acta.id,
+            practica.id,
+            practica.id_estudiante,
+            practica.id_empresa,
+            practica.id_tutor,
+            regla.plantilla_acta,
+            self._repositorio.sumar_horas_aprobadas(practica.id),
+            regla.horas_requeridas,
+            dict(evaluacion.calificaciones) if evaluacion is not None else {},
+            evaluacion.observaciones if evaluacion is not None else "",
+            acta.fecha_solicitud,
         )
-        lineas = [
-            "%PDF-simulado",
-            f"ACTA FINAL {acta.id}",
-            f"Plantilla: {regla.plantilla_acta}",
-            f"Práctica: {practica.id}",
-            f"Estudiante: {practica.id_estudiante}",
-            f"Empresa: {practica.id_empresa}",
-            f"Tutor: {practica.id_tutor}",
-            f"Horas aprobadas: {horas} de {regla.horas_requeridas}",
-            f"Evaluación: {calificaciones}",
-            f"Solicitada: {acta.fecha_solicitud:%Y-%m-%d %H:%M}",
-        ]
-        return "\n".join(lineas).encode("utf-8")
 
     def _cambiar_estado(self, acta: ActaFinal, ahora: datetime) -> None:
         """Guarda el acta y audita su paso desde en generacion (ADR-006)."""
