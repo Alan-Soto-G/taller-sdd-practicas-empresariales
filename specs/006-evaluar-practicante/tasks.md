@@ -110,7 +110,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-E3
       Depende de: T-12
 
-- [ ] T-18 Caso de uso ConsultarFormularioEvaluacion
+- [x] T-18 Caso de uso ConsultarFormularioEvaluacion
       Archivos: src/aplicacion/evaluacion/consultar_formulario_evaluacion.py
       Escenarios: ESC-B2, ESC-E5, ESC-E3
       Depende de: T-07, T-13, T-17
