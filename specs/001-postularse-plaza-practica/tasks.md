@@ -105,7 +105,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-AP, ESC-OP, ESC-MP, ESC-VP, ESC-NE, ESC-CC
       Depende de: T-10
 
-- [ ] T-17 Adaptador BitacoraMemoria
+- [x] T-17 Adaptador BitacoraMemoria
       Archivos: src/infraestructura/bitacora_memoria.py
       Escenarios: ESC-B, ESC-SC, ESC-SR
       Depende de: T-11
