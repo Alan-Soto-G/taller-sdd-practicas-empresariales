@@ -39,7 +39,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-SC, ESC-AP, ESC-MP, ESC-NE, ESC-SR, ESC-TV
       Depende de: ninguna
 
-- [ ] T-05 Error NoAutenticado
+- [x] T-05 Error NoAutenticado
       Archivos: src/aplicacion/errores/no_autenticado.py
       Escenarios: ESC-TV
       Depende de: T-04
