@@ -21,7 +21,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-SP
       Depende de: ninguna
 
-- [ ] T-02 DTO SolicitudExportacionActa
+- [x] T-02 DTO SolicitudExportacionActa
       Archivos: src/aplicacion/actas/solicitud_exportacion_acta.py
       Escenarios: todos menos ESC-TV
       Depende de: ninguna
