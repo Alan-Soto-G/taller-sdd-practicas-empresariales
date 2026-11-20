@@ -1,6 +1,6 @@
-"""Composicion de CU-01 a CU-04: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/004."""
+"""Composicion de CU-01 a CU-05: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/005."""
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from dominio.empresa import Empresa
 from dominio.estado_practica import EstadoPractica
@@ -8,6 +8,7 @@ from dominio.estudiante import Estudiante
 from dominio.plaza import Plaza
 from dominio.practica import Practica
 from dominio.regla_practica import ReglaPractica
+from dominio.registro_horas import RegistroHoras
 from dominio.tutor import Tutor
 from infraestructura.notificador_simulado import NotificadorSimulado
 from infraestructura.repositorio_practicas_memoria import RepositorioPracticasMemoria
@@ -15,7 +16,9 @@ from infraestructura.bitacora_memoria import BitacoraMemoria
 from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimulado
 from infraestructura.validador_token import ValidadorToken
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
+from aplicacion.configuracion.consultar_horas_requeridas import ConsultarHorasRequeridas
 from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigente
+from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
@@ -39,12 +42,17 @@ def construir() -> dict[str, object]:
         reloj=datetime.now,
     )
     registrar_horas = RegistrarHoras(repositorio, bitacora, reloj=datetime.now)
+    consultar_horas = ConsultarHorasRequeridas(repositorio)
+    aprobar_horas = AprobarHoras(
+        repositorio, bitacora, consultar_horas, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
         publicar_plaza,
         asignar_tutor,
         registrar_horas,
+        aprobar_horas,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -88,10 +96,16 @@ def construir() -> dict[str, object]:
     repositorio.agregar_estudiante(Estudiante("E-1004", "e1004@universidad.edu.co"))
     repositorio.agregar_practica(Practica("PR-04", "E-1004", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-300"))
 
+    # Antecedentes de specs/005 (CU-05)
+    repositorio.agregar_estudiante(Estudiante("E-1005", "e1005@universidad.edu.co"))
+    repositorio.agregar_practica(Practica("PR-05", "E-1005", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-300"))
+    repositorio.guardar_registro_horas(RegistroHoras.reportar("RH-05", "PR-05", "2026-W46", 20, "Desarrollo de la API", date(2026, 11, 13)))
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
     proveedor.emitir("tok-E-1004", "E-1004", "Estudiante", ahora)
+    proveedor.emitir("tok-E-1005", "E-1005", "Estudiante", ahora)
     proveedor.emitir("tok-T-200", "T-200", "Tutor", ahora)
     proveedor.emitir("tok-T-300", "T-300", "Tutor", ahora)
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
@@ -111,6 +125,7 @@ def construir() -> dict[str, object]:
         "notificador": notificador,
         "asignar_tutor": asignar_tutor,
         "registrar_horas": registrar_horas,
+        "aprobar_horas": aprobar_horas,
     }
 
 
