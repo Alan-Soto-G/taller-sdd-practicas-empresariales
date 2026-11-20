@@ -90,7 +90,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: Módulo Evaluación
 
-- [ ] T-14 DTO SolicitudEnlaceEvaluacion
+- [x] T-14 DTO SolicitudEnlaceEvaluacion
       Archivos: src/aplicacion/evaluacion/solicitud_enlace_evaluacion.py
       Escenarios: ESC-B1, ESC-SR
       Depende de: ninguna
