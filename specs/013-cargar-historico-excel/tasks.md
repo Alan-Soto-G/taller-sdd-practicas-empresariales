@@ -13,7 +13,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Valor Correo con es_valido
+- [x] T-01 Valor Correo con es_valido
       Archivos: src/dominio/correo.py
       Escenarios: ESC-B, ESC-RE
       Depende de: ninguna
