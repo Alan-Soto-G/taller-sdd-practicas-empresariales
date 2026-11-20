@@ -60,7 +60,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-SR, ESC-EN
       Depende de: T-04, T-05, T-06, T-07
 
-- [ ] T-09 DTO SolicitudAprobacionActa
+- [x] T-09 DTO SolicitudAprobacionActa
       Archivos: src/aplicacion/actas/solicitud_aprobacion_acta.py
       Escenarios: ESC-B1, ESC-B3, ESC-AJ, ESC-ES
       Depende de: ninguna
