@@ -2,8 +2,12 @@
 
 from dominio.empresa import Empresa
 from dominio.estado_postulacion import EstadoPostulacion
+from dominio.estudiante import Estudiante
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
+from dominio.practica import Practica
+from dominio.regla_practica import ReglaPractica
+from dominio.tutor import Tutor
 
 
 class RepositorioPracticasMemoria:
@@ -14,6 +18,11 @@ class RepositorioPracticasMemoria:
         self._plazas: dict[str, Plaza] = {}
         self._postulaciones: list[Postulacion] = []
         self._empresas: dict[str, Empresa] = {}
+        self._reglas: dict[str, ReglaPractica] = {}
+        self._version_vigente: str | None = None
+        self._tutores: dict[str, Tutor] = {}
+        self._estudiantes: dict[str, Estudiante] = {}
+        self._practicas: dict[str, Practica] = {}
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -70,3 +79,53 @@ class RepositorioPracticasMemoria:
     def listar_plazas(self) -> list[Plaza]:
         """Devuelve una copia de la lista de plazas registradas."""
         return list(self._plazas.values())
+
+    def agregar_regla(self, regla: ReglaPractica, vigente: bool = True) -> None:
+        """Guarda una regla de práctica por su versión."""
+        self._reglas[regla.version] = regla
+        if vigente:
+            self._version_vigente = regla.version
+
+    def obtener_regla_vigente(self) -> ReglaPractica:
+        """Obtiene la regla de práctica vigente."""
+        return self._reglas[self._version_vigente]
+
+    def agregar_tutor(self, tutor: Tutor) -> None:
+        """Precarga un tutor en el repositorio."""
+        self._tutores[tutor.id] = tutor
+
+    def obtener_tutor(self, id_tutor: str) -> Tutor | None:
+        """Obtiene un tutor por su identificador."""
+        return self._tutores.get(id_tutor)
+
+    def agregar_estudiante(self, estudiante: Estudiante) -> None:
+        """Precarga un estudiante en el repositorio."""
+        self._estudiantes[estudiante.id] = estudiante
+
+    def obtener_estudiante(self, id_estudiante: str) -> Estudiante | None:
+        """Obtiene un estudiante por su identificador."""
+        return self._estudiantes.get(id_estudiante)
+
+    def agregar_practica(self, practica: Practica) -> None:
+        """Precarga una práctica en el repositorio."""
+        self._practicas[practica.id] = practica
+
+    def obtener_practica(self, id_practica: str) -> Practica | None:
+        """Obtiene una práctica por su identificador."""
+        return self._practicas.get(id_practica)
+
+    def contar_practicas_activas_tutor(self, id_tutor: str) -> int:
+        """Cuenta las prácticas activas asignadas a un tutor."""
+        return sum(
+            1
+            for p in self._practicas.values()
+            if p.id_tutor == id_tutor and p.esta_activa()
+        )
+
+    def guardar_practica(self, practica: Practica) -> None:
+        """Guarda una práctica en el repositorio."""
+        self._practicas[practica.id] = practica
+
+    def listar_practicas(self) -> list[Practica]:
+        """Devuelve una copia de las prácticas registradas."""
+        return list(self._practicas.values())

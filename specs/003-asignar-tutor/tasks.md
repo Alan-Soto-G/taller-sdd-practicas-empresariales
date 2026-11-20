@@ -107,7 +107,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-CO, ESC-SC, ESC-TN
       Depende de: T-07
 
-- [ ] T-17 RepositorioPracticasMemoria: reglas, tutores, estudiantes y prácticas
+- [x] T-17 RepositorioPracticasMemoria: reglas, tutores, estudiantes y prácticas
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: todos menos ESC-TV
       Depende de: T-09
