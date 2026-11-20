@@ -1,0 +1,144 @@
+@startuml desarrollo
+title Vista de desarrollo: componentes de la API de prácticas, por paquetes y capas
+
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 90
+skinparam packageStyle rectangle
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam ArrowFontSize 11
+skinparam package {
+  BackgroundColor #1B4472
+  BorderColor #9DC3E6
+  FontColor white
+  FontSize 14
+}
+skinparam class {
+  BackgroundColor #1F4E8C
+  BorderColor white
+  FontColor white
+  StereotypeFontColor #BDD7EE
+  HeaderBackgroundColor #4F81BD
+}
+skinparam class<<externo>> {
+  BackgroundColor #7F7F7F
+}
+hide circle
+hide empty members
+
+class "Aplicación web" as web <<externo>>
+
+package "API de prácticas (monolito modular, ADR-002)" as api {
+
+  package "infraestructura: adaptadores de entrada" as entrada {
+    class "Validador de token" as token <<ADR-004>>
+    class "Controlador REST" as ctrl <<ADR-007>>
+    class "Validador de enlace" as enlace <<ADR-005>>
+  }
+
+  package "aplicacion: módulos de casos de uso" as casos {
+    class "Módulo Seguimiento" as seg <<CU-09, CU-10, CU-11>>
+    class "Módulo Postulaciones" as post <<CU-01, CU-02, CU-14>>
+    class "Módulo Actas" as act <<CU-07, CU-08, CU-12>>
+    class "Módulo Asignación" as asig <<CU-03>>
+    class "Módulo Horas" as hor <<CU-04, CU-05>>
+    class "Módulo Evaluación" as eva <<CU-06>>
+    class "Módulo Configuración" as conf <<CU-13, ADR-008>>
+  }
+
+  package "aplicacion/puertos" as puertos {
+    interface ProveedorIdentidad
+    interface RepositorioPracticas
+    interface Bitacora
+    interface Notificador
+    interface PublicadorActas
+    interface AlmacenActas
+  }
+
+  package "infraestructura: adaptadores de salida" as salida {
+    class "Adaptador SSO" as asso
+    class "Adaptador PostgreSQL" as apg
+    class "Adaptador de bitácora" as abit <<ADR-006>>
+    class "Adaptador de correo" as acor
+    class "Publicador" as pub
+    class "Adaptador del repositorio de actas" as aalm
+  }
+}
+
+package "Sistemas y contenedores externos a la API" as externos {
+  class "Directorio Activo / SSO" as sso <<externo>>
+  class "PostgreSQL" as db <<externo>>
+  class "Servicio de correo institucional" as correo <<externo>>
+  class "Broker de mensajes (RabbitMQ)" as broker <<externo>>
+  class "Repositorio de actas" as actas <<externo>>
+}
+
+' ---- Orden horizontal de las filas (enlaces ocultos) ----
+token -[hidden]right- ctrl
+ctrl -[hidden]right- enlace
+ProveedorIdentidad -[hidden]right- RepositorioPracticas
+RepositorioPracticas -[hidden]right- Bitacora
+Bitacora -[hidden]right- Notificador
+Notificador -[hidden]right- PublicadorActas
+PublicadorActas -[hidden]right- AlmacenActas
+sso -[hidden]right- db
+db -[hidden]right- correo
+correo -[hidden]right- broker
+broker -[hidden]right- actas
+
+' ---- Entrada ----
+web -down-> ctrl : invoca\nJSON / HTTPS
+ctrl -left-> token : valida identidad
+ctrl -right-> enlace : valida enlace
+ctrl -down-> casos : invoca el caso de uso
+
+' ---- Vista de usos entre módulos (sin ciclos) ----
+seg -down-> act : consulta actas
+seg -down-> hor : consulta horas
+act -down-> hor : horas aprobadas
+act -down-> eva : evaluación
+asig -down-> conf : carga máxima
+hor -down-> conf : horas requeridas
+eva -down-> conf : criterios
+
+' ---- Uso de puertos ----
+token -down-> ProveedorIdentidad
+enlace -down-> RepositorioPracticas : EnlaceAcceso
+casos -down-> RepositorioPracticas : todos los módulos
+casos -down-> Bitacora : todos, salvo Seguimiento
+asig -down-> Notificador
+eva -down-> Notificador
+act -down-> Notificador
+act -down-> PublicadorActas
+act -down-> AlmacenActas
+
+' ---- Los adaptadores implementan los puertos ----
+asso .up.|> ProveedorIdentidad
+apg .up.|> RepositorioPracticas
+abit .up.|> Bitacora
+acor .up.|> Notificador
+pub .up.|> PublicadorActas
+aalm .up.|> AlmacenActas
+
+' ---- Adaptadores hacia los sistemas reales ----
+asso -down-> sso : OIDC / SAML
+apg -down-> db : SQL
+abit -down-> db : SQL (auditoría)
+acor -down-> correo : SMTP
+pub -down-> broker : AMQP
+aalm -down-> actas : archivos
+
+legend right
+  Flecha continua: usa / depende de
+  Flecha punteada con triángulo: implementa el puerto
+  Gris: fuera de la API de prácticas
+  Las dependencias solo apuntan hacia adentro:
+  infraestructura -> aplicacion -> dominio
+endlegend
+@enduml

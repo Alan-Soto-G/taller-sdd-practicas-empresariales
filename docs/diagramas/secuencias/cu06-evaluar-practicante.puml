@@ -1,0 +1,80 @@
+@startuml cu06
+title ESC-04: CU-06 Evaluar el desempeño del practicante (cumple EAC-05; ADR-005, ADR-006)
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+<style>
+participant {
+  Padding 25
+}
+</style>
+skinparam BoxPadding 10
+skinparam wrapWidth 230
+skinparam maxMessageSize 230
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign left
+skinparam NoteTextAlignment left
+skinparam SequenceGroupBodyBackgroundColor transparent
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam sequence {
+  LifeLineBorderColor white
+  LifeLineBackgroundColor #4F81BD
+  ParticipantBackgroundColor #4F81BD
+  ParticipantBorderColor white
+  ParticipantFontColor white
+  ActorBackgroundColor #4F81BD
+  ActorBorderColor white
+  ActorFontColor white
+  GroupBackgroundColor #1F4E8C
+  GroupBorderColor white
+  GroupFontColor white
+  BoxBackgroundColor #1F4E8C
+}
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #C00000
+  FontColor #C00000
+}
+
+actor "Coordinador de Prácticas" as Coord
+actor "Representante de la Empresa" as Rep
+participant "Aplicación web" as Web
+participant "API de prácticas" as API
+participant "PostgreSQL" as DB
+participant "Servicio de correo institucional" as Correo
+
+Coord -> Web : solicita la evaluación de una práctica con horas completas
+Web -> API : POST /practicas/{id}/enlaces-evaluacion (JSON / HTTPS)
+API -> DB : guarda EnlaceAcceso (acción evaluar, vence en 7 días) (SQL)
+API ->> Correo : envía el enlace al correo del representante (SMTP)
+Correo ->> Rep : "evalúe a su practicante" (enlace)
+
+Rep -> Web : abre el enlace desde el móvil
+Web -> API : GET /evaluaciones/{enlace} (HTTPS)
+API -> DB : consulta el EnlaceAcceso (SQL)
+DB --> API : enlace
+
+alt el enlace es válido, vigente y no usado
+  API -> DB : lee los CriterioEvaluacion de la ReglaPractica de la práctica (SQL)
+  API --> Web : 200 formulario con los criterios
+  Rep -> Web : califica los criterios y envía
+  Web -> API : POST /evaluaciones/{enlace} (JSON / HTTPS)
+  API -> DB : guarda la Evaluacion, marca el enlace como usado, pasa la Practica a "evaluada" y audita (SQL, ADR-006)
+  API --> Web : 201 Creada
+  Web --> Rep : "evaluación enviada"
+  note across : Sin instalar nada ni crear cuenta, en menos de 5 minutos: cumple EAC-05
+else el enlace está vencido, usado o es inválido
+  API -> DB : registra el intento rechazado (SQL, ADR-006)
+  API --> Web : 410 "enlace vencido: solicite uno nuevo a la Coordinación"
+  Web --> Rep : muestra el mensaje
+  opt el Coordinador reemite el enlace
+    Coord -> Web : reemitir enlace
+    Web -> API : POST /practicas/{id}/enlaces-evaluacion (JSON / HTTPS)
+    API -> DB : invalida el enlace anterior y guarda uno nuevo (SQL)
+    API ->> Correo : envía el nuevo enlace (SMTP)
+  end
+end
+@enduml

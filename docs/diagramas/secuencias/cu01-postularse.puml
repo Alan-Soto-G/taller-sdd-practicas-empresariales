@@ -1,0 +1,62 @@
+@startuml cu01
+title ESC-01: CU-01 Postularse a una plaza de práctica (ADR-002, ADR-004, ADR-006)
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+<style>
+participant {
+  Padding 25
+}
+</style>
+skinparam BoxPadding 10
+skinparam wrapWidth 230
+skinparam maxMessageSize 230
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign left
+skinparam NoteTextAlignment left
+skinparam SequenceGroupBodyBackgroundColor transparent
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam sequence {
+  LifeLineBorderColor white
+  LifeLineBackgroundColor #4F81BD
+  ParticipantBackgroundColor #4F81BD
+  ParticipantBorderColor white
+  ParticipantFontColor white
+  ActorBackgroundColor #4F81BD
+  ActorBorderColor white
+  ActorFontColor white
+  GroupBackgroundColor #1F4E8C
+  GroupBorderColor white
+  GroupFontColor white
+  BoxBackgroundColor #1F4E8C
+}
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #C00000
+  FontColor #C00000
+}
+
+actor Estudiante
+participant "Aplicación web" as Web
+participant "API de prácticas" as API
+participant "PostgreSQL" as DB
+
+Estudiante -> Web : elige una plaza y se postula
+Web -> API : POST /postulaciones (JSON / HTTPS, token de corta vida)
+API -> API : valida el token y el rol Estudiante (ADR-004)
+API -> DB : consulta cupos de la plaza y postulaciones aceptadas del estudiante en el periodo (SQL)
+DB --> API : cupos disponibles y postulaciones
+
+break plaza sin cupos o el estudiante ya tiene una postulación aceptada en el periodo
+  API --> Web : 409 "postulación no permitida" (ADR-007)
+  Web --> Estudiante : muestra el motivo
+end
+
+API -> DB : registra Postulacion "enviada" y su auditoría en la misma transacción (SQL, ADR-006)
+API --> Web : 201 Creada
+Web --> Estudiante : "postulación enviada"
+note across : Solo se ejecuta si no hubo break: no se crean postulaciones sin cupo
+@enduml

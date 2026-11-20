@@ -1,0 +1,69 @@
+@startuml cu04
+title ESC-03: CU-04 Registrar horas de práctica (cumple EAC-01 y EAC-04; ADR-004, ADR-006)
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+<style>
+participant {
+  Padding 25
+}
+</style>
+skinparam BoxPadding 10
+skinparam wrapWidth 230
+skinparam maxMessageSize 230
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign left
+skinparam NoteTextAlignment left
+skinparam SequenceGroupBodyBackgroundColor transparent
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam sequence {
+  LifeLineBorderColor white
+  LifeLineBackgroundColor #4F81BD
+  ParticipantBackgroundColor #4F81BD
+  ParticipantBorderColor white
+  ParticipantFontColor white
+  ActorBackgroundColor #4F81BD
+  ActorBorderColor white
+  ActorFontColor white
+  GroupBackgroundColor #1F4E8C
+  GroupBorderColor white
+  GroupFontColor white
+  BoxBackgroundColor #1F4E8C
+}
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #C00000
+  FontColor #C00000
+}
+
+actor Estudiante
+participant "Aplicación web" as Web
+participant "API de prácticas" as API
+participant "PostgreSQL" as DB
+
+Estudiante -> Web : registra las horas y actividades de la semana
+Web -> API : POST /practicas/{id}/horas (JSON / HTTPS, token de corta vida)
+API -> API : valida el token y el rol Estudiante (ADR-004)
+API -> DB : consulta la Practica y su titular (SQL)
+DB --> API : práctica
+
+break la práctica no pertenece al estudiante autenticado
+  API -> DB : registra el acceso rechazado con usuario, recurso y hora (SQL, ADR-006)
+  API --> Web : 403 "acceso denegado"
+  Web --> Estudiante : muestra el rechazo
+  note across : 100% de los accesos ajenos rechazados y registrados: cumple EAC-04
+end
+
+alt la semana ya tiene registro o las horas están fuera del rango permitido
+  API --> Web : 422 "registro no válido" (ADR-007)
+  Web --> Estudiante : muestra qué corregir
+else registro válido
+  API -> DB : guarda RegistroHoras "reportado" y su auditoría en la misma transacción (SQL)
+  API --> Web : 201 Creado
+  Web --> Estudiante : "horas reportadas, pendientes de aprobación del tutor"
+end
+note across : Confirmación en menos de 2 s en el 95% de los casos, aun en el cierre (R-02): cumple EAC-01.\nLa generación de actas no compite con esta petición: corre en el Worker de actas (ADR-001).
+@enduml

@@ -1,0 +1,50 @@
+@startuml procesos
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+skinparam linetype polyline
+skinparam nodesep 70
+skinparam ranksep 90
+title Vista de procesos: contenedores del Sistema de Gestión de Prácticas Empresariales (C4 nivel 2)
+
+Person(estudiante, "Estudiante", "Se postula, registra horas y consulta su práctica")
+Person(tutor, "Tutor", "Aprueba horas y el acta")
+Person(coordinador, "Coordinador de Prácticas", "Asigna tutores y gestiona actas")
+Person_Ext(representante, "Representante de la Empresa", "Evalúa con enlace de un solo uso")
+
+System_Boundary(sistema, "Sistema de Gestión de Prácticas Empresariales") {
+  Container(web, "Aplicación web", "Angular", "Interfaz por rol, adaptable a móviles (ADR-010)")
+  Container(api, "API de prácticas", "Python, monolito modular", "Reglas del proceso (ADR-002)")
+  ContainerDb(db, "PostgreSQL", "Base de datos relacional", "Prácticas, horas, evaluaciones, actas y auditoría (ADR-003)")
+  ContainerDb(actas, "Repositorio de actas", "Almacenamiento de archivos", "PDF de las actas finales (ADR-003)")
+  ContainerQueue(broker, "Broker de mensajes", "RabbitMQ", "Colas actas y errores_actas (ADR-001)")
+  Container(worker, "Worker de actas", "Python", "Genera el acta y reintenta sin perderla")
+}
+
+System_Ext(sso, "Directorio Activo / SSO", "Autenticación institucional (RT-01)")
+System_Ext(correo, "Servicio de correo institucional", "Notificaciones y enlaces")
+
+Lay_R(estudiante, tutor)
+Lay_R(tutor, coordinador)
+Lay_R(coordinador, representante)
+Lay_R(db, actas)
+Lay_R(actas, broker)
+Lay_D(sso, correo)
+
+Rel_D(estudiante, web, "usa", "HTTPS")
+Rel_D(tutor, web, "usa", "HTTPS")
+Rel_D(coordinador, web, "usa", "HTTPS")
+Rel_D(representante, web, "abre el enlace", "HTTPS")
+Rel_D(web, api, "invoca", "JSON / HTTPS")
+
+Rel_R(api, sso, "valida la identidad", "OIDC / SAML, HTTPS")
+Rel_R(api, correo, "envía notificaciones y enlaces", "SMTP")
+
+Rel_D(api, db, "lee y escribe", "SQL")
+Rel_D(api, actas, "lee el PDF para exportar", "sistema de archivos")
+Rel_D(api, broker, "publica SolicitudActa", "AMQP")
+
+Rel_D(broker, worker, "entrega SolicitudActa", "AMQP")
+Rel_L(worker, actas, "guarda el PDF", "sistema de archivos")
+Rel_L(worker, db, "consolida datos y registra intentos y estado", "SQL")
+Rel_R(worker, correo, "notifica acta lista", "SMTP")
+@enduml

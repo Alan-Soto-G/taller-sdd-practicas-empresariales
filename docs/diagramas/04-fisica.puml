@@ -1,0 +1,91 @@
+@startuml fisica
+title Vista física: despliegue en la infraestructura de la universidad (S-01, ADR-009)
+
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 90
+skinparam ranksep 90
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam ArrowFontSize 11
+skinparam node {
+  BackgroundColor #1B4472
+  BorderColor #9DC3E6
+  FontColor white
+}
+skinparam component {
+  BackgroundColor #1F4E8C
+  BorderColor white
+  FontColor white
+}
+skinparam database {
+  BackgroundColor #1F4E8C
+  BorderColor white
+  FontColor white
+}
+skinparam queue {
+  BackgroundColor #1F4E8C
+  BorderColor white
+  FontColor white
+}
+skinparam cloud {
+  BackgroundColor #7F7F7F
+  BorderColor white
+  FontColor white
+}
+
+cloud "Directorio Activo / SSO\n<<sistema externo>>" as sso
+
+node "Infraestructura de servidores de la universidad\n<<Oficina de TI, S-01>>" as infra {
+
+  node "Servidor web\n<<Ubuntu, Nginx>>\núnico nodo expuesto a internet" as srvweb {
+    component "Aplicación web\n[Angular, archivos estáticos]" as app
+  }
+
+  node "Servidor de aplicaciones\n<<Docker>>" as apps {
+    component "API de prácticas\n[Python]\nréplicas en el cierre" as api
+    component "Worker de actas\n[Python]\ngenera y reintenta" as worker
+  }
+
+  node "Servidor de mensajería\n<<Docker>>" as msg {
+    queue "Broker de mensajes\n[RabbitMQ]\ncolas persistentes" as broker
+  }
+
+  node "Servidor de base de datos\nsolo red interna" as dbn {
+    database "PostgreSQL" as db
+  }
+
+  node "Almacenamiento institucional" as alm {
+    database "Repositorio de actas\nPDF de las actas finales" as actas
+  }
+}
+
+cloud "Servicio de correo institucional\n<<sistema externo>>" as correo
+
+' ---- Disposición: API a la izquierda, Worker a la derecha,
+' ---- broker, base de datos y repositorio en la columna central.
+api -[hidden]right- worker
+broker -[hidden]down- db
+db -[hidden]down- actas
+
+app -down-> api : invoca (proxy inverso)\nJSON / HTTPS, red interna
+api -left-> sso : valida identidad\nOIDC / SAML, HTTPS
+api -down-> broker : publica\nAMQP
+broker -up-> worker : entrega\nAMQP
+api -down-> db : lee y escribe\nSQL
+worker -down-> db : consolida y\nregistra estado\nSQL
+api -down-> actas : lee PDF
+worker -down-> actas : guarda PDF
+worker -right-> correo : notifica acta lista\nSMTP
+api -right-> correo : envía enlaces y\nnotificaciones, SMTP
+
+legend right
+  Gris: sistemas externos al Sistema de Prácticas
+  Todo el tráfico entre nodos va por la red interna,
+  salvo la entrada por el Servidor web
+endlegend
+@enduml

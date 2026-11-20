@@ -1,0 +1,66 @@
+@startuml cu03
+title ESC-02: CU-03 Asignar tutor a un estudiante (OB-01, ADR-008, ADR-006)
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+<style>
+participant {
+  Padding 25
+}
+</style>
+skinparam BoxPadding 10
+skinparam wrapWidth 230
+skinparam maxMessageSize 230
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign left
+skinparam NoteTextAlignment left
+skinparam SequenceGroupBodyBackgroundColor transparent
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam sequence {
+  LifeLineBorderColor white
+  LifeLineBackgroundColor #4F81BD
+  ParticipantBackgroundColor #4F81BD
+  ParticipantBorderColor white
+  ParticipantFontColor white
+  ActorBackgroundColor #4F81BD
+  ActorBorderColor white
+  ActorFontColor white
+  GroupBackgroundColor #1F4E8C
+  GroupBorderColor white
+  GroupFontColor white
+  BoxBackgroundColor #1F4E8C
+}
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #C00000
+  FontColor #C00000
+}
+
+actor "Coordinador de Prácticas" as Coord
+participant "Aplicación web" as Web
+participant "API de prácticas" as API
+participant "PostgreSQL" as DB
+participant "Servicio de correo institucional" as Correo
+
+Coord -> Web : selecciona prácticas "sin tutor" y un tutor
+Web -> API : POST /asignaciones (JSON / HTTPS)
+API -> API : valida el token y el rol Coordinador (ADR-004)
+API -> DB : lee la carga máxima por tutor de la ReglaPractica vigente y la carga actual del tutor (SQL)
+DB --> API : carga máxima y carga actual
+
+loop por cada práctica seleccionada
+  alt el tutor tiene cupo
+    API -> DB : asigna el tutor, pasa la Practica a "en curso" y audita (SQL, ADR-006)
+    API ->> Correo : notifica la asignación al tutor y al estudiante (SMTP)
+  else el tutor alcanzó su carga máxima
+    API -> API : marca la práctica como "no asignada: tutor sin cupo"
+  end
+end
+
+API --> Web : 200 resultado por práctica (asignadas y no asignadas)
+Web --> Coord : muestra el resultado de la asignación
+note across : Si el correo falla, la asignación no se revierte: queda registrado para reenvío (ADR-007)
+@enduml

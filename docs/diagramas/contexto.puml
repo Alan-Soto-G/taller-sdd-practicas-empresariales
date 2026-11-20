@@ -1,0 +1,31 @@
+@startuml contexto
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+skinparam linetype polyline
+skinparam nodesep 60
+skinparam ranksep 80
+title Contexto del Sistema de Gestión de Prácticas Empresariales (C4 nivel 1)
+
+Person(estudiante, "Estudiante", "Se postula, registra horas y consulta su práctica")
+Person(tutor, "Tutor", "Aprueba horas y el acta de sus estudiantes asignados")
+Person(coordinador, "Coordinador de Prácticas", "Publica plazas, asigna tutores y gestiona actas")
+Person_Ext(representante, "Representante de la Empresa", "Evalúa al practicante y aprueba el acta, sin cuenta institucional")
+
+System(sistema, "Sistema de Gestión de Prácticas Empresariales", "Postulación, asignación de tutor, seguimiento de horas, evaluación y acta final")
+
+System_Ext(sso, "Directorio Activo / SSO", "Autenticación institucional (RT-01)")
+System_Ext(correo, "Servicio de correo institucional", "Envía notificaciones y enlaces de acceso")
+
+Lay_R(estudiante, tutor)
+Lay_R(tutor, coordinador)
+Lay_R(coordinador, representante)
+Lay_R(sso, correo)
+
+Rel_D(estudiante, sistema, "Se postula, registra horas y consulta", "HTTPS")
+Rel_D(tutor, sistema, "Aprueba horas y el acta", "HTTPS")
+Rel_D(coordinador, sistema, "Asigna tutores y solicita actas", "HTTPS")
+Rel_D(representante, sistema, "Evalúa y aprueba el acta con enlace de un solo uso", "HTTPS")
+Rel_D(sistema, sso, "Autentica usuarios institucionales", "OIDC / SAML, HTTPS")
+Rel_D(sistema, correo, "Envía notificaciones y enlaces", "SMTP")
+Rel_U(correo, representante, "Entrega el enlace de acceso", "correo electrónico")
+@enduml

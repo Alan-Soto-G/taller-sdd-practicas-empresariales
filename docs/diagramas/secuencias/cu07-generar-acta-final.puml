@@ -1,0 +1,81 @@
+@startuml cu07
+title ESC-05: CU-07 Generar el acta final (cumple EAC-02; ADR-001, ADR-003, ADR-007)
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+<style>
+participant {
+  Padding 25
+}
+</style>
+skinparam BoxPadding 10
+skinparam wrapWidth 230
+skinparam maxMessageSize 230
+skinparam responseMessageBelowArrow true
+skinparam sequenceMessageAlign left
+skinparam NoteTextAlignment left
+skinparam SequenceGroupBodyBackgroundColor transparent
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam sequence {
+  LifeLineBorderColor white
+  LifeLineBackgroundColor #4F81BD
+  ParticipantBackgroundColor #4F81BD
+  ParticipantBorderColor white
+  ParticipantFontColor white
+  ActorBackgroundColor #4F81BD
+  ActorBorderColor white
+  ActorFontColor white
+  GroupBackgroundColor #1F4E8C
+  GroupBorderColor white
+  GroupFontColor white
+  BoxBackgroundColor #1F4E8C
+}
+skinparam note {
+  BackgroundColor #FFF2CC
+  BorderColor #C00000
+  FontColor #C00000
+}
+
+actor "Coordinador de Prácticas" as Coord
+participant "Aplicación web" as Web
+participant "API de prácticas" as API
+participant "Broker de mensajes" as Broker
+participant "Worker de actas" as Worker
+participant "PostgreSQL" as DB
+participant "Repositorio de actas" as Actas
+participant "Servicio de correo institucional" as Correo
+
+Coord -> Web : solicita las actas de las prácticas evaluadas
+Web -> API : POST /actas (JSON / HTTPS)
+loop por cada práctica evaluada seleccionada
+  API -> DB : registra ActaFinal "en generación" (SQL)
+  API ->> Broker : publica SolicitudActa en la cola actas (AMQP)
+end
+API --> Web : 202 Aceptada
+Web --> Coord : "actas en generación; se le notificará"
+note across : Solicitud aceptada en menos de 3 s, aun con 500 actas: la API solo encola (ADR-001)
+
+Broker ->> Worker : entrega SolicitudActa (AMQP)
+loop máx. 3 intentos y sin acta generada
+  Worker -> DB : consolida horas aprobadas, evaluación y ReglaPractica de la práctica (SQL)
+  Worker -> Worker : compone el PDF con la plantilla del acta
+  alt PDF generado
+    Worker -> Actas : guarda el PDF del acta
+    Worker -> DB : registra IntentoGeneracion exitoso y marca el acta "generada" (SQL)
+    Worker ->> Correo : avisa a tutor, representante y coordinador que el acta espera su aprobación (SMTP, CU-08)
+  else falla al consolidar o al componer el PDF
+    Worker -> DB : registra IntentoGeneracion fallido (SQL)
+    Worker ->> Broker : reencola con espera creciente de 1 y 2 min (AMQP)
+  end
+end
+
+opt se agotaron los 3 intentos
+  Worker ->> Broker : envía a la cola errores_actas (AMQP)
+  Worker -> DB : marca el acta "con error" (SQL)
+  note across : Queda para revisión del Coordinador (DT-01).\nAlerta si la cola actas supera 100 pendientes (R-04).
+end
+note across : Ningún acta se pierde: termina generada o en errores_actas. Cumple EAC-02
+@enduml

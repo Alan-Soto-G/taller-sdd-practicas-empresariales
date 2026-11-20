@@ -1,0 +1,115 @@
+@startuml logica
+title Vista lógica: modelo de dominio del Sistema de Gestión de Prácticas Empresariales
+
+skinparam backgroundColor #17375E
+skinparam defaultFontName Arial
+skinparam defaultFontColor white
+skinparam titleFontColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 70
+skinparam ArrowColor white
+skinparam ArrowFontColor white
+skinparam class {
+  BackgroundColor #1F4E8C
+  BorderColor white
+  FontColor white
+  AttributeFontColor white
+  HeaderBackgroundColor #4F81BD
+}
+hide circle
+hide methods
+
+class Estudiante {
+  documento
+  programa
+  correo institucional
+}
+class Tutor {
+  documento
+  correo institucional
+}
+class Empresa {
+  NIT
+  razón social
+}
+class RepresentanteEmpresa {
+  nombre
+  correo
+}
+class Plaza {
+  cargo
+  cupos
+  periodo
+}
+class Postulacion {
+  fecha
+  estado
+}
+class Practica {
+  fecha de inicio
+  estado
+  horas aprobadas
+}
+class RegistroHoras {
+  semana
+  horas
+  actividades
+  estado
+}
+class ReglaPractica {
+  versión
+  horas requeridas
+  carga máxima por tutor
+  plantilla del acta
+}
+class CriterioEvaluacion {
+  nombre
+  escala
+}
+class Evaluacion {
+  fecha
+  calificaciones
+  observaciones
+}
+class EnlaceAcceso {
+  acción
+  vencimiento
+  usado
+}
+class ActaFinal {
+  fecha de solicitud
+  estado
+  ruta del PDF
+}
+class IntentoGeneracion {
+  número
+  fecha
+  resultado
+}
+class Aprobacion {
+  rol
+  usuario
+  fecha
+}
+
+Empresa "1" -- "1..*" RepresentanteEmpresa
+Empresa "1" -- "0..*" Plaza
+Estudiante "1" -- "0..*" Postulacion
+Postulacion "0..*" -- "1" Plaza
+Postulacion "1" -- "0..1" Practica : origina
+Estudiante "1" -- "0..*" Practica
+Tutor "0..1" -- "0..*" Practica : acompaña
+Practica "0..*" -- "1" ReglaPractica : se rige por
+ReglaPractica "1" -- "1..*" CriterioEvaluacion
+Practica "1" -- "0..*" RegistroHoras
+Practica "1" -- "0..1" Evaluacion
+RepresentanteEmpresa "1" -- "0..*" Evaluacion : registra
+Evaluacion "0..*" -- "1..*" CriterioEvaluacion : califica
+Practica "1" -- "0..*" EnlaceAcceso
+RepresentanteEmpresa "1" -- "0..*" EnlaceAcceso : recibe
+Practica "1" -- "0..1" ActaFinal
+ActaFinal "1" -- "0..3" IntentoGeneracion
+ActaFinal "1" -- "0..3" Aprobacion
+@enduml

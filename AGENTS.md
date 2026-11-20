@@ -15,11 +15,13 @@ Reglas permanentes del proyecto. Se le entregan al agente al inicio de cada sesi
 - Monolito modular (ADR-002), con Clean Architecture por dentro.
 - `dominio/` no importa nada de `aplicacion/` ni de `infraestructura/`.
 - Puertos como `Protocol` en `aplicacion/puertos/` (los define el caso de uso; los implementa `infraestructura/`).
-- La firma es asíncrona (ADR-001): la API solo encola; nunca llama al proveedor de firma. Solo el worker lo hace.
-- PostgreSQL (ADR-003); en esta etapa, adaptadores en memoria.
-- Errores de integración traducidos por los adaptadores a errores de aplicación (ADR-006).
-- Toda solicitud pertenece a un Estudiante y solo su titular la consulta (ADR-004).
-- Se audita cada cambio de estado y cada acceso rechazado (ADR-005).
+- La generación del acta final es asíncrona (ADR-001): la API solo encola; nunca compone el PDF del acta. Solo el Worker de actas lo hace.
+- PostgreSQL y repositorio de actas (ADR-003); en esta etapa, adaptadores en memoria.
+- Autenticación con el Directorio Activo / SSO institucional (ADR-004). El Representante de la Empresa no tiene cuenta institucional: accede solo con un enlace de un solo uso y con vencimiento (ADR-005).
+- Toda Práctica pertenece a un Estudiante. Solo la consultan su titular, su tutor asignado, el Representante de su empresa (con enlace) y el Coordinador de Prácticas; solo el tutor asignado aprueba sus horas (ADR-004).
+- Se audita cada cambio de estado, cada aprobación y cada acceso rechazado (ADR-006). Las firmas del acta son aprobaciones electrónicas internas, no un proveedor externo.
+- Errores de integración traducidos por los adaptadores a errores de aplicación (ADR-007).
+- Las reglas de la práctica (horas requeridas, carga por tutor, criterios de evaluación, plantilla del acta) son datos, no código (ADR-008).
 
 ## Convenciones de código
 
