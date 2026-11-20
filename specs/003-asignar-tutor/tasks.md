@@ -24,7 +24,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-CE, ESC-YT
       Depende de: ninguna
 
-- [ ] T-02 Entidad Practica con asignar_tutor y esta_activa
+- [x] T-02 Entidad Practica con asignar_tutor y esta_activa
       Archivos: src/dominio/practica.py
       Escenarios: ESC-B, ESC-VA, ESC-CE, ESC-YT
       Depende de: T-01
