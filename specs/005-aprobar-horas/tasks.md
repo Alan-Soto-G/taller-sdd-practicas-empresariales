@@ -17,7 +17,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 RegistroHoras: aprobar y rechazar
+- [x] T-01 RegistroHoras: aprobar y rechazar
       Archivos: src/dominio/registro_horas.py
       Escenarios: ESC-B, ESC-RE, ESC-YR
       Depende de: ninguna

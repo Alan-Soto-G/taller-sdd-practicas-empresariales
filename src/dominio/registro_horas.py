@@ -1,7 +1,7 @@
 """RegistroHoras: horas reportadas por el Estudiante en una semana (vista logica, CU-04)."""
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 
 from dominio.estado_registro_horas import EstadoRegistroHoras
@@ -52,3 +52,15 @@ class RegistroHoras:
         if not actividades or not actividades.strip():
             return "las actividades son obligatorias"
         return None
+
+    def aprobar(self) -> "RegistroHoras":
+        """Regla de CU-05: solo un registro reportado se aprueba; aprobado no se modifica."""
+        if self.estado != EstadoRegistroHoras.REPORTADO:
+            raise ValueError("el registro ya fue revisado")
+        return replace(self, estado=EstadoRegistroHoras.APROBADO)
+
+    def rechazar(self) -> "RegistroHoras":
+        """Regla de CU-05: solo un registro reportado se rechaza."""
+        if self.estado != EstadoRegistroHoras.REPORTADO:
+            raise ValueError("el registro ya fue revisado")
+        return replace(self, estado=EstadoRegistroHoras.RECHAZADO)
