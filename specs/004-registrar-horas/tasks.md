@@ -18,7 +18,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Enum EstadoRegistroHoras
+- [x] T-01 Enum EstadoRegistroHoras
       Archivos: src/dominio/estado_registro_horas.py
       Escenarios: ESC-B, ESC-OS
       Depende de: ninguna
