@@ -47,7 +47,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-OS, ESC-SR2, ESC-CA, ESC-DU
       Depende de: T-02
 
-- [ ] T-06 DTO de entrada SolicitudRegistroHoras
+- [x] T-06 DTO de entrada SolicitudRegistroHoras
       Archivos: src/aplicacion/horas/solicitud_registro_horas.py
       Escenarios: ESC-B, ESC-AJ, ESC-SR
       Depende de: ninguna
