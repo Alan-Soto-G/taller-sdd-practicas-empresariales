@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-12: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/012. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-13: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/013. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -33,6 +33,7 @@ from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.configuracion.consultar_criterios_evaluacion import ConsultarCriteriosEvaluacion
 from aplicacion.configuracion.consultar_horas_requeridas import ConsultarHorasRequeridas
 from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigente
+from aplicacion.configuracion.importar_historico import ImportarHistorico
 from aplicacion.evaluacion.emitir_enlace_evaluacion import EmitirEnlaceEvaluacion
 from aplicacion.evaluacion.consultar_formulario_evaluacion import ConsultarFormularioEvaluacion
 from aplicacion.evaluacion.registrar_enlace_rechazado import RegistrarEnlaceRechazado
@@ -103,6 +104,7 @@ def construir() -> dict[str, object]:
         repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
     )
     exportar_acta = ExportarActa(repositorio, bitacora, almacen_actas, reloj=datetime.now)
+    importar_historico = ImportarHistorico(repositorio, bitacora, consultar_regla, reloj=datetime.now)
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -122,6 +124,7 @@ def construir() -> dict[str, object]:
         consultar_estado_practica,
         generar_reporte,
         exportar_acta,
+        importar_historico,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -266,6 +269,7 @@ def construir() -> dict[str, object]:
         "consultar_estado_practica": consultar_estado_practica,
         "generar_reporte": generar_reporte,
         "exportar_acta": exportar_acta,
+        "importar_historico": importar_historico,
     }
 
 

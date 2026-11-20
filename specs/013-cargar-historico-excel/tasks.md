@@ -57,7 +57,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos
       Depende de: T-06
 
-- [ ] T-09 Composición en main.py con ImportarHistorico
+- [x] T-09 Composición en main.py con ImportarHistorico
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-07, T-08
