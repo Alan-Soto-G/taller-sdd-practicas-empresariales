@@ -165,7 +165,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que los casos de uso escriben en la `Bitacora`, y la vista de desarrollo dice que el Validador de enlace solo depende de RepositorioPracticas.
 
-- [ ] T-27 EnlaceNoValido lleva el enlace y el representante
+- [x] T-27 EnlaceNoValido lleva el enlace y el representante
       Archivos: src/aplicacion/errores/enlace_no_valido.py
       Escenarios: ESC-EV, ESC-RE
       Depende de: T-08
