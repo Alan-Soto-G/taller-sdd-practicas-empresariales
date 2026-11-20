@@ -11,7 +11,7 @@ Aterriza [spec.md](spec.md) (CU-13) en la arquitectura de [docs/arquitectura.md]
 | ADR-004 | Solo `CoordinadorPracticas`; autorización en el caso de uso. |
 | ADR-006 | Se auditan la creación de cada Práctica importada, el resumen de la importación y el acceso rechazado. |
 | ADR-007 | Los rechazos por datos no son errores HTTP: van en el reporte (200). |
-| Sin librería de Excel | Ningún ADR aprueba una librería para leer `.xlsx`. El importador recibe el libro ya leído (hojas → filas por encabezado). Leer el archivo en el servidor queda pendiente de un ADR nuevo. |
+| ADR-012 | El `.xlsx` lo lee **openpyxl 3.1.5** detrás del puerto `LectorExcel` (adaptador `LectorExcelOpenpyxl`). Un archivo ilegible → `ArchivoNoValido` (422). La primera versión recibía el libro ya leído; ese camino se conserva. Ajuste: tareas T-11 a T-19. |
 
 ## Componentes
 
@@ -44,5 +44,17 @@ Aterriza [spec.md](spec.md) (CU-13) en la arquitectura de [docs/arquitectura.md]
 
 ## Fuera de alcance
 
-- Leer el archivo `.xlsx` en el servidor (necesita una librería aprobada por un ADR nuevo).
 - Importar postulaciones, horas, evaluaciones o actas históricas, y deshacer una importación.
+
+## Ajuste ADR-012 (subir el archivo .xlsx)
+
+| Archivo | Clase | Responsabilidad |
+|---------|-------|-----------------|
+| `src/aplicacion/errores/archivo_no_valido.py` **(nuevo)** | `ArchivoNoValido` | código `archivo_no_valido`, mensaje "archivo no válido", con `motivo` |
+| `src/aplicacion/puertos/lector_excel.py` **(nuevo)** | `LectorExcel` (Protocol) | `leer(contenido: bytes) -> dict[str, list[dict[str, str]]]`; lanza `ArchivoNoValido` |
+| `src/aplicacion/configuracion/solicitud_importacion_excel.py` **(nuevo)** | `SolicitudImportacionExcel` (DTO) | `usuario`, `contenido: bytes` |
+| `src/aplicacion/configuracion/importar_historico.py` **(cambia)** | `ImportarHistorico` | Recibe también el `LectorExcel`. `ejecutar_excel(SolicitudImportacionExcel)`: autoriza primero (sin leer el archivo si se rechaza), lee las hojas con el puerto y aplica las mismas reglas de `ejecutar` |
+| `src/infraestructura/lector_excel_openpyxl.py` **(nuevo)** | `LectorExcelOpenpyxl` | `openpyxl.load_workbook(BytesIO, read_only=True, data_only=True)`; la fila 1 es el encabezado; las celdas pasan a texto (un decimal entero, como 3.0, se lee "3"); se quitan las filas vacías del final; cualquier excepción → `ArchivoNoValido("el archivo no es un Excel .xlsx válido")` |
+| `src/infraestructura/controlador_rest.py` **(cambia)** | `ControladorRest` | `importar_historico_excel(token, contenido)` representa "POST /importaciones/historico/archivo" (multipart con el .xlsx); 422 `ArchivoNoValido` con motivo |
+| `src/main.py` **(cambia)** | (composición) | Inyecta `LectorExcelOpenpyxl()` en `ImportarHistorico` |
+| `src/requirements.txt` **(cambia)** | — | Agrega `openpyxl==3.1.5` |

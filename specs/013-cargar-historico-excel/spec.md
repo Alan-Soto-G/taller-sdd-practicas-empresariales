@@ -1,5 +1,5 @@
 # language: es
-# Traza: CU-13, PA-07, S-04, ADR-002, ADR-004, ADR-006, ADR-007, ADR-008
+# Traza: CU-13, PA-07, S-04, ADR-002, ADR-004, ADR-006, ADR-007, ADR-008, ADR-012
 # EAC: ningún EAC cita a CU-13. docs/drivers.md: "operación de una sola vez al arrancar (S-04); se resuelve
 #      como preocupación PA-07" (cuadrante "cuestionar").
 # Fuentes: ADR-008 ("un importador de una sola vez (CU-13) que valida los archivos de Excel y reporta las
@@ -8,10 +8,12 @@
 #          (Empresa, Plaza, Tutor, Estudiante, Practica), CU-02 (reglas de la Plaza).
 #
 # Decisiones de la revisión (se eligió la opción más simple, coherente con los ADR y con CU-01 a CU-12):
-# - Leer el archivo .xlsx en el servidor necesita una librería que ningún ADR aprueba (AGENTS.md: "no agregar
-#   librerías que ningún ADR haya aprobado"). Por eso el importador recibe el libro ya leído: por cada hoja,
-#   la lista de filas como pares encabezado-valor (la aplicación web o una utilidad del Coordinador convierte
-#   el Excel). Elegir una librería para leer el .xlsx en el servidor queda pendiente de un ADR nuevo.
+# - El Coordinador sube el archivo .xlsx tal como lo tiene. Lo lee openpyxl detrás del puerto LectorExcel
+#   (ADR-012, 2026-11-20, aprobado por el usuario). Un archivo que no es un .xlsx válido responde 422 "archivo
+#   no válido" con el motivo "el archivo no es un Excel .xlsx válido" y no carga nada. La primera versión de
+#   esta spec recibía el libro ya leído; ese camino se conserva (mismas reglas) para quien ya tenga las filas.
+# - Las celdas se leen como texto: un número entero (por ejemplo 3, que Excel guarda como 3.0) se lee "3", y
+#   una celda vacía se lee vacía. Las filas vacías del final de la hoja se ignoran.
 # - Hojas y columnas: "Empresas" (id, razon_social), "Plazas" (id, id_empresa, cargo, cupos, periodo),
 #   "Tutores" (id, correo), "Estudiantes" (id, correo) y "Practicas" (id, id_estudiante, id_empresa,
 #   id_tutor). Se procesan en ese orden, para que una fila pueda referirse a lo cargado en una hoja anterior.
@@ -81,3 +83,19 @@ Característica: Cargar información histórica desde Excel
     Dado una importación con un token emitido hace 16 minutos
     Cuando la API recibe la petición
     Entonces la petición se rechaza por falta de autenticación
+
+  Escenario: Flujo alterno - el Coordinador sube el archivo .xlsx (ADR-012)
+    Dado un archivo .xlsx con las hojas y las filas del flujo alterno de filas inválidas
+    Cuando el Coordinador "C-01" sube el archivo para importarlo
+    Entonces se cargan las mismas filas válidas y se reportan las mismas 8 filas rechazadas, con su hoja, su fila y su motivo
+
+  Escenario: Excepción - el archivo no es un Excel válido (ADR-007, ADR-012)
+    Dado un archivo que no es un .xlsx
+    Cuando el Coordinador "C-01" sube el archivo para importarlo
+    Entonces la petición se rechaza con el error de aplicación "archivo no válido" y el motivo "el archivo no es un Excel .xlsx válido"
+    Y no se carga ningún dato
+
+  Escenario: Excepción - un usuario sin el rol CoordinadorPracticas sube el archivo (ADR-004, ADR-006)
+    Cuando el Tutor "T-500" sube el archivo .xlsx del flujo básico
+    Entonces la petición se rechaza con el error de aplicación "acceso denegado" antes de leer el archivo
+    Y la bitácora de auditoría tiene un registro del acceso rechazado con recurso "importacion" y acción "importar histórico"

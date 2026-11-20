@@ -68,3 +68,52 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Archivos: specs/013-cargar-historico-excel/validacion.md
       Escenarios: todos
       Depende de: T-09
+
+## Ajuste: subir el archivo .xlsx (ADR-012)
+
+Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo alterno - el Coordinador sube el archivo .xlsx", ESC-AN "Excepción - el archivo no es un Excel válido", ESC-XS "Excepción - un usuario sin el rol CoordinadorPracticas sube el archivo".
+
+- [ ] T-11 Error ArchivoNoValido con su motivo
+      Archivos: src/aplicacion/errores/archivo_no_valido.py
+      Escenarios: ESC-AN
+      Depende de: ninguna
+
+- [ ] T-12 Puerto LectorExcel
+      Archivos: src/aplicacion/puertos/lector_excel.py
+      Escenarios: ESC-XL, ESC-AN
+      Depende de: T-11
+
+- [ ] T-13 DTO SolicitudImportacionExcel
+      Archivos: src/aplicacion/configuracion/solicitud_importacion_excel.py
+      Escenarios: ESC-XL, ESC-AN, ESC-XS
+      Depende de: ninguna
+
+- [ ] T-14 ImportarHistorico: ejecutar_excel con el LectorExcel
+      Archivos: src/aplicacion/configuracion/importar_historico.py
+      Escenarios: ESC-XL, ESC-AN, ESC-XS
+      Depende de: T-12, T-13
+
+- [ ] T-15 Adaptador LectorExcelOpenpyxl
+      Archivos: src/infraestructura/lector_excel_openpyxl.py
+      Escenarios: ESC-XL, ESC-AN
+      Depende de: T-11, T-12
+
+- [ ] T-16 ControladorRest: importar_historico_excel (POST /importaciones/historico/archivo) con 422
+      Archivos: src/infraestructura/controlador_rest.py
+      Escenarios: ESC-XL, ESC-AN, ESC-XS
+      Depende de: T-14
+
+- [ ] T-17 Composición en main.py con LectorExcelOpenpyxl
+      Archivos: src/main.py
+      Escenarios: ESC-XL, ESC-AN, ESC-XS
+      Depende de: T-15, T-16
+
+- [ ] T-18 Dependencia openpyxl==3.1.5
+      Archivos: src/requirements.txt
+      Escenarios: ESC-XL
+      Depende de: T-15
+
+- [ ] T-19 Revalidar CU-13 con archivos .xlsx reales y actualizar la evidencia
+      Archivos: specs/013-cargar-historico-excel/validacion.md
+      Escenarios: todos
+      Depende de: T-17, T-18
