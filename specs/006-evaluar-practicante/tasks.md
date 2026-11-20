@@ -100,7 +100,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-RE, ESC-CO
       Depende de: ninguna
 
-- [ ] T-16 Caso de uso EmitirEnlaceEvaluacion
+- [x] T-16 Caso de uso EmitirEnlaceEvaluacion
       Archivos: src/aplicacion/evaluacion/emitir_enlace_evaluacion.py
       Escenarios: ESC-B1, ESC-HC, ESC-SR, ESC-RE, ESC-CO
       Depende de: T-04, T-09, T-11, T-14, T-15
