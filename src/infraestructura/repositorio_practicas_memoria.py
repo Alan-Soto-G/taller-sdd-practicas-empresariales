@@ -3,14 +3,17 @@
 from threading import Lock
 
 from dominio.empresa import Empresa
+from dominio.enlace_acceso import EnlaceAcceso
 from dominio.estado_postulacion import EstadoPostulacion
 from dominio.estado_registro_horas import EstadoRegistroHoras
 from dominio.estudiante import Estudiante
+from dominio.evaluacion import Evaluacion
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
 from dominio.practica import Practica
 from dominio.registro_horas import RegistroHoras
 from dominio.regla_practica import ReglaPractica
+from dominio.representante_empresa import RepresentanteEmpresa
 from dominio.tutor import Tutor
 
 
@@ -29,6 +32,10 @@ class RepositorioPracticasMemoria:
         self._practicas: dict[str, Practica] = {}
         self._registros_horas: list[RegistroHoras] = []
         self._candado_horas = Lock()
+        self._representantes: dict[str, RepresentanteEmpresa] = {}
+        self._enlaces: dict[str, EnlaceAcceso] = {}
+        self._evaluaciones: list[Evaluacion] = []
+        self._candado_enlaces = Lock()
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -181,4 +188,64 @@ class RepositorioPracticasMemoria:
             for r in self._registros_horas
             if r.id_practica == id_practica and r.estado == EstadoRegistroHoras.APROBADO
         )
+
+    def agregar_representante(self, representante: RepresentanteEmpresa) -> None:
+        """Precarga un representante de empresa en el repositorio."""
+        self._representantes[representante.id] = representante
+
+    def obtener_representante_de_empresa(
+        self, id_empresa: str
+    ) -> RepresentanteEmpresa | None:
+        """Obtiene el primer representante asociado a una empresa."""
+        return next(
+            (
+                representante
+                for representante in self._representantes.values()
+                if representante.id_empresa == id_empresa
+            ),
+            None,
+        )
+
+    def guardar_enlace(self, enlace: EnlaceAcceso) -> None:
+        """Guarda un enlace de acceso en el repositorio."""
+        self._enlaces[enlace.id] = enlace
+
+    def obtener_enlace_por_token(self, token: str) -> EnlaceAcceso | None:
+        """Obtiene el primer enlace de acceso con el token indicado."""
+        return next(
+            (enlace for enlace in self._enlaces.values() if enlace.token == token),
+            None,
+        )
+
+    def invalidar_enlaces(self, id_practica: str, accion: str) -> None:
+        """Invalida los enlaces no usados de una práctica y acción."""
+        with self._candado_enlaces:
+            for enlace in list(self._enlaces.values()):
+                if (
+                    enlace.id_practica == id_practica
+                    and enlace.accion == accion
+                    and not enlace.usado
+                ):
+                    self._enlaces[enlace.id] = enlace.usar()
+
+    def marcar_enlace_usado(self, id_enlace: str) -> bool:
+        """Marca el enlace como usado de forma atomica (un solo uso, ADR-005)."""
+        with self._candado_enlaces:
+            enlace = self._enlaces.get(id_enlace)
+            if enlace is None or enlace.usado:
+                return False
+            self._enlaces[id_enlace] = enlace.usar()
+            return True
+
+    def guardar_evaluacion(self, evaluacion: Evaluacion) -> None:
+        """Guarda una evaluación en el repositorio."""
+        self._evaluaciones.append(evaluacion)
+
+    def listar_enlaces(self) -> list[EnlaceAcceso]:
+        """Devuelve una copia de los enlaces registrados."""
+        return list(self._enlaces.values())
+
+    def listar_evaluaciones(self) -> list[Evaluacion]:
+        """Devuelve una copia de las evaluaciones registradas."""
+        return list(self._evaluaciones)
 

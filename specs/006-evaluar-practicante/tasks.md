@@ -137,7 +137,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV, ESC-E5
       Depende de: T-04, T-07, T-08, T-11
 
-- [ ] T-23 RepositorioPracticasMemoria: representantes, enlaces y evaluaciones
+- [x] T-23 RepositorioPracticasMemoria: representantes, enlaces y evaluaciones
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: todos menos ESC-TV
       Depende de: T-11
