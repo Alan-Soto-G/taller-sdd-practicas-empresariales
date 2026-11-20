@@ -336,3 +336,15 @@ class RepositorioPracticasMemoria:
             (p for p in self._practicas.values() if p.id_estudiante == id_estudiante),
             key=lambda p: p.id,
         )
+
+    def guardar_empresa(self, empresa: Empresa) -> None:
+        """Guarda una empresa, nueva o modificada."""
+        self._empresas[empresa.id] = empresa
+
+    def guardar_tutor(self, tutor: Tutor) -> None:
+        """Guarda un tutor nuevo."""
+        self._tutores[tutor.id] = tutor
+
+    def guardar_estudiante(self, estudiante: Estudiante) -> None:
+        """Guarda un estudiante nuevo."""
+        self._estudiantes[estudiante.id] = estudiante

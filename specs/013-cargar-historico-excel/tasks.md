@@ -47,7 +47,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura y composición
 
-- [ ] T-07 RepositorioPracticasMemoria: guardar_empresa, guardar_tutor y guardar_estudiante
+- [x] T-07 RepositorioPracticasMemoria: guardar_empresa, guardar_tutor y guardar_estudiante
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-RE, ESC-DO
       Depende de: T-02
