@@ -46,7 +46,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: errores (ADR-007)
 
-- [ ] T-06 Error TutorNoEncontrado
+- [x] T-06 Error TutorNoEncontrado
       Archivos: src/aplicacion/errores/tutor_no_encontrado.py
       Escenarios: ESC-TN
       Depende de: ninguna
