@@ -137,7 +137,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos
       Depende de: T-17, T-18, T-20, T-21
 
-- [ ] T-23 Composición del Worker de actas en worker.py
+- [x] T-23 Composición del Worker de actas en worker.py
       Archivos: src/worker.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-CO, ESC-E2
       Depende de: T-16, T-19
