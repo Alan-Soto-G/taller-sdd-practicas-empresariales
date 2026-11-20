@@ -44,7 +44,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: mensaje, errores y puertos
 
-- [ ] T-06 Mensaje SolicitudActa
+- [x] T-06 Mensaje SolicitudActa
       Archivos: src/aplicacion/actas/solicitud_acta.py
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3
       Depende de: ninguna
