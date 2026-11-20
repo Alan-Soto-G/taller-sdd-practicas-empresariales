@@ -76,7 +76,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-SR
       Depende de: ninguna
 
-- [ ] T-12 DTO ResultadoSolicitudActa
+- [x] T-12 DTO ResultadoSolicitudActa
       Archivos: src/aplicacion/actas/resultado_solicitud_acta.py
       Escenarios: ESC-B1, ESC-NE, ESC-PN
       Depende de: ninguna
