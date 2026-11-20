@@ -166,3 +166,15 @@ class RepositorioPracticas(Protocol):
     def listar_practicas(self) -> list[Practica]:
         """Devuelve todas las Practicas (CU-11)."""
         ...
+
+    def guardar_empresa(self, empresa: Empresa) -> None:
+        """Guarda una Empresa, nueva o modificada (CU-13, CU-14)."""
+        ...
+
+    def guardar_tutor(self, tutor: Tutor) -> None:
+        """Guarda un Tutor nuevo (CU-13)."""
+        ...
+
+    def guardar_estudiante(self, estudiante: Estudiante) -> None:
+        """Guarda un Estudiante nuevo (CU-13)."""
+        ...

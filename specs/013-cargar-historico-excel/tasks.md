@@ -20,7 +20,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación
 
-- [ ] T-02 Puerto RepositorioPracticas: guardar_empresa, guardar_tutor y guardar_estudiante
+- [x] T-02 Puerto RepositorioPracticas: guardar_empresa, guardar_tutor y guardar_estudiante
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: ESC-B, ESC-RE, ESC-DO
       Depende de: ninguna
