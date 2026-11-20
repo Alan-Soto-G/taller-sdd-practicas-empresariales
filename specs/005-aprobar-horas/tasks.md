@@ -29,7 +29,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: errores, puertos, configuración y DTO
 
-- [ ] T-03 Error RegistroNoEncontrado
+- [x] T-03 Error RegistroNoEncontrado
       Archivos: src/aplicacion/errores/registro_no_encontrado.py
       Escenarios: ESC-RN
       Depende de: ninguna
