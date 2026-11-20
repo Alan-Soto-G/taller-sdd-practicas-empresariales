@@ -318,3 +318,14 @@ class RepositorioPracticasMemoria:
         """Devuelve el acta más reciente de la práctica, o None."""
         actas = [a for a in self._actas.values() if a.id_practica == id_practica]
         return max(actas, key=lambda a: a.fecha_solicitud) if actas else None
+
+    def listar_practicas_de_tutor(self, id_tutor: str) -> list[Practica]:
+        """Devuelve las prácticas asignadas al tutor, ordenadas por id."""
+        return sorted(
+            (p for p in self._practicas.values() if p.id_tutor == id_tutor),
+            key=lambda p: p.id,
+        )
+
+    def listar_registros_horas_de_practica(self, id_practica: str) -> list[RegistroHoras]:
+        """Devuelve los registros de horas de la práctica."""
+        return [r for r in self._registros_horas if r.id_practica == id_practica]

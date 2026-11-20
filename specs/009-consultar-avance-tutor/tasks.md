@@ -52,7 +52,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura
 
-- [ ] T-08 RepositorioPracticasMemoria: prácticas de un tutor y registros de una práctica
+- [x] T-08 RepositorioPracticasMemoria: prácticas de un tutor y registros de una práctica
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-UNA, ESC-VAC, ESC-VR
       Depende de: T-01
