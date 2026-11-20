@@ -30,3 +30,9 @@ class ActaFinal:
         if self.estado != EstadoActa.EN_GENERACION:
             raise ValueError("el acta no está en generación")
         return replace(self, estado=EstadoActa.CON_ERROR)
+
+    def aprobar(self) -> "ActaFinal":
+        """Regla de CU-08: con las tres aprobaciones, el acta generada queda aprobada (ADR-006)."""
+        if self.estado != EstadoActa.GENERADA:
+            raise ValueError("el acta no está generada")
+        return replace(self, estado=EstadoActa.APROBADA)

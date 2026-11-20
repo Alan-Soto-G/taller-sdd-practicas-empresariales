@@ -23,7 +23,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-B3, ESC-DO
       Depende de: ninguna
 
-- [ ] T-02 ActaFinal: aprobar
+- [x] T-02 ActaFinal: aprobar
       Archivos: src/dominio/acta_final.py
       Escenarios: ESC-B3
       Depende de: ninguna
