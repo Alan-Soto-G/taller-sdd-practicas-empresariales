@@ -156,7 +156,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Validación
 
-- [ ] T-26 Validar escenario por escenario y registrar la evidencia
+- [x] T-26 Validar escenario por escenario y registrar la evidencia
       Archivos: specs/006-evaluar-practicante/validacion.md
       Escenarios: todos
       Depende de: T-25

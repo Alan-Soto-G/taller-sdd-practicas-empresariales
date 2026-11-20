@@ -102,7 +102,7 @@ Característica: Evaluar el desempeño del practicante
     Dado un enlace de la Practica "PR-06" que <condición>
     Cuando el Representante abre el enlace
     Entonces la petición se rechaza con 410 y el mensaje "enlace vencido: solicite uno nuevo a la Coordinación" con el motivo "<motivo>"
-    Y la Practica "PR-06" sigue en estado "horas completas"
+    Y la Practica "PR-06" no cambia de estado
     Y la bitácora de auditoría tiene un registro del intento rechazado con la acción "usar enlace rechazado: <motivo>" y la hora
 
     Ejemplos:
