@@ -81,7 +81,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-NE, ESC-PN
       Depende de: ninguna
 
-- [ ] T-13 DTO ActasSolicitadas
+- [x] T-13 DTO ActasSolicitadas
       Archivos: src/aplicacion/actas/actas_solicitadas.py
       Escenarios: ESC-B1, ESC-E2
       Depende de: T-12
