@@ -39,7 +39,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B3, ESC-RE, ESC-EV
       Depende de: ninguna
 
-- [ ] T-05 Entidad Evaluacion con motivo_invalidez
+- [x] T-05 Entidad Evaluacion con motivo_invalidez
       Archivos: src/dominio/evaluacion.py
       Escenarios: ESC-B3, ESC-CI
       Depende de: ninguna
