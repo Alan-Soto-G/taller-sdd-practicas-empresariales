@@ -22,3 +22,8 @@ class Practica:
     def esta_activa(self) -> bool:
         """Una Practica cuenta en la carga del tutor mientras no este cerrada."""
         return self.estado != EstadoPractica.CERRADA
+    def completar_horas(self) -> 'Practica':
+        """Regla de CU-05: una Practica en curso pasa a horas completas cuando sus horas aprobadas alcanzan las requeridas."""
+        if self.estado != EstadoPractica.EN_CURSO:
+            raise ValueError('la practica no esta en curso')
+        return replace(self, estado=EstadoPractica.HORAS_COMPLETAS)

@@ -22,7 +22,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-RE, ESC-YR
       Depende de: ninguna
 
-- [ ] T-02 Practica: completar_horas
+- [x] T-02 Practica: completar_horas
       Archivos: src/dominio/practica.py
       Escenarios: ESC-HC, ESC-VR
       Depende de: ninguna
