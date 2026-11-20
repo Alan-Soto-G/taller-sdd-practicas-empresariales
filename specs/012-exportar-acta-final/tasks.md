@@ -54,3 +54,17 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Archivos: specs/012-exportar-acta-final/validacion.md
       Escenarios: todos
       Depende de: T-06
+
+## Ajuste: el acta precargada AC-09 es un PDF válido
+
+Observación 2 de [validacion.md](validacion.md): la precarga de "AC-09" (CU-08) guardaba 30 bytes de texto ("%PDF-simulado…"). Ahora guarda un PDF mínimo válido, armado como dato de prueba. La API sigue sin componer actas (ADR-001): es el contenido que ya estaría en el Repositorio de actas.
+
+- [ ] T-08 Precarga de AC-09 con un PDF mínimo válido
+      Archivos: src/main.py
+      Escenarios: ESC-ES, ESC-AP
+      Depende de: T-06
+
+- [ ] T-09 Revalidar la exportación de AC-09
+      Archivos: specs/012-exportar-acta-final/validacion.md
+      Escenarios: ESC-ES, ESC-AP
+      Depende de: T-08
