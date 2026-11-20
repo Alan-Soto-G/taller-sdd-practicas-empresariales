@@ -112,7 +112,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-09
 
-- [ ] T-18 ControladorRest: asignar_tutor (POST /asignaciones) con 200 y 404
+- [x] T-18 ControladorRest: asignar_tutor (POST /asignaciones) con 200 y 404
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B, ESC-TN, ESC-SR, ESC-TV
       Depende de: T-15
