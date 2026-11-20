@@ -28,7 +28,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-CA, ESC-EM
       Depende de: ninguna
 
-- [ ] T-04 Caso de uso GenerarReporte
+- [x] T-04 Caso de uso GenerarReporte
       Archivos: src/aplicacion/seguimiento/generar_reporte.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01, T-02, T-03
