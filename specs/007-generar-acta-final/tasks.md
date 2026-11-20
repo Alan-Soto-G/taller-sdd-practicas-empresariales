@@ -115,7 +115,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-07
 
-- [ ] T-19 Adaptador de entrada WorkerActas (consume la cola y reintenta)
+- [x] T-19 Adaptador de entrada WorkerActas (consume la cola y reintenta)
       Archivos: src/infraestructura/worker_actas.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-CO, ESC-E2
       Depende de: T-16, T-17
