@@ -39,7 +39,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B
       Depende de: ninguna
 
-- [ ] T-05 Entidad ReglaPractica
+- [x] T-05 Entidad ReglaPractica
       Archivos: src/dominio/regla_practica.py
       Escenarios: ESC-SC, ESC-RV
       Depende de: ninguna
