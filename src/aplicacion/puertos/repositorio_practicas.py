@@ -158,3 +158,7 @@ class RepositorioPracticas(Protocol):
     def listar_registros_horas_de_practica(self, id_practica: str) -> list[RegistroHoras]:
         """Devuelve los RegistroHoras de la Practica (CU-09)."""
         ...
+
+    def listar_practicas_de_estudiante(self, id_estudiante: str) -> list[Practica]:
+        """Devuelve las Practicas del Estudiante, ordenadas por id (CU-10)."""
+        ...
