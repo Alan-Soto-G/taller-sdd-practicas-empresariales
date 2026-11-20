@@ -54,7 +54,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-NE
       Depende de: T-04
 
-- [ ] T-08 Error PostulacionNoPermitida con su motivo
+- [x] T-08 Error PostulacionNoPermitida con su motivo
       Archivos: src/aplicacion/errores/postulacion_no_permitida.py
       Escenarios: ESC-SC, ESC-AP, ESC-MP
       Depende de: T-04
