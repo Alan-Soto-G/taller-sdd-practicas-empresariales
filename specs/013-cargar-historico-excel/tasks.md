@@ -30,7 +30,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: ninguna
 
-- [ ] T-04 DTO FilaRechazada
+- [x] T-04 DTO FilaRechazada
       Archivos: src/aplicacion/configuracion/fila_rechazada.py
       Escenarios: ESC-RE, ESC-DO, ESC-HD
       Depende de: ninguna
