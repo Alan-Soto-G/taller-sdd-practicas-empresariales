@@ -71,7 +71,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: Módulo Actas (API)
 
-- [ ] T-11 DTO SolicitudGeneracionActas
+- [x] T-11 DTO SolicitudGeneracionActas
       Archivos: src/aplicacion/actas/solicitud_generacion_actas.py
       Escenarios: ESC-B1, ESC-SR
       Depende de: ninguna
