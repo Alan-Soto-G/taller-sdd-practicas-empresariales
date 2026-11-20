@@ -2,8 +2,12 @@
 from typing import Protocol
 
 from dominio.empresa import Empresa
+from dominio.estudiante import Estudiante
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
+from dominio.practica import Practica
+from dominio.regla_practica import ReglaPractica
+from dominio.tutor import Tutor
 
 
 class RepositorioPracticas(Protocol):
@@ -33,4 +37,28 @@ class RepositorioPracticas(Protocol):
 
     def guardar_plaza(self, plaza: Plaza) -> None:
         """Guarda una Plaza nueva (CU-02)."""
+        ...
+
+    def obtener_regla_vigente(self) -> ReglaPractica:
+        """Devuelve la ReglaPractica vigente (CU-03, ADR-008)."""
+        ...
+
+    def obtener_tutor(self, id_tutor: str) -> Tutor | None:
+        """Devuelve el Tutor o None si no existe (CU-03)."""
+        ...
+
+    def obtener_estudiante(self, id_estudiante: str) -> Estudiante | None:
+        """Devuelve el Estudiante o None si no existe (CU-03)."""
+        ...
+
+    def obtener_practica(self, id_practica: str) -> Practica | None:
+        """Devuelve la Practica o None si no existe (CU-03)."""
+        ...
+
+    def contar_practicas_activas_tutor(self, id_tutor: str) -> int:
+        """Cuenta las Practicas del Tutor que no estan cerradas (CU-03)."""
+        ...
+
+    def guardar_practica(self, practica: Practica) -> None:
+        """Guarda la Practica, nueva o modificada (CU-03)."""
         ...
