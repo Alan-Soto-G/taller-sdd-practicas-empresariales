@@ -78,7 +78,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-AN
       Depende de: ninguna
 
-- [ ] T-12 Puerto LectorExcel
+- [x] T-12 Puerto LectorExcel
       Archivos: src/aplicacion/puertos/lector_excel.py
       Escenarios: ESC-XL, ESC-AN
       Depende de: T-11
