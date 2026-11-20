@@ -49,7 +49,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-SR
       Depende de: T-04
 
-- [ ] T-07 Error PlazaNoEncontrada
+- [x] T-07 Error PlazaNoEncontrada
       Archivos: src/aplicacion/errores/plaza_no_encontrada.py
       Escenarios: ESC-NE
       Depende de: T-04
