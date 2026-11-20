@@ -39,7 +39,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-01
 
-- [ ] T-05 Caso de uso ConsultarHorasRequeridas (Módulo Configuración)
+- [x] T-05 Caso de uso ConsultarHorasRequeridas (Módulo Configuración)
       Archivos: src/aplicacion/configuracion/consultar_horas_requeridas.py
       Escenarios: ESC-HC, ESC-VR
       Depende de: T-04
