@@ -95,7 +95,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: caso de uso
 
-- [ ] T-15 Caso de uso AsignarTutor
+- [x] T-15 Caso de uso AsignarTutor
       Archivos: src/aplicacion/asignacion/asignar_tutor.py
       Escenarios: todos menos ESC-TV
       Depende de: T-02, T-03, T-06, T-07, T-08, T-09, T-11, T-12, T-14
