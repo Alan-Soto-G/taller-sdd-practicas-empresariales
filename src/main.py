@@ -1,23 +1,29 @@
-"""Composicion de CU-01 a CU-06: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/006."""
+"""Composicion de la API para CU-01 a CU-07: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/007. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
+from dominio.coordinador_practicas import CoordinadorPracticas
+from dominio.criterio_evaluacion import CriterioEvaluacion
 from dominio.empresa import Empresa
 from dominio.estado_practica import EstadoPractica
+from dominio.estado_registro_horas import EstadoRegistroHoras
 from dominio.estudiante import Estudiante
-from dominio.criterio_evaluacion import CriterioEvaluacion
+from dominio.evaluacion import Evaluacion
 from dominio.plaza import Plaza
 from dominio.practica import Practica
 from dominio.representante_empresa import RepresentanteEmpresa
 from dominio.regla_practica import ReglaPractica
 from dominio.registro_horas import RegistroHoras
 from dominio.tutor import Tutor
+from infraestructura.almacen_actas_memoria import AlmacenActasMemoria
+from infraestructura.cola_actas_memoria import ColaActasMemoria
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.notificador_simulado import NotificadorSimulado
 from infraestructura.repositorio_practicas_memoria import RepositorioPracticasMemoria
 from infraestructura.bitacora_memoria import BitacoraMemoria
 from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimulado
 from infraestructura.validador_token import ValidadorToken
+from aplicacion.actas.solicitar_actas import SolicitarActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.configuracion.consultar_criterios_evaluacion import ConsultarCriteriosEvaluacion
 from aplicacion.configuracion.consultar_horas_requeridas import ConsultarHorasRequeridas
@@ -64,6 +70,11 @@ def construir() -> dict[str, object]:
     registrar_evaluacion = RegistrarEvaluacion(
         repositorio, bitacora, consultar_criterios, reloj=datetime.now
     )
+    cola_actas = ColaActasMemoria(reloj=datetime.now)
+    almacen_actas = AlmacenActasMemoria()
+    solicitar_actas = SolicitarActas(
+        repositorio, bitacora, cola_actas, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -75,6 +86,7 @@ def construir() -> dict[str, object]:
         emitir_enlace_evaluacion,
         consultar_formulario_evaluacion,
         registrar_evaluacion,
+        solicitar_actas,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -139,6 +151,14 @@ def construir() -> dict[str, object]:
     repositorio.agregar_estudiante(Estudiante("E-1006", "e1006@universidad.edu.co"))
     repositorio.agregar_practica(Practica("PR-06", "E-1006", "EMP-ACME", "v1", EstadoPractica.HORAS_COMPLETAS, "T-400"))
 
+    # Antecedentes de specs/007 (CU-07)
+    repositorio.agregar_coordinador(CoordinadorPracticas("C-01", "coordinacion@universidad.edu.co"))
+    repositorio.agregar_estudiante(Estudiante("E-1008", "e1008@universidad.edu.co"))
+    repositorio.agregar_practica(Practica("PR-08", "E-1008", "EMP-ACME", "v1", EstadoPractica.EVALUADA, "T-400"))
+    for semana in range(30, 38):
+        repositorio.guardar_registro_horas(RegistroHoras(f"RH-08-{semana}", "PR-08", f"2026-W{semana}", 20, "Desarrollo", date(2026, 8, 1), EstadoRegistroHoras.APROBADO))
+    repositorio.guardar_evaluacion(Evaluacion("EV-08", "PR-08", {"Responsabilidad": 5, "Trabajo en equipo": 5, "Calidad técnica": 4}, "Cumplió los objetivos", date(2026, 11, 10)))
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
@@ -146,6 +166,7 @@ def construir() -> dict[str, object]:
     proveedor.emitir("tok-E-1005", "E-1005", "Estudiante", ahora)
     proveedor.emitir("tok-T-200", "T-200", "Tutor", ahora)
     proveedor.emitir("tok-T-300", "T-300", "Tutor", ahora)
+    proveedor.emitir("tok-T-400", "T-400", "Tutor", ahora)
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
     proveedor.emitir(
         "tok-vencido",
@@ -167,6 +188,9 @@ def construir() -> dict[str, object]:
         "validador_enlace": validador_enlace,
         "emitir_enlace_evaluacion": emitir_enlace_evaluacion,
         "registrar_evaluacion": registrar_evaluacion,
+        "cola_actas": cola_actas,
+        "almacen_actas": almacen_actas,
+        "solicitar_actas": solicitar_actas,
     }
 
 

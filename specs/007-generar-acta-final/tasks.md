@@ -132,7 +132,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-22 Composición de la API en main.py con SolicitarActas y los datos de los Antecedentes
+- [x] T-22 Composición de la API en main.py con SolicitarActas y los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-17, T-18, T-20, T-21
