@@ -68,7 +68,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-02, T-03, T-04, T-05
 
-- [ ] T-10 DTO ReglaVigente
+- [x] T-10 DTO ReglaVigente
       Archivos: src/aplicacion/configuracion/regla_vigente.py
       Escenarios: ESC-SC, ESC-RV
       Depende de: ninguna
