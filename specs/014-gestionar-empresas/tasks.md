@@ -18,7 +18,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Empresa: NIT y motivo_invalidez
+- [x] T-01 Empresa: NIT y motivo_invalidez
       Archivos: src/dominio/empresa.py
       Escenarios: ESC-B, ESC-AC, ESC-DI
       Depende de: ninguna
