@@ -50,7 +50,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-AC, ESC-EL, ESC-EP, ESC-YE, ESC-DI, ESC-EN, ESC-SR
       Depende de: ninguna
 
-- [ ] T-07 DTO SolicitudRepresentante
+- [x] T-07 DTO SolicitudRepresentante
       Archivos: src/aplicacion/postulaciones/solicitud_representante.py
       Escenarios: ESC-B, ESC-CO, ESC-DI
       Depende de: ninguna
