@@ -70,7 +70,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-B3
       Depende de: ninguna
 
-- [ ] T-11 Caso de uso AprobarActa (con token y con enlace)
+- [x] T-11 Caso de uso AprobarActa (con token y con enlace)
       Archivos: src/aplicacion/actas/aprobar_acta.py
       Escenarios: ESC-B1, ESC-B2, ESC-B3, ESC-DO, ESC-NG, ESC-AN, ESC-AJ, ESC-ES, ESC-EN
       Depende de: T-01, T-02, T-03, T-04, T-05, T-06, T-09, T-10
