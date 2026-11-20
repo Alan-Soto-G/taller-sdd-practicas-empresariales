@@ -76,7 +76,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-SR
       Depende de: ninguna
 
-- [ ] T-12 Puerto ProveedorIdentidad
+- [x] T-12 Puerto ProveedorIdentidad
       Archivos: src/aplicacion/puertos/proveedor_identidad.py
       Escenarios: ESC-TV
       Depende de: T-05, T-09
