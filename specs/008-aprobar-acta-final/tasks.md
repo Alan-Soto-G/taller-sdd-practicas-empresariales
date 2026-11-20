@@ -65,7 +65,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B3, ESC-AJ, ESC-ES
       Depende de: ninguna
 
-- [ ] T-10 DTO AprobacionRegistrada
+- [x] T-10 DTO AprobacionRegistrada
       Archivos: src/aplicacion/actas/aprobacion_registrada.py
       Escenarios: ESC-B1, ESC-B2, ESC-B3
       Depende de: ninguna
