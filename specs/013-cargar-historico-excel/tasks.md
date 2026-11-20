@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-RE, ESC-DO, ESC-HD
       Depende de: ninguna
 
-- [ ] T-05 DTO ResultadoImportacion
+- [x] T-05 DTO ResultadoImportacion
       Archivos: src/aplicacion/configuracion/resultado_importacion.py
       Escenarios: ESC-B, ESC-RE, ESC-DO, ESC-HD
       Depende de: T-04
