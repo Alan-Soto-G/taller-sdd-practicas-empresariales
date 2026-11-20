@@ -30,7 +30,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: errores (ADR-007)
 
-- [ ] T-03 Error PracticaNoEncontrada
+- [x] T-03 Error PracticaNoEncontrada
       Archivos: src/aplicacion/errores/practica_no_encontrada.py
       Escenarios: ESC-PN
       Depende de: ninguna
