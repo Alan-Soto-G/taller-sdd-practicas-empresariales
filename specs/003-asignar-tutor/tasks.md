@@ -58,7 +58,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: puertos y DTO
 
-- [ ] T-08 Puerto Notificador
+- [x] T-08 Puerto Notificador
       Archivos: src/aplicacion/puertos/notificador.py
       Escenarios: ESC-B, ESC-CO
       Depende de: T-07
