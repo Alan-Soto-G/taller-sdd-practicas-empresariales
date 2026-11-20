@@ -15,10 +15,12 @@ from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
 from aplicacion.configuracion.importar_historico import ImportarHistorico
 from aplicacion.configuracion.solicitud_importacion import SolicitudImportacion
+from aplicacion.configuracion.solicitud_importacion_excel import SolicitudImportacionExcel
 from aplicacion.errores.acceso_denegado import AccesoDenegado
 from aplicacion.errores.acta_no_encontrada import ActaNoEncontrada
 from aplicacion.errores.acta_no_exportable import ActaNoExportable
 from aplicacion.errores.almacen_no_disponible import AlmacenNoDisponible
+from aplicacion.errores.archivo_no_valido import ArchivoNoValido
 from aplicacion.errores.aprobacion_no_permitida import AprobacionNoPermitida
 from aplicacion.errores.enlace_no_valido import EnlaceNoValido
 from aplicacion.errores.empresa_no_encontrada import EmpresaNoEncontrada
@@ -88,6 +90,7 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     AlmacenNoDisponible: 503,
     EmpresaNoValida: 400,
     EmpresaNoPermitida: 409,
+    ArchivoNoValido: 422,
 }
 
 
@@ -580,6 +583,28 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def importar_historico_excel(
+        self,
+        token: str | None,
+        contenido: bytes,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa POST /importaciones/historico/archivo con el .xlsx subido (CU-13, ADR-012)."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._importar_historico.ejecutar_excel(SolicitudImportacionExcel(usuario, contenido))
+            return (
+                200,
+                {
+                    "cargadas": resultado.cargadas,
+                    "rechazadas": [
+                        {"hoja": f.hoja, "fila": f.fila, "motivo": f.motivo}
+                        for f in resultado.rechazadas
+                    ],
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
     def crear_empresa(self, token: str | None, cuerpo: dict[str, object]) -> tuple[int, dict[str, object]]:
         """Representa POST /empresas (CU-14)."""
         try:
@@ -700,6 +725,7 @@ class ControladorRest:
                 ActaNoExportable,
                 EmpresaNoValida,
                 EmpresaNoPermitida,
+                ArchivoNoValido,
             ),
         ):
             cuerpo["motivo"] = error.motivo

@@ -98,7 +98,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN
       Depende de: T-11, T-12
 
-- [ ] T-16 ControladorRest: importar_historico_excel (POST /importaciones/historico/archivo) con 422
+- [x] T-16 ControladorRest: importar_historico_excel (POST /importaciones/historico/archivo) con 422
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-14
