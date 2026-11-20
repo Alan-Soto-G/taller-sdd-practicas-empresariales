@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-PN
       Depende de: ninguna
 
-- [ ] T-04 Error RegistroNoValido con su motivo
+- [x] T-04 Error RegistroNoValido con su motivo
       Archivos: src/aplicacion/errores/registro_no_valido.py
       Escenarios: ESC-SR2, ESC-DI, ESC-NC, ESC-DU
       Depende de: ninguna
