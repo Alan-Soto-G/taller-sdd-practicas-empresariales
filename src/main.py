@@ -1,10 +1,12 @@
-"""Composicion de la API para CU-01 a CU-07: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/007. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-08: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/008. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
 from dominio.coordinador_practicas import CoordinadorPracticas
 from dominio.criterio_evaluacion import CriterioEvaluacion
 from dominio.empresa import Empresa
+from dominio.acta_final import ActaFinal
+from dominio.estado_acta import EstadoActa
 from dominio.estado_practica import EstadoPractica
 from dominio.estado_registro_horas import EstadoRegistroHoras
 from dominio.estudiante import Estudiante
@@ -23,6 +25,8 @@ from infraestructura.repositorio_practicas_memoria import RepositorioPracticasMe
 from infraestructura.bitacora_memoria import BitacoraMemoria
 from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimulado
 from infraestructura.validador_token import ValidadorToken
+from aplicacion.actas.aprobar_acta import AprobarActa
+from aplicacion.actas.emitir_enlace_aprobacion import EmitirEnlaceAprobacion
 from aplicacion.actas.solicitar_actas import SolicitarActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.configuracion.consultar_criterios_evaluacion import ConsultarCriteriosEvaluacion
@@ -75,6 +79,10 @@ def construir() -> dict[str, object]:
     solicitar_actas = SolicitarActas(
         repositorio, bitacora, cola_actas, reloj=datetime.now
     )
+    emitir_enlace_aprobacion = EmitirEnlaceAprobacion(
+        repositorio, bitacora, notificador, reloj=datetime.now
+    )
+    aprobar_acta = AprobarActa(repositorio, bitacora, reloj=datetime.now)
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -87,6 +95,8 @@ def construir() -> dict[str, object]:
         consultar_formulario_evaluacion,
         registrar_evaluacion,
         solicitar_actas,
+        emitir_enlace_aprobacion,
+        aprobar_acta,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -159,6 +169,16 @@ def construir() -> dict[str, object]:
         repositorio.guardar_registro_horas(RegistroHoras(f"RH-08-{semana}", "PR-08", f"2026-W{semana}", 20, "Desarrollo", date(2026, 8, 1), EstadoRegistroHoras.APROBADO))
     repositorio.guardar_evaluacion(Evaluacion("EV-08", "PR-08", {"Responsabilidad": 5, "Trabajo en equipo": 5, "Calidad técnica": 4}, "Cumplió los objetivos", date(2026, 11, 10)))
 
+    # Antecedentes de specs/008 (CU-08)
+    repositorio.agregar_estudiante(Estudiante("E-1009", "e1009@universidad.edu.co"))
+    repositorio.agregar_practica(
+        Practica("PR-09", "E-1009", "EMP-ACME", "v1", EstadoPractica.ACTA_EN_TRAMITE, "T-400")
+    )
+    ruta_ac09 = almacen_actas.guardar("AC-09", "%PDF-simulado\nACTA FINAL AC-09".encode("utf-8"))
+    repositorio.guardar_acta(
+        ActaFinal("AC-09", "PR-09", datetime(2026, 11, 18, 10, 0), EstadoActa.GENERADA, ruta_ac09)
+    )
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
@@ -167,6 +187,7 @@ def construir() -> dict[str, object]:
     proveedor.emitir("tok-T-200", "T-200", "Tutor", ahora)
     proveedor.emitir("tok-T-300", "T-300", "Tutor", ahora)
     proveedor.emitir("tok-T-400", "T-400", "Tutor", ahora)
+    proveedor.emitir("tok-E-1009", "E-1009", "Estudiante", ahora)
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
     proveedor.emitir(
         "tok-vencido",
@@ -191,6 +212,7 @@ def construir() -> dict[str, object]:
         "cola_actas": cola_actas,
         "almacen_actas": almacen_actas,
         "solicitar_actas": solicitar_actas,
+        "aprobar_acta": aprobar_acta,
     }
 
 

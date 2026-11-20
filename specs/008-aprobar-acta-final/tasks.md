@@ -89,7 +89,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-14 Composición en main.py con el Módulo Actas (CU-08) y los datos de los Antecedentes
+- [x] T-14 Composición en main.py con el Módulo Actas (CU-08) y los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-12, T-13
