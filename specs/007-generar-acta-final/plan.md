@@ -13,7 +13,7 @@ Aterriza [spec.md](spec.md) (CU-07) en la arquitectura de [docs/arquitectura.md]
 | ADR-006 | Se auditan la creación del ActaFinal, el cambio de la Práctica, los cambios del acta hechos por el Worker y cada acceso rechazado. `IntentoGeneracion` deja rastro de cada intento. |
 | ADR-007 | El almacén traduce su falla a `AlmacenNoDisponible`; el Worker la registra como intento fallido. Si el correo de aviso falla, el acta sigue "generada". |
 | ADR-008 | El acta usa la plantilla de la versión de ReglaPractica de la Práctica. |
-| DT-05 | Sigue abierta: no se elige una librería de PDF. El contenido del acta es un documento simulado (bytes de texto que empiezan con `%PDF-simulado`). |
+| ADR-011 | Resuelve DT-05: el PDF lo compone **ReportLab 5.1.0** detrás del puerto `ComponedorActa` (`aplicacion/puertos/`), implementado por `ComponedorActaReportlab` (`infraestructura/`). Solo el Worker lo compone. Las fallas de la librería se traducen a `ActaNoComponible`, que cuenta como intento fallido. Versión fijada en `src/requirements.txt`. La primera versión de este plan usaba un documento simulado (T-16); el ajuste son las tareas T-25 a T-32. |
 | Vista lógica | ActaFinal, IntentoGeneracion, CoordinadorPracticas, la transición "evaluada" → "acta en trámite" y el mensaje `SolicitudActa`. |
 
 ## Componentes
@@ -68,12 +68,24 @@ Secuencia [cu07-generar-acta-final.puml](../../docs/diagramas/secuencias/cu07-ge
    - si todo va bien: crea `ActaFinal` con id `AC-<8 hex>` y la guarda; pasa la Práctica a "acta en trámite"; audita ambos cambios; publica `SolicitudActa(acta, practica, 1)`; resultado "en generación".
 2. **Worker** (`WorkerActas.procesar` → `GenerarActa.ejecutar(SolicitudActa)`):
    - si el acta no está "en generación" → "omitida" (idempotencia);
-   - consolida la práctica, las horas aprobadas, la Evaluacion, la ReglaPractica de su versión, el tutor, el representante y el coordinador, y compone el documento simulado;
+   - consolida la práctica, las horas aprobadas, la Evaluacion, la ReglaPractica de su versión, el tutor, el representante y el coordinador, arma `DatosActa` y pide el PDF al `ComponedorActa` (ADR-011);
    - `almacen.guardar` → `IntentoGeneracion(numero, "exitoso")`, `acta.marcar_generada(ruta)`, bitácora ("cambiar estado de en generación a generada") y aviso por correo (ignora `CorreoNoEnviado`) → "generada";
    - si `AlmacenNoDisponible` → `IntentoGeneracion(numero, "fallido: <mensaje>")`. Si `numero < 3` → "reintentar" con `espera_tras(numero)`; si no → `marcar_con_error`, bitácora → "con error".
 
 ## Fuera de alcance
 
-- Elegir la librería de PDF (DT-05) y el broker real (RabbitMQ), PostgreSQL y el almacenamiento institucional.
+- El broker real (RabbitMQ), PostgreSQL y el almacenamiento institucional.
 - Reprocesar actas "con error" (DT-01) y la alerta de más de 100 pendientes (R-04).
 - Aprobar el acta (CU-08) y exportarla (CU-12).
+
+## Ajuste ADR-011 (PDF real con ReportLab)
+
+| Archivo | Clase | Responsabilidad |
+|---------|-------|-----------------|
+| `aplicacion/actas/datos_acta.py` **(nuevo)** | `DatosActa` (DTO) | Datos consolidados del acta: `id_acta`, `id_practica`, `id_estudiante`, `id_empresa`, `id_tutor`, `plantilla`, `horas_aprobadas`, `horas_requeridas`, `calificaciones`, `observaciones`, `fecha_solicitud` |
+| `aplicacion/errores/acta_no_componible.py` **(nuevo)** | `ActaNoComponible` | código `acta_no_componible`, mensaje "no se pudo componer el PDF del acta" |
+| `aplicacion/puertos/componedor_acta.py` **(nuevo)** | `ComponedorActa` (Protocol) | `componer(datos: DatosActa) -> bytes`; lanza `ActaNoComponible` |
+| `aplicacion/actas/generar_acta.py` **(cambia)** | `GenerarActa` | Recibe el `ComponedorActa`; `_consolidar` arma `DatosActa`; `ActaNoComponible` y `AlmacenNoDisponible` cuentan como intento fallido |
+| `infraestructura/componedor_acta_reportlab.py` **(nuevo)** | `ComponedorActaReportlab` | `reportlab.pdfgen.canvas.Canvas` sobre `BytesIO`, carta, sin compresión de página; título, datos, horas, calificaciones, observaciones, plantilla y las tres líneas de aprobación electrónica (CU-08); cualquier excepción → `ActaNoComponible` |
+| `src/worker.py` **(cambia)** | (composición del Worker) | Inyecta `ComponedorActaReportlab()` en `GenerarActa` |
+| `src/requirements.txt` **(nuevo)** | — | `reportlab==5.1.0` |

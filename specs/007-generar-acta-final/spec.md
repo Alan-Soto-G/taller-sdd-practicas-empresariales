@@ -1,6 +1,6 @@
 # language: es
 # Traza: CU-07, ESC-05, EAC-02, OB-03, R-02, R-04, DT-01, DT-05, ADR-001, ADR-002, ADR-003, ADR-004, ADR-006,
-#        ADR-007, ADR-008
+#        ADR-007, ADR-008, ADR-011
 # Fuentes: docs/drivers.md (CU-07, EAC-02), secuencia cu07-generar-acta-final.puml (ESC-05), ADR-001 (la API
 #          solo encola; Worker de actas con hasta 3 intentos y esperas de 1 y 2 min; cola actas y cola
 #          errores_actas), ADR-003 (PDF en el repositorio de actas, ruta en la base), vista lógica (ActaFinal:
@@ -14,9 +14,13 @@
 #   aprobadas (CU-05) y la evaluación registrada (CU-06). Al solicitarla, la Práctica pasa a "acta en trámite".
 # - El Coordinador solicita varias actas a la vez; cada práctica tiene su resultado ("en generación" o
 #   "no solicitada: <motivo>"), como en CU-03. Una práctica no evaluada o inexistente no rechaza el lote.
-# - DT-05 (librería de PDF) sigue abierta: ningún ADR aprueba una librería y en esta etapa no hay servicios
-#   reales (AGENTS.md). El Worker compone un documento simulado con los datos de la práctica, las horas, la
-#   evaluación y la plantilla de su ReglaPractica (ADR-008), y lo guarda en el AlmacenActas en memoria.
+# - El PDF es real: ADR-011 (2026-11-20, resuelve DT-05) elige ReportLab detrás del puerto ComponedorActa. El
+#   Worker consolida los datos de la práctica, las horas, la evaluación y la plantilla de su ReglaPractica
+#   (ADR-008), compone el PDF y lo guarda en el AlmacenActas (en memoria en esta etapa). La primera versión de
+#   esta spec usaba un documento simulado porque DT-05 estaba abierta.
+# - Si el componedor falla, el adaptador lo traduce a "no se pudo componer el PDF del acta" (ADR-007, ADR-011) y
+#   cuenta como un intento fallido, igual que la falla del repositorio de actas (la secuencia dice "falla al
+#   consolidar o al componer el PDF").
 # - La falla de generación se simula con el repositorio de actas no disponible al guardar el PDF; el
 #   adaptador la traduce al error de aplicación "repositorio de actas no disponible" (ADR-007).
 # - Reintentos (ADR-001): intento 1; si falla, se reencola para 1 min después; intento 2; si falla, para
@@ -54,7 +58,7 @@ Característica: Generar el acta final
   Escenario: Flujo básico (2/2) - el Worker de actas genera el acta
     Dado que la cola "actas" tiene la SolicitudActa del acta de la Practica "PR-08"
     Cuando el Worker de actas procesa la cola
-    Entonces el repositorio de actas guarda el PDF del acta, con la plantilla "plantilla-acta-v1", las 160 horas aprobadas y la evaluación
+    Entonces el repositorio de actas guarda el PDF del acta (un archivo PDF válido), con la plantilla "plantilla-acta-v1", las 160 horas aprobadas y la evaluación
     Y se registra el IntentoGeneracion 1 con resultado "exitoso"
     Y el ActaFinal queda en estado "generada" con la ruta del PDF
     Y se envía un correo a "t400@universidad.edu.co", "representante@acme.example" y "coordinacion@universidad.edu.co" avisando que el acta espera su aprobación
@@ -117,3 +121,10 @@ Característica: Generar el acta final
     Y hay 500 ActaFinal: 0 actas perdidas
     Y el 100% de las actas termina "generada" o en la cola "errores_actas"
     Y el 95% o más de las actas queda "generada" en 10 minutos o menos después de solicitada
+
+  Escenario: Flujo alterno - falla la composición del PDF y se reintenta (ADR-001, ADR-011)
+    Dado que el acta de la Practica "PR-08" está en la cola "actas"
+    Y que el componedor del PDF falla en el primer intento
+    Cuando el Worker de actas procesa la cola y la vuelve a procesar 1 minuto después
+    Entonces el IntentoGeneracion 1 es "fallido: no se pudo componer el PDF del acta"
+    Y el IntentoGeneracion 2 es "exitoso" y el acta queda "generada"

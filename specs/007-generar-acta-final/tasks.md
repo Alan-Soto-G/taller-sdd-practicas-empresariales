@@ -148,3 +148,47 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Archivos: specs/007-generar-acta-final/validacion.md
       Escenarios: todos
       Depende de: T-22, T-23
+
+## Ajuste: PDF real con ReportLab (ADR-011)
+
+Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita y registrarla en un ADR. La clave nueva es ESC-RC: "Flujo alterno - falla la composición del PDF y se reintenta".
+
+- [ ] T-25 DTO DatosActa
+      Archivos: src/aplicacion/actas/datos_acta.py
+      Escenarios: ESC-B2, ESC-E2
+      Depende de: ninguna
+
+- [ ] T-26 Error ActaNoComponible
+      Archivos: src/aplicacion/errores/acta_no_componible.py
+      Escenarios: ESC-RC
+      Depende de: ninguna
+
+- [ ] T-27 Puerto ComponedorActa
+      Archivos: src/aplicacion/puertos/componedor_acta.py
+      Escenarios: ESC-B2, ESC-RC, ESC-E2
+      Depende de: T-25, T-26
+
+- [ ] T-28 GenerarActa consolida DatosActa y usa el ComponedorActa
+      Archivos: src/aplicacion/actas/generar_acta.py
+      Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
+      Depende de: T-25, T-26, T-27
+
+- [ ] T-29 Adaptador ComponedorActaReportlab
+      Archivos: src/infraestructura/componedor_acta_reportlab.py
+      Escenarios: ESC-B2, ESC-RC, ESC-E2
+      Depende de: T-27
+
+- [ ] T-30 Composición del Worker con ComponedorActaReportlab
+      Archivos: src/worker.py
+      Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
+      Depende de: T-28, T-29
+
+- [ ] T-31 Dependencia reportlab==5.1.0
+      Archivos: src/requirements.txt
+      Escenarios: ESC-B2
+      Depende de: T-29
+
+- [ ] T-32 Revalidar CU-07 con el PDF real y actualizar la evidencia
+      Archivos: specs/007-generar-acta-final/validacion.md
+      Escenarios: todos
+      Depende de: T-30, T-31
