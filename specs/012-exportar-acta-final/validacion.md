@@ -9,7 +9,7 @@ Método: cada escenario se ejecutó contra la composición real de `src/main.py`
 | Escenario | Resultado | Evidencia |
 |-----------|-----------|-----------|
 | ESC-B El Coordinador exporta el acta del Worker | Cumple | Acta `AC-47f316a2` "generada" por el Worker. `HTTP 200 {'nombre_archivo': 'acta-AC-47f316a2.pdf', 'tipo_contenido': 'application/pdf', 'bytes': 2593, 'inicio': b'%PDF-1.3', 'fin': b'%%EOF'}`. El contenido es igual al guardado por el Worker: `True`. Bitácora nueva `[]`. Código: `src/aplicacion/actas/exportar_acta.py` |
-| ESC-ES El Estudiante titular (E-1009) | Cumple | `HTTP 200 {'nombre_archivo': 'acta-AC-09.pdf', 'tipo_contenido': 'application/pdf', …}` |
+| ESC-ES El Estudiante titular (E-1009) | Cumple | `HTTP 200 {'nombre_archivo': 'acta-AC-09.pdf', 'tipo_contenido': 'application/pdf', …}`. Tras el ajuste T-08: `'bytes': 604, 'inicio': b'%PDF-1.4', 'fin': b'%%EOF'`; el archivo abre como PDF de una página ("Acta final AC-09 (precargada)") |
 | ESC-AP Acta aprobada | Cumple | Después de las tres aprobaciones de CU-08, AC-09 está `aprobada` y la exportación da `HTTP 200` con `acta-AC-09.pdf` |
 | ESC-SP acta en generación | Cumple | `HTTP 409 {'codigo': 'acta_no_exportable', 'mensaje': 'exportación no permitida', …, 'motivo': 'el acta no tiene PDF generado'}` |
 | ESC-SP acta con error | Cumple | `HTTP 409 … 'motivo': 'el acta no tiene PDF generado'` |
@@ -33,7 +33,7 @@ Método: cada escenario se ejecutó contra la composición real de `src/main.py`
 ### Observaciones
 
 1. **CU-01 a CU-11 no se rompieron.** Los scripts de los Anexos dan los mismos códigos: CU-01 `201, 409, 409, 201, 409, 409, 201, 404, 403, 401, [201, 201]`; CU-02 `201×3, 404, 400×5, 403, 401`; CU-03 `200×9, 404, 403, 401`; CU-04 `201, 201, 422×8, 404, 403, 403, 401, {201: 300}`; CU-05 `200×4, 422×3, 404, 403, 403, 401`; CU-06 `201, 200, 201, 409, 403, 401, 410, 200, 201, 410×3, 422×4`; CU-07 `202×3, 403, 401, 202` con 500 de 500 actas; CU-08 `201×4, 409×3, 404, 403×3, 410×3, 401`; CU-09 `200×4, 403, 403, 404, 401`; CU-10 `200×4, 403, 403, 404, 401`; CU-11 `200, 200, 404, 403, 401`.
-2. **Contenido de AC-09:** el acta "AC-09" la precargó CU-08 con un contenido de prueba de 30 bytes (`%PDF-simulado…`), porque la composición de la API no puede componer PDF (ADR-001). Las actas que genera el Worker son PDF reales (ESC-B).
+2. **Contenido de AC-09 (corregido en T-08 y T-09):** la precarga de "AC-09" guardaba 30 bytes de texto (`%PDF-simulado…`). Ahora `src/main.py` (`_pdf_de_prueba`) guarda un PDF mínimo válido de 604 bytes; se abrió con un lector de PDF y su tabla xref apunta a sus 5 objetos. Es un dato precargado del Repositorio de actas, no la composición del acta: esa la sigue haciendo solo el Worker con ReportLab (ADR-001, ADR-011).
 3. **Transporte:** el controlador devuelve los bytes en el cuerpo. Con un servidor HTTP real se enviarían con `Content-Type: application/pdf` y `Content-Disposition` con el nombre de archivo.
 
 ## Anexo: script de ejecución

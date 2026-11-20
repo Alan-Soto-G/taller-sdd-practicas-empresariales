@@ -64,7 +64,7 @@ Observación 2 de [validacion.md](validacion.md): la precarga de "AC-09" (CU-08)
       Escenarios: ESC-ES, ESC-AP
       Depende de: T-06
 
-- [ ] T-09 Revalidar la exportación de AC-09
+- [x] T-09 Revalidar la exportación de AC-09
       Archivos: specs/012-exportar-acta-final/validacion.md
       Escenarios: ESC-ES, ESC-AP
       Depende de: T-08
