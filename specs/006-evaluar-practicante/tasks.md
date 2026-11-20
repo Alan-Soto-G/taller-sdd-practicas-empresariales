@@ -78,7 +78,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: Módulo Configuración
 
-- [ ] T-12 DTO CriterioConsultado
+- [x] T-12 DTO CriterioConsultado
       Archivos: src/aplicacion/configuracion/criterio_consultado.py
       Escenarios: ESC-B2, ESC-E3
       Depende de: ninguna
