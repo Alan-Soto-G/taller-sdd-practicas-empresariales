@@ -19,7 +19,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-EN
       Depende de: ninguna
 
-- [ ] T-02 Regla de validación Plaza.motivo_invalidez (cargo, cupos, periodo)
+- [x] T-02 Regla de validación Plaza.motivo_invalidez (cargo, cupos, periodo)
       Archivos: src/dominio/plaza.py
       Escenarios: ESC-B, ESC-DI
       Depende de: ninguna
