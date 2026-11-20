@@ -51,7 +51,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: identidad, errores y puertos
 
-- [ ] T-07 DTO IdentidadEnlace
+- [x] T-07 DTO IdentidadEnlace
       Archivos: src/aplicacion/identidad_enlace.py
       Escenarios: ESC-B2, ESC-B3, ESC-E5
       Depende de: ninguna
