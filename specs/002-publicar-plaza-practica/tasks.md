@@ -43,7 +43,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-PO, ESC-DU, ESC-EN
       Depende de: T-01
 
-- [ ] T-06 DTO de entrada SolicitudPublicacionPlaza
+- [x] T-06 DTO de entrada SolicitudPublicacionPlaza
       Archivos: src/aplicacion/postulaciones/solicitud_publicacion_plaza.py
       Escenarios: ESC-B, ESC-SR
       Depende de: ninguna
