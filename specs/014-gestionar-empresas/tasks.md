@@ -30,7 +30,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación
 
-- [ ] T-03 Error EmpresaNoValida con su motivo
+- [x] T-03 Error EmpresaNoValida con su motivo
       Archivos: src/aplicacion/errores/empresa_no_valida.py
       Escenarios: ESC-DI
       Depende de: ninguna
