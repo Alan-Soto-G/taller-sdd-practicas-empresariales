@@ -19,6 +19,7 @@ from dominio.registro_horas import RegistroHoras
 from dominio.tutor import Tutor
 from infraestructura.almacen_actas_memoria import AlmacenActasMemoria
 from infraestructura.cola_actas_memoria import ColaActasMemoria
+from infraestructura.lector_excel_openpyxl import LectorExcelOpenpyxl
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.notificador_simulado import NotificadorSimulado
 from infraestructura.repositorio_practicas_memoria import RepositorioPracticasMemoria
@@ -105,7 +106,9 @@ def construir() -> dict[str, object]:
         repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
     )
     exportar_acta = ExportarActa(repositorio, bitacora, almacen_actas, reloj=datetime.now)
-    importar_historico = ImportarHistorico(repositorio, bitacora, consultar_regla, reloj=datetime.now)
+    importar_historico = ImportarHistorico(
+        repositorio, bitacora, consultar_regla, LectorExcelOpenpyxl(), reloj=datetime.now
+    )
     gestionar_empresas = GestionarEmpresas(repositorio, bitacora, reloj=datetime.now)
     controlador = ControladorRest(
         validador,

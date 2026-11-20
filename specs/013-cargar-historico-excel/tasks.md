@@ -103,7 +103,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-14
 
-- [ ] T-17 Composición en main.py con LectorExcelOpenpyxl
+- [x] T-17 Composición en main.py con LectorExcelOpenpyxl
       Archivos: src/main.py
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-15, T-16
