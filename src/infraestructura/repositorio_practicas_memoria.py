@@ -348,3 +348,17 @@ class RepositorioPracticasMemoria:
     def guardar_estudiante(self, estudiante: Estudiante) -> None:
         """Guarda un estudiante nuevo."""
         self._estudiantes[estudiante.id] = estudiante
+
+    def listar_empresas(self) -> list[Empresa]:
+        """Devuelve una copia de las empresas registradas."""
+        return list(self._empresas.values())
+
+    def eliminar_empresa(self, id_empresa: str) -> None:
+        """Elimina la empresa y su representante."""
+        self._empresas.pop(id_empresa, None)
+        for id_representante in [r.id for r in self._representantes.values() if r.id_empresa == id_empresa]:
+            del self._representantes[id_representante]
+
+    def guardar_representante(self, representante: RepresentanteEmpresa) -> None:
+        """Guarda un representante, nuevo o modificado."""
+        self._representantes[representante.id] = representante

@@ -67,7 +67,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura y composición
 
-- [ ] T-10 RepositorioPracticasMemoria: empresas, plazas y representantes
+- [x] T-10 RepositorioPracticasMemoria: empresas, plazas y representantes
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-LI, ESC-CO, ESC-EL, ESC-EP
       Depende de: T-05
