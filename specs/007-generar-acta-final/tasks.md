@@ -144,7 +144,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Validación
 
-- [ ] T-24 Validar escenario por escenario y registrar la evidencia
+- [x] T-24 Validar escenario por escenario y registrar la evidencia
       Archivos: specs/007-generar-acta-final/validacion.md
       Escenarios: todos
       Depende de: T-22, T-23
