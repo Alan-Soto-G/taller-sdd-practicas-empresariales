@@ -33,3 +33,9 @@ class Practica:
         if self.estado != EstadoPractica.HORAS_COMPLETAS:
             raise ValueError('la practica no tiene las horas completas')
         return replace(self, estado=EstadoPractica.EVALUADA)
+
+    def solicitar_acta(self) -> 'Practica':
+        """Regla de CU-07: una Practica evaluada pasa a acta en tramite al solicitar su acta final."""
+        if self.estado != EstadoPractica.EVALUADA:
+            raise ValueError('la practica no esta evaluada')
+        return replace(self, estado=EstadoPractica.ACTA_EN_TRAMITE)

@@ -37,7 +37,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2
       Depende de: ninguna
 
-- [ ] T-05 Practica: solicitar_acta
+- [x] T-05 Practica: solicitar_acta
       Archivos: src/dominio/practica.py
       Escenarios: ESC-B1, ESC-NE
       Depende de: ninguna
