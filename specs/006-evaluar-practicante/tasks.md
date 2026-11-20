@@ -175,7 +175,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: ESC-EV, ESC-RE
       Depende de: ninguna
 
-- [ ] T-29 Caso de uso RegistrarEnlaceRechazado
+- [x] T-29 Caso de uso RegistrarEnlaceRechazado
       Archivos: src/aplicacion/evaluacion/registrar_enlace_rechazado.py
       Escenarios: ESC-EV, ESC-RE
       Depende de: T-28
