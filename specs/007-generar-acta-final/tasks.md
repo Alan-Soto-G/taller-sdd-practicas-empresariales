@@ -105,7 +105,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura
 
-- [ ] T-17 Adaptador ColaActasMemoria (colas actas y errores_actas)
+- [x] T-17 Adaptador ColaActasMemoria (colas actas y errores_actas)
       Archivos: src/infraestructura/cola_actas_memoria.py
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-06
