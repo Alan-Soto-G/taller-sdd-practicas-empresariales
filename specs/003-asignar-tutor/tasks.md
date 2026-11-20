@@ -73,7 +73,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-SC, ESC-RV
       Depende de: ninguna
 
-- [ ] T-11 Caso de uso ConsultarReglaVigente (Módulo Configuración)
+- [x] T-11 Caso de uso ConsultarReglaVigente (Módulo Configuración)
       Archivos: src/aplicacion/configuracion/consultar_regla_vigente.py
       Escenarios: ESC-SC, ESC-RV
       Depende de: T-09, T-10
