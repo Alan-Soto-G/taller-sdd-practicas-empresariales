@@ -50,7 +50,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Validación
 
-- [ ] T-07 Validar escenario por escenario y registrar la evidencia
+- [x] T-07 Validar escenario por escenario y registrar la evidencia
       Archivos: specs/012-exportar-acta-final/validacion.md
       Escenarios: todos
       Depende de: T-06
