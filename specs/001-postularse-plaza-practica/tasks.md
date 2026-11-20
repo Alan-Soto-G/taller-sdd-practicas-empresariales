@@ -22,7 +22,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-AP, ESC-OP, ESC-MP, ESC-VP
       Depende de: ninguna
 
-- [ ] T-02 Entidad Plaza con la regla de cupos
+- [x] T-02 Entidad Plaza con la regla de cupos
       Archivos: src/dominio/plaza.py
       Escenarios: ESC-B, ESC-SC, ESC-CC
       Depende de: ninguna
