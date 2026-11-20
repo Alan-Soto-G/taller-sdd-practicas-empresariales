@@ -3,6 +3,7 @@
 from threading import Lock
 
 from dominio.acta_final import ActaFinal
+from dominio.aprobacion import Aprobacion
 from dominio.coordinador_practicas import CoordinadorPracticas
 from dominio.empresa import Empresa
 from dominio.enlace_acceso import EnlaceAcceso
@@ -43,6 +44,7 @@ class RepositorioPracticasMemoria:
         self._intentos: list[IntentoGeneracion] = []
         self._coordinador: CoordinadorPracticas | None = None
         self._candado_actas = Lock()
+        self._aprobaciones: list[Aprobacion] = []
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -303,3 +305,16 @@ class RepositorioPracticasMemoria:
             return list(self._intentos)
         return [intento for intento in self._intentos if intento.id_acta == id_acta]
 
+    def guardar_aprobacion(self, aprobacion: Aprobacion) -> None:
+        """Registra una aprobación del acta."""
+        with self._candado_actas:
+            self._aprobaciones.append(aprobacion)
+
+    def listar_aprobaciones(self, id_acta: str) -> list[Aprobacion]:
+        """Devuelve las aprobaciones del acta."""
+        return [a for a in self._aprobaciones if a.id_acta == id_acta]
+
+    def obtener_acta_de_practica(self, id_practica: str) -> ActaFinal | None:
+        """Devuelve el acta más reciente de la práctica, o None."""
+        actas = [a for a in self._actas.values() if a.id_practica == id_practica]
+        return max(actas, key=lambda a: a.fecha_solicitud) if actas else None

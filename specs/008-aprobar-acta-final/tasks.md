@@ -77,7 +77,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura
 
-- [ ] T-12 RepositorioPracticasMemoria: aprobaciones y acta de una práctica
+- [x] T-12 RepositorioPracticasMemoria: aprobaciones y acta de una práctica
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: todos menos ESC-TV
       Depende de: T-06
