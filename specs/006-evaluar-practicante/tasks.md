@@ -115,7 +115,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-E5, ESC-E3
       Depende de: T-07, T-13, T-17
 
-- [ ] T-19 DTO SolicitudEvaluacion
+- [x] T-19 DTO SolicitudEvaluacion
       Archivos: src/aplicacion/evaluacion/solicitud_evaluacion.py
       Escenarios: ESC-B3, ESC-CI
       Depende de: T-07
