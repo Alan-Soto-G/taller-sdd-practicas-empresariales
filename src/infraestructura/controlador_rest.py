@@ -1,18 +1,22 @@
-"""Adaptador de entrada REST de CU-01 a CU-11: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-12: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
 from aplicacion.actas.aprobacion_registrada import AprobacionRegistrada
 from aplicacion.actas.aprobar_acta import AprobarActa
 from aplicacion.actas.emitir_enlace_aprobacion import EmitirEnlaceAprobacion
+from aplicacion.actas.exportar_acta import ExportarActa
 from aplicacion.actas.solicitar_actas import SolicitarActas
 from aplicacion.actas.solicitud_aprobacion_acta import SolicitudAprobacionActa
 from aplicacion.actas.solicitud_enlace_aprobacion import SolicitudEnlaceAprobacion
+from aplicacion.actas.solicitud_exportacion_acta import SolicitudExportacionActa
 from aplicacion.actas.solicitud_generacion_actas import SolicitudGeneracionActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
 from aplicacion.errores.acceso_denegado import AccesoDenegado
 from aplicacion.errores.acta_no_encontrada import ActaNoEncontrada
+from aplicacion.errores.acta_no_exportable import ActaNoExportable
+from aplicacion.errores.almacen_no_disponible import AlmacenNoDisponible
 from aplicacion.errores.aprobacion_no_permitida import AprobacionNoPermitida
 from aplicacion.errores.enlace_no_valido import EnlaceNoValido
 from aplicacion.errores.empresa_no_encontrada import EmpresaNoEncontrada
@@ -71,6 +75,8 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     EvaluacionNoValida: 422,
     ActaNoEncontrada: 404,
     AprobacionNoPermitida: 409,
+    ActaNoExportable: 409,
+    AlmacenNoDisponible: 503,
 }
 
 
@@ -96,6 +102,7 @@ class ControladorRest:
         consultar_avance_tutor: ConsultarAvanceTutor,
         consultar_estado_practica: ConsultarEstadoPractica,
         generar_reporte: GenerarReporte,
+        exportar_acta: ExportarActa,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -115,6 +122,7 @@ class ControladorRest:
         self._consultar_avance_tutor = consultar_avance_tutor
         self._consultar_estado_practica = consultar_estado_practica
         self._generar_reporte = generar_reporte
+        self._exportar_acta = exportar_acta
 
     def postular(
         self,
@@ -513,6 +521,26 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def exportar_acta(
+        self,
+        token: str | None,
+        id_acta: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa GET /actas/{id}/pdf; el contenido es el PDF guardado por el Worker (CU-12)."""
+        try:
+            usuario = self._validador.validar(token)
+            acta = self._exportar_acta.ejecutar(SolicitudExportacionActa(usuario, id_acta))
+            return (
+                200,
+                {
+                    "nombre_archivo": acta.nombre_archivo,
+                    "tipo_contenido": acta.tipo_contenido,
+                    "contenido": acta.contenido,
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
     def _validar_enlace(self, enlace: str, accion: str) -> IdentidadEnlace:
         """Valida el enlace; si se rechaza, el caso de uso audita el intento antes de responder (ADR-005, ADR-006)."""
         try:
@@ -555,6 +583,7 @@ class ControladorRest:
                 EvaluacionNoPermitida,
                 EvaluacionNoValida,
                 AprobacionNoPermitida,
+                ActaNoExportable,
             ),
         ):
             cuerpo["motivo"] = error.motivo

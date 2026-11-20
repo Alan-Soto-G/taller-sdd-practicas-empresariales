@@ -38,7 +38,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura y composición
 
-- [ ] T-05 ControladorRest: exportar_acta (GET /actas/{id}/pdf) con 409 y 503
+- [x] T-05 ControladorRest: exportar_acta (GET /actas/{id}/pdf) con 409 y 503
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-04
