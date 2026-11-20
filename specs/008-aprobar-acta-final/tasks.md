@@ -45,7 +45,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-DO, ESC-NG
       Depende de: ninguna
 
-- [ ] T-06 Puerto RepositorioPracticas: aprobaciones y acta de una práctica
+- [x] T-06 Puerto RepositorioPracticas: aprobaciones y acta de una práctica
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01

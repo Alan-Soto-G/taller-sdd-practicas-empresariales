@@ -2,6 +2,7 @@
 from typing import Protocol
 
 from dominio.acta_final import ActaFinal
+from dominio.aprobacion import Aprobacion
 from dominio.coordinador_practicas import CoordinadorPracticas
 from dominio.empresa import Empresa
 from dominio.enlace_acceso import EnlaceAcceso
@@ -136,4 +137,16 @@ class RepositorioPracticas(Protocol):
 
     def obtener_coordinador(self) -> CoordinadorPracticas | None:
         """Devuelve el Coordinador de Practicas o None (CU-07)."""
+        ...
+
+    def guardar_aprobacion(self, aprobacion: Aprobacion) -> None:
+        """Registra una Aprobacion del acta (CU-08, ADR-006)."""
+        ...
+
+    def listar_aprobaciones(self, id_acta: str) -> list[Aprobacion]:
+        """Devuelve las Aprobaciones del acta (CU-08)."""
+        ...
+
+    def obtener_acta_de_practica(self, id_practica: str) -> ActaFinal | None:
+        """Devuelve el ActaFinal mas reciente de la Practica o None (CU-08)."""
         ...
