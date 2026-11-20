@@ -61,7 +61,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-RE, ESC-EV
       Depende de: ninguna
 
-- [ ] T-09 Error EvaluacionNoPermitida con su motivo
+- [x] T-09 Error EvaluacionNoPermitida con su motivo
       Archivos: src/aplicacion/errores/evaluacion_no_permitida.py
       Escenarios: ESC-HC
       Depende de: ninguna
