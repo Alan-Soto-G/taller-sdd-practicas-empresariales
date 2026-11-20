@@ -83,7 +83,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-E3
       Depende de: ninguna
 
-- [ ] T-13 Caso de uso ConsultarCriteriosEvaluacion
+- [x] T-13 Caso de uso ConsultarCriteriosEvaluacion
       Archivos: src/aplicacion/configuracion/consultar_criterios_evaluacion.py
       Escenarios: ESC-B2, ESC-B3, ESC-CI, ESC-E3
       Depende de: T-02, T-11, T-12
