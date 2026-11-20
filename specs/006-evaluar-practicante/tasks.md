@@ -56,7 +56,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-B3, ESC-E5
       Depende de: ninguna
 
-- [ ] T-08 Error EnlaceNoValido con su motivo
+- [x] T-08 Error EnlaceNoValido con su motivo
       Archivos: src/aplicacion/errores/enlace_no_valido.py
       Escenarios: ESC-RE, ESC-EV
       Depende de: ninguna
