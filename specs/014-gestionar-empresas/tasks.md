@@ -23,7 +23,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-AC, ESC-DI
       Depende de: ninguna
 
-- [ ] T-02 RepresentanteEmpresa: motivo_invalidez
+- [x] T-02 RepresentanteEmpresa: motivo_invalidez
       Archivos: src/dominio/representante_empresa.py
       Escenarios: ESC-B, ESC-CO, ESC-DI
       Depende de: ninguna
