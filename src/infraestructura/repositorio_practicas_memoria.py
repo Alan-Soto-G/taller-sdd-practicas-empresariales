@@ -2,12 +2,15 @@
 
 from threading import Lock
 
+from dominio.acta_final import ActaFinal
+from dominio.coordinador_practicas import CoordinadorPracticas
 from dominio.empresa import Empresa
 from dominio.enlace_acceso import EnlaceAcceso
 from dominio.estado_postulacion import EstadoPostulacion
 from dominio.estado_registro_horas import EstadoRegistroHoras
 from dominio.estudiante import Estudiante
 from dominio.evaluacion import Evaluacion
+from dominio.intento_generacion import IntentoGeneracion
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
 from dominio.practica import Practica
@@ -36,6 +39,10 @@ class RepositorioPracticasMemoria:
         self._enlaces: dict[str, EnlaceAcceso] = {}
         self._evaluaciones: list[Evaluacion] = []
         self._candado_enlaces = Lock()
+        self._actas: dict[str, ActaFinal] = {}
+        self._intentos: list[IntentoGeneracion] = []
+        self._coordinador: CoordinadorPracticas | None = None
+        self._candado_actas = Lock()
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -248,4 +255,51 @@ class RepositorioPracticasMemoria:
     def listar_evaluaciones(self) -> list[Evaluacion]:
         """Devuelve una copia de las evaluaciones registradas."""
         return list(self._evaluaciones)
+
+    def guardar_acta(self, acta: ActaFinal) -> None:
+        """Guarda un acta final en el repositorio."""
+        with self._candado_actas:
+            self._actas[acta.id] = acta
+
+    def obtener_acta(self, id_acta: str) -> ActaFinal | None:
+        """Obtiene un acta final por su identificador."""
+        return self._actas.get(id_acta)
+
+    def guardar_intento(self, intento: IntentoGeneracion) -> None:
+        """Guarda un intento de generación de acta."""
+        with self._candado_actas:
+            self._intentos.append(intento)
+
+    def obtener_evaluacion_de_practica(
+        self, id_practica: str
+    ) -> Evaluacion | None:
+        """Obtiene la primera evaluación de una práctica."""
+        return next(
+            (
+                evaluacion
+                for evaluacion in self._evaluaciones
+                if evaluacion.id_practica == id_practica
+            ),
+            None,
+        )
+
+    def agregar_coordinador(self, coordinador: CoordinadorPracticas) -> None:
+        """Precarga el coordinador de prácticas."""
+        self._coordinador = coordinador
+
+    def obtener_coordinador(self) -> CoordinadorPracticas | None:
+        """Obtiene el coordinador de prácticas precargado."""
+        return self._coordinador
+
+    def listar_actas(self) -> list[ActaFinal]:
+        """Devuelve una copia de las actas registradas."""
+        return list(self._actas.values())
+
+    def listar_intentos(
+        self, id_acta: str | None = None
+    ) -> list[IntentoGeneracion]:
+        """Devuelve los intentos, opcionalmente filtrados por acta."""
+        if id_acta is None:
+            return list(self._intentos)
+        return [intento for intento in self._intentos if intento.id_acta == id_acta]
 

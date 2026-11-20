@@ -120,7 +120,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-CO, ESC-E2
       Depende de: T-16, T-17
 
-- [ ] T-20 RepositorioPracticasMemoria: actas, intentos, evaluación y coordinador
+- [x] T-20 RepositorioPracticasMemoria: actas, intentos, evaluación y coordinador
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: todos menos ESC-TV
       Depende de: T-10
