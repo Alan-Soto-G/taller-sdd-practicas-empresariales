@@ -95,7 +95,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-SR
       Depende de: ninguna
 
-- [ ] T-15 DTO EnlaceEmitido
+- [x] T-15 DTO EnlaceEmitido
       Archivos: src/aplicacion/evaluacion/enlace_emitido.py
       Escenarios: ESC-B1, ESC-RE, ESC-CO
       Depende de: ninguna
