@@ -3,6 +3,7 @@ from typing import Protocol
 
 from dominio.empresa import Empresa
 from dominio.estudiante import Estudiante
+from dominio.registro_horas import RegistroHoras
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
 from dominio.practica import Practica
@@ -61,4 +62,12 @@ class RepositorioPracticas(Protocol):
 
     def guardar_practica(self, practica: Practica) -> None:
         """Guarda la Practica, nueva o modificada (CU-03)."""
+        ...
+
+    def existe_registro_horas(self, id_practica: str, semana: str) -> bool:
+        """Indica si la Practica ya tiene un RegistroHoras de la semana (CU-04)."""
+        ...
+
+    def guardar_registro_horas(self, registro: RegistroHoras) -> bool:
+        """Guarda el RegistroHoras de forma atomica; devuelve False, sin guardar, si ya hay uno de la misma Practica y semana (CU-04, EAC-01)."""
         ...

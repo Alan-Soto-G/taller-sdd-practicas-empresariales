@@ -42,7 +42,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: puertos y DTO
 
-- [ ] T-05 Puerto RepositorioPracticas: existe_registro_horas y guardar_registro_horas
+- [x] T-05 Puerto RepositorioPracticas: existe_registro_horas y guardar_registro_horas
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: ESC-B, ESC-OS, ESC-SR2, ESC-CA, ESC-DU
       Depende de: T-02
