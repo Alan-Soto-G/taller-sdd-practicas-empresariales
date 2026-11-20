@@ -55,7 +55,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-CO, ESC-DI
       Depende de: ninguna
 
-- [ ] T-08 DTO EmpresaGestionada
+- [x] T-08 DTO EmpresaGestionada
       Archivos: src/aplicacion/postulaciones/empresa_gestionada.py
       Escenarios: ESC-B, ESC-LI, ESC-AC, ESC-CO
       Depende de: ninguna
