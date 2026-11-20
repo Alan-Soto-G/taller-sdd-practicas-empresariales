@@ -163,7 +163,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-RC
       Depende de: ninguna
 
-- [ ] T-27 Puerto ComponedorActa
+- [x] T-27 Puerto ComponedorActa
       Archivos: src/aplicacion/puertos/componedor_acta.py
       Escenarios: ESC-B2, ESC-RC, ESC-E2
       Depende de: T-25, T-26
