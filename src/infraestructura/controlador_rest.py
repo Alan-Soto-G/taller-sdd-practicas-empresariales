@@ -2,6 +2,7 @@
 
 from uuid import uuid4
 
+from aplicacion.actas.aprobacion_registrada import AprobacionRegistrada
 from aplicacion.actas.aprobar_acta import AprobarActa
 from aplicacion.actas.emitir_enlace_aprobacion import EmitirEnlaceAprobacion
 from aplicacion.actas.solicitar_actas import SolicitarActas
@@ -28,6 +29,8 @@ from aplicacion.errores.registro_no_valido import RegistroNoValido
 from aplicacion.errores.tutor_no_encontrado import TutorNoEncontrado
 from aplicacion.evaluacion.consultar_formulario_evaluacion import ConsultarFormularioEvaluacion
 from aplicacion.evaluacion.emitir_enlace_evaluacion import EmitirEnlaceEvaluacion
+from aplicacion.evaluacion.intento_enlace_rechazado import IntentoEnlaceRechazado
+from aplicacion.evaluacion.registrar_enlace_rechazado import RegistrarEnlaceRechazado
 from aplicacion.evaluacion.registrar_evaluacion import RegistrarEvaluacion
 from aplicacion.evaluacion.solicitud_enlace_evaluacion import SolicitudEnlaceEvaluacion
 from aplicacion.evaluacion.solicitud_evaluacion import SolicitudEvaluacion
@@ -35,6 +38,7 @@ from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.horas.solicitud_registro_horas import SolicitudRegistroHoras
 from aplicacion.horas.solicitud_revision_horas import SolicitudRevisionHoras
+from aplicacion.identidad_enlace import IdentidadEnlace
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
@@ -82,6 +86,7 @@ class ControladorRest:
         solicitar_actas: SolicitarActas,
         emitir_enlace_aprobacion: EmitirEnlaceAprobacion,
         aprobar_acta: AprobarActa,
+        registrar_enlace_rechazado: RegistrarEnlaceRechazado,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -97,6 +102,7 @@ class ControladorRest:
         self._solicitar_actas = solicitar_actas
         self._emitir_enlace_aprobacion = emitir_enlace_aprobacion
         self._aprobar_acta = aprobar_acta
+        self._registrar_enlace_rechazado = registrar_enlace_rechazado
 
     def postular(
         self,
@@ -274,7 +280,7 @@ class ControladorRest:
     ) -> tuple[int, dict[str, object]]:
         """Representa la petición GET /evaluaciones/{enlace}; no pide token institucional (ADR-005)."""
         try:
-            identidad = self._validador_enlace.validar(enlace, ACCION_EVALUAR)
+            identidad = self._validar_enlace(enlace, ACCION_EVALUAR)
             formulario = self._consultar_formulario_evaluacion.ejecutar(identidad)
             return (
                 200,
@@ -297,7 +303,7 @@ class ControladorRest:
     ) -> tuple[int, dict[str, object]]:
         """Representa la petición POST /evaluaciones/{enlace}; no pide token institucional (ADR-005)."""
         try:
-            identidad = self._validador_enlace.validar(enlace, ACCION_EVALUAR)
+            identidad = self._validar_enlace(enlace, ACCION_EVALUAR)
             solicitud = SolicitudEvaluacion(
                 identidad,
                 dict(cuerpo.get("calificaciones", {})),
@@ -391,13 +397,23 @@ class ControladorRest:
     ) -> tuple[int, dict[str, object]]:
         """Representa la petición POST /aprobaciones-acta/{enlace}; no pide token institucional (ADR-005)."""
         try:
-            identidad = self._validador_enlace.validar(enlace, ACCION_APROBAR_ACTA)
+            identidad = self._validar_enlace(enlace, ACCION_APROBAR_ACTA)
             resultado = self._aprobar_acta.aprobar_con_enlace(identidad)
             return (201, self._cuerpo_aprobacion(resultado))
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
-    def _cuerpo_aprobacion(self, resultado: object) -> dict[str, object]:
+    def _validar_enlace(self, enlace: str, accion: str) -> IdentidadEnlace:
+        """Valida el enlace; si se rechaza, el caso de uso audita el intento antes de responder (ADR-005, ADR-006)."""
+        try:
+            return self._validador_enlace.validar(enlace, accion)
+        except EnlaceNoValido as error:
+            self._registrar_enlace_rechazado.ejecutar(
+                IntentoEnlaceRechazado(error.id_enlace, error.id_representante, error.motivo)
+            )
+            raise
+
+    def _cuerpo_aprobacion(self, resultado: AprobacionRegistrada) -> dict[str, object]:
         """Arma la respuesta de una aprobación registrada."""
         return {
             "id_acta": resultado.id_acta,

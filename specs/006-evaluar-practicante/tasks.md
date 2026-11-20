@@ -185,7 +185,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV, ESC-E5
       Depende de: T-27
 
-- [ ] T-31 ControladorRest audita el enlace rechazado con el caso de uso
+- [x] T-31 ControladorRest audita el enlace rechazado con el caso de uso
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV
       Depende de: T-29, T-30
