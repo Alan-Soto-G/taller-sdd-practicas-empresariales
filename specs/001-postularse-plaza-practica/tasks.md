@@ -100,7 +100,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura: adaptadores
 
-- [ ] T-16 Adaptador RepositorioPracticasMemoria
+- [x] T-16 Adaptador RepositorioPracticasMemoria
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-SC, ESC-AP, ESC-OP, ESC-MP, ESC-VP, ESC-NE, ESC-CC
       Depende de: T-10
