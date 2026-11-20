@@ -40,7 +40,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-UNA, ESC-VR
       Depende de: ninguna
 
-- [ ] T-06 DTO AvanceTutor
+- [x] T-06 DTO AvanceTutor
       Archivos: src/aplicacion/seguimiento/avance_tutor.py
       Escenarios: ESC-B, ESC-VAC
       Depende de: T-05
