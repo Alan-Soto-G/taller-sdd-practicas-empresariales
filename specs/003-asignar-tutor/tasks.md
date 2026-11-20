@@ -34,7 +34,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-CP, ESC-RV
       Depende de: ninguna
 
-- [ ] T-04 Entidad Estudiante
+- [x] T-04 Entidad Estudiante
       Archivos: src/dominio/estudiante.py
       Escenarios: ESC-B
       Depende de: ninguna
