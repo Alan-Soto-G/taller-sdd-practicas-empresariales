@@ -55,7 +55,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-SR
       Depende de: ninguna
 
-- [ ] T-08 Caso de uso EmitirEnlaceAprobacion
+- [x] T-08 Caso de uso EmitirEnlaceAprobacion
       Archivos: src/aplicacion/actas/emitir_enlace_aprobacion.py
       Escenarios: ESC-B2, ESC-SR, ESC-EN
       Depende de: T-04, T-05, T-06, T-07
