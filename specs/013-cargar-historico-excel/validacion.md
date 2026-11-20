@@ -1,8 +1,8 @@
 # Validación: 013 Cargar información histórica desde Excel
 
-Fecha: 2026-11-20. Código validado: `src/` en el commit `5feeedf` (013 T-09). Implementado por Claude sin obreros.
+Fecha: 2026-11-20. Código validado: `src/` en el commit `e29dda2` (013 T-18, ajuste de ADR-012); la primera versión se validó en el commit `5feeedf` (013 T-09). Implementado por Claude sin obreros.
 
-Método: cada escenario se ejecutó contra la composición real de `src/main.py` (`construir()`), con una aplicación nueva por escenario. El libro de Excel se pasa ya leído (hojas → filas por encabezado), como decidió la spec. El script con los libros de prueba está en el Anexo. Se ejecuta con `python -B validar_cu13.py <ruta>/src`.
+Método: cada escenario se ejecutó contra la composición real de `src/main.py` (`construir()`), con una aplicación nueva por escenario. El libro de Excel se pasa ya leído (hojas → filas por encabezado), como decidió la spec. El script con los libros de prueba está en el Anexo. Se ejecuta con `python -B validar_cu13.py <ruta>/src [ruta del .xlsx de muestra]`.
 
 ## Validación funcional
 
@@ -14,6 +14,9 @@ Método: cada escenario se ejecutó contra la composición real de `src/main.py`
 | ESC-HD Hoja desconocida | Cumple | `'rechazadas': [{'hoja': 'Notas', 'fila': 1, 'motivo': 'hoja desconocida'}]` |
 | ESC-SR Sin rol Coordinador (T-500) | Cumple | `HTTP 403`; nada cargado. Bitácora `{'usuario': 'T-500', 'rol': 'Tutor', 'recurso': 'importacion', 'accion': 'importar histórico', 'hora': …}` |
 | ESC-TV Token de hace 16 minutos | Cumple | `HTTP 401`; nada cargado |
+| ESC-XL Subir el .xlsx (ADR-012) | Cumple | Un archivo `.xlsx` real de 7239 bytes (empieza con `PK`), con las filas de ESC-RE, los cupos como número (3 → 3.0 en Excel) y una fila vacía al final de cada hoja. `HTTP 200` con las mismas cargadas (1 por hoja) y las mismas 8 rechazadas, con su hoja, su fila y su motivo. El resultado es igual al del libro ya leído: `True`. Cupos de PL-H1: `3`. Código: `src/infraestructura/lector_excel_openpyxl.py`, `src/aplicacion/configuracion/importar_historico.py` (`ejecutar_excel`) |
+| ESC-AN Archivo que no es Excel | Cumple | `HTTP 422 {'codigo': 'archivo_no_valido', 'mensaje': 'archivo no válido', …, 'motivo': 'el archivo no es un Excel .xlsx válido'}`; nada cargado. Código: `lector_excel_openpyxl.py` (traduce la excepción, ADR-007) |
+| ESC-XS Sin rol Coordinador al subir el archivo | Cumple | `HTTP 403`; nada cargado. Bitácora `('T-500', 'importacion', 'importar histórico')`; se rechaza antes de leer el archivo (`ejecutar_excel` → `_autorizar`) |
 
 ## Validación arquitectónica
 
@@ -23,13 +26,13 @@ Método: cada escenario se ejecutó contra la composición real de `src/main.py`
   - ADR-008: valida y reporta cada fila rechazada sin cargarla, y las prácticas toman la regla vigente.
   - ADR-004: rol Coordinador.
   - ADR-006: creación de cada práctica, resumen de la importación y rechazo de acceso.
-  - AGENTS.md: no se agregó ninguna librería.
+  - ADR-012: openpyxl solo se importa en `src/infraestructura/lector_excel_openpyxl.py`; `aplicacion/` usa el puerto `LectorExcel`, y la versión está fijada en `src/requirements.txt`.
 - **Convenciones de AGENTS.md: cumplen.** Una clase por archivo, sin `__init__.py`, sin BOM, DTO en la entrada y la salida.
 
 ### Observaciones
 
 1. **CU-01 a CU-12 no se rompieron.** Los scripts de los Anexos dan los mismos códigos: CU-01 `201, 409, 409, 201, 409, 409, 201, 404, 403, 401, [201, 201]`; CU-02 `201×3, 404, 400×5, 403, 401`; CU-03 `200×9, 404, 403, 401`; CU-04 `201, 201, 422×8, 404, 403, 403, 401, {201: 300}`; CU-05 `200×4, 422×3, 404, 403, 403, 401`; CU-06 `201, 200, 201, 409, 403, 401, 410, 200, 201, 410×3, 422×4`; CU-07 `202×3, 403, 401, 202` con 500 de 500 actas; CU-08 `201×4, 409×3, 404, 403×3, 410×3, 401`; CU-09 `200×4, 403, 403, 404, 401`; CU-10 `200×4, 403, 403, 404, 401`; CU-11 `200, 200, 404, 403, 401`; CU-12 `200×3, 409, 409, 404, 403, 403, 503, 401`.
-2. **Pendiente de decisión del usuario:** leer el archivo `.xlsx` en el servidor necesita una librería (por ejemplo openpyxl, licencia MIT) y un ADR nuevo que la apruebe. Se propuso un ADR-012 con openpyxl detrás de un puerto `LectorExcel`, pero no se aplicó sin aprobación explícita. Hoy el libro llega ya leído al endpoint.
+2. **Ajuste de ADR-012 (aprobado por el usuario el 2026-11-20):** el Coordinador sube el `.xlsx` y openpyxl 3.1.5 (MIT) lo lee detrás del puerto `LectorExcel`. El camino del libro ya leído se conserva y da el mismo resultado (ESC-XL). Después del ajuste, la regresión de CU-01 a CU-12 y de CU-14 da los mismos códigos.
 
 ## Anexo: script de ejecución
 
@@ -117,4 +120,48 @@ a, c, r, b = app()
 a["proveedor"].emitir("tok-C-vencido", "C-01", "CoordinadorPracticas", datetime.now() - timedelta(minutes=16))
 print(" HTTP", *importar(c, VALIDO, token="tok-C-vencido"))
 print(" cargado:", cargado(r))
+
+
+# --- Ajuste ADR-012: el Coordinador sube el archivo .xlsx real ---
+from io import BytesIO
+from openpyxl import Workbook
+
+
+def a_xlsx(hojas, numeros=True):
+    """Arma un .xlsx real; los cupos que son numeros se escriben como numero, como en una hoja de Excel."""
+    libro = Workbook()
+    libro.remove(libro.active)
+    for nombre, filas in hojas.items():
+        hoja = libro.create_sheet(nombre)
+        encabezado = list(filas[0].keys())
+        hoja.append(encabezado)
+        for fila in filas:
+            hoja.append([float(v) if numeros and k == "cupos" and v.lstrip("-").isdigit() else v for k, v in fila.items()])
+        hoja.append([None] * len(encabezado))  # fila vacia al final: se ignora
+    salida = BytesIO()
+    libro.save(salida)
+    return salida.getvalue()
+
+
+print("== ESC-XL")
+a, c, r, b = app()
+archivo = a_xlsx(CON_ERRORES)
+open(sys.argv[2] if len(sys.argv) > 2 else "historico_cu13.xlsx", "wb").write(archivo)
+estado, cuerpo = c.importar_historico_excel("tok-C-01", archivo)
+print(" bytes del .xlsx:", len(archivo), "| empieza con:", archivo[:2])
+print(" HTTP", estado, "cargadas:", cuerpo["cargadas"])
+for f in cuerpo["rechazadas"]:
+    print("  rechazada:", f)
+print(" igual que con el libro ya leido:", cuerpo == importar(app()[1], CON_ERRORES)[1])
+print(" PL-H1 cupos (3.0 en Excel):", r.obtener_plaza("PL-H1").cupos)
+
+print("== ESC-AN")
+a, c, r, b = app()
+print(" HTTP", *c.importar_historico_excel("tok-C-01", b"esto no es un excel"))
+print(" cargado:", cargado(r))
+
+print("== ESC-XS")
+a, c, r, b = app()
+print(" HTTP", *c.importar_historico_excel("tok-T-500", a_xlsx(VALIDO)))
+print(" cargado:", cargado(r), "| bitacora:", [(x["usuario"], x["recurso"], x["accion"]) for x in b.listar()])
 ```

@@ -113,7 +113,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL
       Depende de: T-15
 
-- [ ] T-19 Revalidar CU-13 con archivos .xlsx reales y actualizar la evidencia
+- [x] T-19 Revalidar CU-13 con archivos .xlsx reales y actualizar la evidencia
       Archivos: specs/013-cargar-historico-excel/validacion.md
       Escenarios: todos
       Depende de: T-17, T-18
