@@ -17,7 +17,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Enum EstadoActa
+- [x] T-01 Enum EstadoActa
       Archivos: src/dominio/estado_acta.py
       Escenarios: ESC-B1, ESC-B2, ESC-R3
       Depende de: ninguna
