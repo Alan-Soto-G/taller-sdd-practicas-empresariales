@@ -98,7 +98,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-R1, ESC-R3
       Depende de: ninguna
 
-- [ ] T-16 Caso de uso GenerarActa
+- [x] T-16 Caso de uso GenerarActa
       Archivos: src/aplicacion/actas/generar_acta.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-CO, ESC-E2
       Depende de: T-02, T-03, T-06, T-07, T-09, T-10, T-15
