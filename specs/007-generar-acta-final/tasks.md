@@ -86,7 +86,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-E2
       Depende de: T-12
 
-- [ ] T-14 Caso de uso SolicitarActas
+- [x] T-14 Caso de uso SolicitarActas
       Archivos: src/aplicacion/actas/solicitar_actas.py
       Escenarios: ESC-B1, ESC-NE, ESC-PN, ESC-SR, ESC-E2
       Depende de: T-02, T-05, T-06, T-08, T-10, T-11, T-13
