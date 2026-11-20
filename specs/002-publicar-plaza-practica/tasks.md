@@ -26,7 +26,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: errores (ADR-007)
 
-- [ ] T-03 Error EmpresaNoEncontrada
+- [x] T-03 Error EmpresaNoEncontrada
       Archivos: src/aplicacion/errores/empresa_no_encontrada.py
       Escenarios: ESC-EN
       Depende de: ninguna
