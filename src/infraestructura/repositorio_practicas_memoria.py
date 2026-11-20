@@ -1,5 +1,6 @@
 """Adaptador en memoria de RepositorioPracticas (sustituye al Adaptador PostgreSQL en esta etapa; ADR-003)."""
 
+from dominio.empresa import Empresa
 from dominio.estado_postulacion import EstadoPostulacion
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
@@ -12,6 +13,7 @@ class RepositorioPracticasMemoria:
         """Inicializa los almacenes en memoria."""
         self._plazas: dict[str, Plaza] = {}
         self._postulaciones: list[Postulacion] = []
+        self._empresas: dict[str, Empresa] = {}
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -52,3 +54,19 @@ class RepositorioPracticasMemoria:
     def listar_postulaciones(self) -> list[Postulacion]:
         """Devuelve una copia de la lista de postulaciones registradas."""
         return list(self._postulaciones)
+
+    def agregar_empresa(self, empresa: Empresa) -> None:
+        """Precarga una empresa en el repositorio."""
+        self._empresas[empresa.id] = empresa
+
+    def obtener_empresa(self, id_empresa: str) -> Empresa | None:
+        """Obtiene una empresa por su identificador."""
+        return self._empresas.get(id_empresa)
+
+    def guardar_plaza(self, plaza: Plaza) -> None:
+        """Guarda una plaza nueva publicada por CU-02."""
+        self._plazas[plaza.id] = plaza
+
+    def listar_plazas(self) -> list[Plaza]:
+        """Devuelve una copia de la lista de plazas registradas."""
+        return list(self._plazas.values())

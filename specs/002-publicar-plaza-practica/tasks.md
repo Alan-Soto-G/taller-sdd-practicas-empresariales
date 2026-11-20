@@ -62,7 +62,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura: adaptadores
 
-- [ ] T-09 RepositorioPracticasMemoria: empresas, obtener_empresa, guardar_plaza y listar_plazas
+- [x] T-09 RepositorioPracticasMemoria: empresas, obtener_empresa, guardar_plaza y listar_plazas
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-PO, ESC-DU, ESC-EN
       Depende de: T-05
