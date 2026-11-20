@@ -25,7 +25,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-AC
       Depende de: ninguna
 
-- [ ] T-03 Caso de uso ConsultarActaPractica (Módulo Actas, solo lectura)
+- [x] T-03 Caso de uso ConsultarActaPractica (Módulo Actas, solo lectura)
       Archivos: src/aplicacion/actas/consultar_acta_practica.py
       Escenarios: ESC-B, ESC-EC, ESC-AC
       Depende de: T-02
