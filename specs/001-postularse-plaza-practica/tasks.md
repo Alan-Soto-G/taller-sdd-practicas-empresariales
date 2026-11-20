@@ -44,7 +44,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TV
       Depende de: T-04
 
-- [ ] T-06 Error AccesoDenegado
+- [x] T-06 Error AccesoDenegado
       Archivos: src/aplicacion/errores/acceso_denegado.py
       Escenarios: ESC-SR
       Depende de: T-04
