@@ -27,7 +27,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-CC
       Depende de: ninguna
 
-- [ ] T-03 Entidad Postulacion con la creación en estado enviada
+- [x] T-03 Entidad Postulacion con la creación en estado enviada
       Archivos: src/dominio/postulacion.py
       Escenarios: ESC-B, ESC-OP, ESC-VP, ESC-CC
       Depende de: T-01
