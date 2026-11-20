@@ -1,12 +1,15 @@
-"""Adaptador de entrada REST de CU-01 a CU-05: traduce POST /postulaciones, POST /plazas, POST /asignaciones, POST /practicas/{id}/horas y POST /registros-horas/{id}/revision a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007)."""
+"""Adaptador de entrada REST de CU-01 a CU-06: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
 from aplicacion.errores.acceso_denegado import AccesoDenegado
+from aplicacion.errores.enlace_no_valido import EnlaceNoValido
 from aplicacion.errores.empresa_no_encontrada import EmpresaNoEncontrada
 from aplicacion.errores.error_aplicacion import ErrorAplicacion
+from aplicacion.errores.evaluacion_no_permitida import EvaluacionNoPermitida
+from aplicacion.errores.evaluacion_no_valida import EvaluacionNoValida
 from aplicacion.errores.no_autenticado import NoAutenticado
 from aplicacion.errores.plaza_no_encontrada import PlazaNoEncontrada
 from aplicacion.errores.plaza_no_valida import PlazaNoValida
@@ -15,6 +18,11 @@ from aplicacion.errores.practica_no_encontrada import PracticaNoEncontrada
 from aplicacion.errores.registro_no_encontrado import RegistroNoEncontrado
 from aplicacion.errores.registro_no_valido import RegistroNoValido
 from aplicacion.errores.tutor_no_encontrado import TutorNoEncontrado
+from aplicacion.evaluacion.consultar_formulario_evaluacion import ConsultarFormularioEvaluacion
+from aplicacion.evaluacion.emitir_enlace_evaluacion import EmitirEnlaceEvaluacion
+from aplicacion.evaluacion.registrar_evaluacion import RegistrarEvaluacion
+from aplicacion.evaluacion.solicitud_enlace_evaluacion import SolicitudEnlaceEvaluacion
+from aplicacion.evaluacion.solicitud_evaluacion import SolicitudEvaluacion
 from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.horas.solicitud_registro_horas import SolicitudRegistroHoras
@@ -23,7 +31,10 @@ from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
 from aplicacion.postulaciones.solicitud_publicacion_plaza import SolicitudPublicacionPlaza
+from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
+
+ACCION_EVALUAR = "evaluar"
 
 ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     NoAutenticado: 401,
@@ -36,11 +47,14 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     PlazaNoValida: 400,
     PostulacionNoPermitida: 409,
     RegistroNoValido: 422,
+    EnlaceNoValido: 410,
+    EvaluacionNoPermitida: 409,
+    EvaluacionNoValida: 422,
 }
 
 
 class ControladorRest:
-    """Controlador REST de postulaciones, plazas, asignaciones, horas y revisiones."""
+    """Controlador REST de postulaciones, plazas, asignaciones, horas y evaluaciones."""
 
     def __init__(
         self,
@@ -50,6 +64,10 @@ class ControladorRest:
         asignar_tutor: AsignarTutor,
         registrar_horas: RegistrarHoras,
         aprobar_horas: AprobarHoras,
+        validador_enlace: ValidadorEnlace,
+        emitir_enlace_evaluacion: EmitirEnlaceEvaluacion,
+        consultar_formulario_evaluacion: ConsultarFormularioEvaluacion,
+        registrar_evaluacion: RegistrarEvaluacion,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -58,6 +76,10 @@ class ControladorRest:
         self._asignar_tutor = asignar_tutor
         self._registrar_horas = registrar_horas
         self._aprobar_horas = aprobar_horas
+        self._validador_enlace = validador_enlace
+        self._emitir_enlace_evaluacion = emitir_enlace_evaluacion
+        self._consultar_formulario_evaluacion = consultar_formulario_evaluacion
+        self._registrar_evaluacion = registrar_evaluacion
 
     def postular(
         self,
@@ -205,6 +227,78 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def emitir_enlace_evaluacion(
+        self,
+        token: str | None,
+        id_practica: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /practicas/{id}/enlaces-evaluacion."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._emitir_enlace_evaluacion.ejecutar(
+                SolicitudEnlaceEvaluacion(usuario, id_practica)
+            )
+            return (
+                201,
+                {
+                    "id_enlace": resultado.id_enlace,
+                    "id_practica": resultado.id_practica,
+                    "vence": resultado.vence.isoformat(),
+                    "correo_representante": resultado.correo_representante,
+                    "mensaje": "enlace de evaluación enviado",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def abrir_evaluacion(
+        self,
+        enlace: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición GET /evaluaciones/{enlace}; no pide token institucional (ADR-005)."""
+        try:
+            identidad = self._validador_enlace.validar(enlace, ACCION_EVALUAR)
+            formulario = self._consultar_formulario_evaluacion.ejecutar(identidad)
+            return (
+                200,
+                {
+                    "id_practica": formulario.id_practica,
+                    "id_estudiante": formulario.id_estudiante,
+                    "criterios": [
+                        {"nombre": c.nombre, "escala": c.escala}
+                        for c in formulario.criterios
+                    ],
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def enviar_evaluacion(
+        self,
+        enlace: str,
+        cuerpo: dict[str, object],
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /evaluaciones/{enlace}; no pide token institucional (ADR-005)."""
+        try:
+            identidad = self._validador_enlace.validar(enlace, ACCION_EVALUAR)
+            solicitud = SolicitudEvaluacion(
+                identidad,
+                dict(cuerpo.get("calificaciones", {})),
+                str(cuerpo.get("observaciones", "")),
+            )
+            resultado = self._registrar_evaluacion.ejecutar(solicitud)
+            return (
+                201,
+                {
+                    "id": resultado.id,
+                    "id_practica": resultado.id_practica,
+                    "estado_practica": str(resultado.estado_practica),
+                    "mensaje": "evaluación enviada",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
     def _responder_error(
         self,
         error: ErrorAplicacion,
@@ -216,6 +310,16 @@ class ControladorRest:
             "mensaje": error.mensaje,
             "correlacion": uuid4().hex,
         }
-        if isinstance(error, (PostulacionNoPermitida, PlazaNoValida, RegistroNoValido)):
+        if isinstance(
+            error,
+            (
+                PostulacionNoPermitida,
+                PlazaNoValida,
+                RegistroNoValido,
+                EnlaceNoValido,
+                EvaluacionNoPermitida,
+                EvaluacionNoValida,
+            ),
+        ):
             cuerpo["motivo"] = error.motivo
         return (estado, cuerpo)

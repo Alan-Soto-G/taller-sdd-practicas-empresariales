@@ -142,7 +142,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-11
 
-- [ ] T-24 ControladorRest: emitir_enlace_evaluacion, abrir_evaluacion y enviar_evaluacion
+- [x] T-24 ControladorRest: emitir_enlace_evaluacion, abrir_evaluacion y enviar_evaluacion
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-16, T-18, T-21, T-22
