@@ -93,7 +93,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: Módulo Actas (Worker)
 
-- [ ] T-15 DTO ResultadoGeneracion
+- [x] T-15 DTO ResultadoGeneracion
       Archivos: src/aplicacion/actas/resultado_generacion.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3
       Depende de: ninguna
