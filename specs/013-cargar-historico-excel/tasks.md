@@ -93,7 +93,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-12, T-13
 
-- [ ] T-15 Adaptador LectorExcelOpenpyxl
+- [x] T-15 Adaptador LectorExcelOpenpyxl
       Archivos: src/infraestructura/lector_excel_openpyxl.py
       Escenarios: ESC-XL, ESC-AN
       Depende de: T-11, T-12
