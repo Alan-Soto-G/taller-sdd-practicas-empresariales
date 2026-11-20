@@ -120,7 +120,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B3, ESC-CI
       Depende de: T-07
 
-- [ ] T-20 DTO EvaluacionRegistrada
+- [x] T-20 DTO EvaluacionRegistrada
       Archivos: src/aplicacion/evaluacion/evaluacion_registrada.py
       Escenarios: ESC-B3
       Depende de: ninguna
