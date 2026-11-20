@@ -81,7 +81,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TV
       Depende de: T-05, T-09
 
-- [ ] T-13 DTO de entrada SolicitudPostulacion
+- [x] T-13 DTO de entrada SolicitudPostulacion
       Archivos: src/aplicacion/postulaciones/solicitud_postulacion.py
       Escenarios: ESC-B
       Depende de: T-09
