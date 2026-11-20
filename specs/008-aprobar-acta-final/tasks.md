@@ -28,7 +28,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B3
       Depende de: ninguna
 
-- [ ] T-03 Practica: cerrar
+- [x] T-03 Practica: cerrar
       Archivos: src/dominio/practica.py
       Escenarios: ESC-B3
       Depende de: ninguna

@@ -39,3 +39,9 @@ class Practica:
         if self.estado != EstadoPractica.EVALUADA:
             raise ValueError('la practica no esta evaluada')
         return replace(self, estado=EstadoPractica.ACTA_EN_TRAMITE)
+
+    def cerrar(self) -> 'Practica':
+        """Regla de CU-08: la Practica con acta en tramite queda cerrada cuando su acta tiene las tres aprobaciones."""
+        if self.estado != EstadoPractica.ACTA_EN_TRAMITE:
+            raise ValueError('la practica no tiene el acta en tramite')
+        return replace(self, estado=EstadoPractica.CERRADA)
