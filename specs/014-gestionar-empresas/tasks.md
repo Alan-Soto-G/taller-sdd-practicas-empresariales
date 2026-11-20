@@ -45,7 +45,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-LI, ESC-CO, ESC-EL, ESC-EP
       Depende de: ninguna
 
-- [ ] T-06 DTO SolicitudEmpresa
+- [x] T-06 DTO SolicitudEmpresa
       Archivos: src/aplicacion/postulaciones/solicitud_empresa.py
       Escenarios: ESC-B, ESC-AC, ESC-EL, ESC-EP, ESC-YE, ESC-DI, ESC-EN, ESC-SR
       Depende de: ninguna
