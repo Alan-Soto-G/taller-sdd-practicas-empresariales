@@ -51,7 +51,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TN
       Depende de: ninguna
 
-- [ ] T-07 Error CorreoNoEnviado
+- [x] T-07 Error CorreoNoEnviado
       Archivos: src/aplicacion/errores/correo_no_enviado.py
       Escenarios: ESC-CO
       Depende de: ninguna
