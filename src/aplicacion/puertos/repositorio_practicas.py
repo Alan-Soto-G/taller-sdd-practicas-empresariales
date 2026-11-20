@@ -1,10 +1,13 @@
 """Puerto de persistencia de las entidades del proceso (glosario: RepositorioPracticas; ADR-003). Lo implementa infraestructura."""
 from typing import Protocol
 
+from dominio.acta_final import ActaFinal
+from dominio.coordinador_practicas import CoordinadorPracticas
 from dominio.empresa import Empresa
 from dominio.enlace_acceso import EnlaceAcceso
 from dominio.estudiante import Estudiante
 from dominio.evaluacion import Evaluacion
+from dominio.intento_generacion import IntentoGeneracion
 from dominio.registro_horas import RegistroHoras
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
@@ -113,4 +116,24 @@ class RepositorioPracticas(Protocol):
 
     def guardar_evaluacion(self, evaluacion: Evaluacion) -> None:
         """Guarda la Evaluacion de la Practica (CU-06)."""
+        ...
+
+    def guardar_acta(self, acta: ActaFinal) -> None:
+        """Guarda el ActaFinal, nueva o modificada (CU-07)."""
+        ...
+
+    def obtener_acta(self, id_acta: str) -> ActaFinal | None:
+        """Devuelve el ActaFinal o None si no existe (CU-07)."""
+        ...
+
+    def guardar_intento(self, intento: IntentoGeneracion) -> None:
+        """Registra un IntentoGeneracion del Worker de actas (CU-07, ADR-001)."""
+        ...
+
+    def obtener_evaluacion_de_practica(self, id_practica: str) -> Evaluacion | None:
+        """Devuelve la Evaluacion de la Practica o None (CU-07)."""
+        ...
+
+    def obtener_coordinador(self) -> CoordinadorPracticas | None:
+        """Devuelve el Coordinador de Practicas o None (CU-07)."""
         ...

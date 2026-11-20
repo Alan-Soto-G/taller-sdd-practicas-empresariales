@@ -64,7 +64,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-R1, ESC-R3
       Depende de: T-07
 
-- [ ] T-10 Puerto RepositorioPracticas: actas, intentos, evaluación y coordinador
+- [x] T-10 Puerto RepositorioPracticas: actas, intentos, evaluación y coordinador
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-02, T-03, T-04
