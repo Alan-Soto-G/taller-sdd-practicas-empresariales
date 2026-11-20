@@ -31,7 +31,7 @@ Prohibido: cualquier ciclo (por ejemplo, Módulo Horas usando Módulo Actas, o M
 
 | Capa | Contenido | Puede usar |
 |------|-----------|------------|
-| infraestructura | Controlador REST, Validador de token, Validador de enlace, Adaptador SSO, Adaptador PostgreSQL, Publicador, Adaptador de correo, Adaptador de bitácora y Adaptador del repositorio de actas | aplicacion y dominio (implementa los puertos) |
+| infraestructura | Controlador REST, Validador de token, Validador de enlace, Adaptador SSO, Adaptador PostgreSQL, Publicador, Adaptador de correo, Adaptador de bitácora, Adaptador del repositorio de actas, Adaptador PDF (ReportLab) y Adaptador de Excel (openpyxl) | aplicacion y dominio (implementa los puertos) |
 | aplicacion | Casos de uso (Postulaciones, Asignación, Horas, Evaluación, Actas, Seguimiento y Configuración) y puertos de salida en `aplicacion/puertos/` | dominio |
 | dominio | Entidades y reglas: Practica, Postulacion, RegistroHoras, Evaluacion, ActaFinal, Aprobacion, ReglaPractica, EnlaceAcceso, entre otras | nada externo |
 
@@ -48,15 +48,17 @@ Prohibido: cualquier ciclo (por ejemplo, Módulo Horas usando Módulo Actas, o M
 | Módulo Asignación | Caso de uso | CU-03: asigna tutor respetando la carga máxima | Puertos RepositorioPracticas, Notificador y Bitacora; Módulo Configuración |
 | Módulo Horas | Caso de uso | CU-04 y CU-05: registra y aprueba horas, con autorización por titularidad | Puertos RepositorioPracticas y Bitacora; Módulo Configuración |
 | Módulo Evaluación | Caso de uso | CU-06: emite el enlace y registra la evaluación de la empresa | Puertos RepositorioPracticas, Notificador y Bitacora; Módulo Configuración |
-| Módulo Actas | Caso de uso | CU-07, CU-08 y CU-12: solicita la generación, registra aprobaciones y exporta el acta | Puertos RepositorioPracticas, PublicadorActas, AlmacenActas, Notificador y Bitacora; Módulos Horas y Evaluación |
+| Módulo Actas | Caso de uso | CU-07, CU-08 y CU-12: solicita la generación, registra aprobaciones y exporta el acta | Puertos RepositorioPracticas, PublicadorActas, AlmacenActas, ComponedorActa (solo en el Worker, ADR-011), Notificador y Bitacora; Módulos Horas y Evaluación |
 | Módulo Seguimiento | Caso de uso | CU-09, CU-10 y CU-11: consultas de avance, estado y reportes | Puerto RepositorioPracticas; Módulos Horas y Actas |
-| Módulo Configuración | Caso de uso | Versiones de ReglaPractica y CriterioEvaluacion; importador de Excel de CU-13 (ADR-008) | Puertos RepositorioPracticas y Bitacora |
+| Módulo Configuración | Caso de uso | Versiones de ReglaPractica y CriterioEvaluacion; importador de Excel de CU-13 (ADR-008) | Puertos RepositorioPracticas, LectorExcel (ADR-012) y Bitacora |
 | Adaptador SSO | Adaptador | Implementa ProveedorIdentidad contra el Directorio Activo / SSO | Directorio Activo / SSO (OIDC / SAML) |
 | Adaptador PostgreSQL | Adaptador | Implementa RepositorioPracticas | PostgreSQL (SQL) |
 | Publicador | Adaptador | Implementa PublicadorActas sobre el broker | Broker de mensajes (AMQP) |
 | Adaptador de correo | Adaptador | Implementa Notificador | Servicio de correo institucional (SMTP) |
 | Adaptador de bitácora | Adaptador | Implementa Bitacora escribiendo en la tabla de auditoría (ADR-006) | PostgreSQL (SQL) |
 | Adaptador del repositorio de actas | Adaptador | Implementa AlmacenActas (lectura de PDF para exportar) | Repositorio de actas (sistema de archivos) |
+| Adaptador de Excel (openpyxl) | Adaptador | Implementa LectorExcel: lee las hojas del .xlsx y traduce un archivo ilegible a ArchivoNoValido (ADR-012, ADR-007) | Librería openpyxl |
+| Adaptador PDF (ReportLab) | Adaptador | Implementa ComponedorActa: compone el PDF del acta y traduce sus fallas a ActaNoComponible (ADR-011, ADR-007) | Librería ReportLab |
 
 En esta etapa del taller, cada adaptador externo tiene una versión en memoria o simulada que implementa el mismo puerto (`AGENTS.md`).
 

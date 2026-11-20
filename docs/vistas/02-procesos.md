@@ -15,7 +15,7 @@ Diagrama: [diagramas/02-procesos.puml](../diagramas/02-procesos.puml)
 | Aplicación web | Interfaz por rol: estudiante, tutor, coordinador y representante de empresa; adaptable a móviles (ADR-010) | Angular | API de prácticas (JSON / HTTPS); Directorio Activo / SSO (redirección de inicio de sesión) |
 | API de prácticas | Reglas del proceso: postulación, asignación, horas, evaluación, actas y configuración (monolito modular, ADR-002) | Python | Aplicación web, PostgreSQL, Broker, Repositorio de actas (lee), Directorio Activo / SSO y Servicio de correo |
 | Broker de mensajes | Guarda las solicitudes de acta hasta que el worker las procese; cola `actas` y cola `errores_actas` (ADR-001) | RabbitMQ | API (publica) y Worker de actas (entrega) |
-| Worker de actas | Consolida horas, evaluación y datos de la práctica, compone el PDF, hace hasta 3 intentos y notifica | Python | Broker, PostgreSQL, Repositorio de actas y Servicio de correo |
+| Worker de actas | Consolida horas, evaluación y datos de la práctica, compone el PDF con ReportLab (ADR-011), hace hasta 3 intentos y notifica | Python | Broker, PostgreSQL, Repositorio de actas y Servicio de correo |
 | PostgreSQL | Postulaciones, prácticas, horas, evaluaciones, actas, aprobaciones, reglas, enlaces y auditoría (ADR-003, ADR-006) | PostgreSQL | API (SQL) y Worker de actas (SQL) |
 | Repositorio de actas | PDF de las actas finales, listos para exportar | Almacenamiento institucional de archivos | Worker de actas (escribe) y API (lee) |
 

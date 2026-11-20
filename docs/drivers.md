@@ -6,8 +6,8 @@
 
 | ID | Caso de uso | Actor | ¿Primario? | Justificación | Se especifica en |
 |----|-------------|-------|------------|---------------|------------------|
-| **CU-01** | Postularse a una plaza de práctica | Estudiante | Sí | Importancia para el negocio (inicio del proceso) y alta frecuencia: los 500 estudiantes se postulan en las primeras semanas del periodo | [specs/001](../specs/001-postularse-plaza/spec.md) |
-| **CU-02** | Publicar plazas de práctica | Coordinador de Prácticas | No | CRUD estándar sobre empresas ya aliadas | [specs/002](../specs/002-publicar-plazas/spec.md) |
+| **CU-01** | Postularse a una plaza de práctica | Estudiante | Sí | Importancia para el negocio (inicio del proceso) y alta frecuencia: los 500 estudiantes se postulan en las primeras semanas del periodo | [specs/001](../specs/001-postularse-plaza-practica/spec.md) |
+| **CU-02** | Publicar plazas de práctica | Coordinador de Prácticas | No | CRUD estándar sobre empresas ya aliadas | [specs/002](../specs/002-publicar-plaza-practica/spec.md) |
 | **CU-03** | Asignar tutor a un estudiante | Coordinador de Prácticas | Sí | Importancia para el negocio (OB-01) y complejidad: reparte 500 estudiantes entre 50 tutores respetando la carga máxima de cada uno | [specs/003](../specs/003-asignar-tutor/spec.md) |
 | **CU-04** | Registrar horas de práctica | Estudiante | Sí | Alta frecuencia y riesgo: concentración masiva al cierre del semestre (R-02); ligado a OB-02, EAC-01 y EAC-04 | [specs/004](../specs/004-registrar-horas/spec.md) |
 | **CU-05** | Aprobar horas reportadas | Tutor / Docente | No | Cambio de estado sobre registros ya existentes; la integridad se cubre con EAC-04 | [specs/005](../specs/005-aprobar-horas/spec.md) |

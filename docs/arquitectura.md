@@ -38,6 +38,8 @@ Detalle: [Contexto](contexto.md)
 | PA-05, PA-07, EAC-03, S-04 | Reglas de la práctica como datos y carga inicial por migraciones e importador de Excel | [ADR-008](adr/ADR-008-reglas-configurables.md) |
 | PA-06, S-01, RN-01, R-02 | Contenedores Docker en los servidores de la universidad; réplicas en el cierre de semestre | [ADR-009](adr/ADR-009-despliegue-contenedores.md) |
 | RT-02, EAC-05, OB-04 | Aplicación web adaptable de una sola página en Angular | [ADR-010](adr/ADR-010-aplicacion-web-adaptable.md) |
+| CU-07, RN-01, DT-05 | PDF del acta con ReportLab detrás del puerto ComponedorActa | [ADR-011](adr/ADR-011-libreria-pdf-actas.md) |
+| CU-13, PA-07, S-04, RN-01 | Lectura del histórico en Excel con openpyxl detrás del puerto LectorExcel | [ADR-012](adr/ADR-012-lectura-excel-historico.md) |
 
 ## 5. Vistas (4+1)
 
@@ -71,6 +73,8 @@ Ninguna fila vacía: todo driver y todo ADR se ven en al menos una vista.
 | ADR-008 Reglas configurables | | ✓ | | ✓ | |
 | ADR-009 Despliegue en contenedores | | | | | ✓ |
 | ADR-010 Aplicación web adaptable | | | ✓ | | ✓ |
+| ADR-011 Librería de PDF del acta | | | ✓ | ✓ | |
+| ADR-012 Lectura del histórico en Excel | | | | ✓ | |
 
 Nota: EAC-02 también se ve en el escenario [CU-07](diagramas/secuencias/cu07-generar-acta-final.puml), EAC-04 en [CU-04](diagramas/secuencias/cu04-registrar-horas.puml) y EAC-05 en [CU-06](diagramas/secuencias/cu06-evaluar-practicante.puml). RN-01 se verifica, además, en que todas las tecnologías de los catálogos son de código abierto.
 
@@ -100,6 +104,8 @@ Nota: EAC-02 también se ve en el escenario [CU-07](diagramas/secuencias/cu07-ge
 | [ADR-008](adr/ADR-008-reglas-configurables.md) | Reglas de la práctica como datos | Aceptado | EAC-03, PA-05, PA-07 |
 | [ADR-009](adr/ADR-009-despliegue-contenedores.md) | Contenedores Docker | Aceptado | S-01, RN-01, PA-06 |
 | [ADR-010](adr/ADR-010-aplicacion-web-adaptable.md) | Aplicación web adaptable | Aceptado | RT-02, EAC-05, OB-04 |
+| [ADR-011](adr/ADR-011-libreria-pdf-actas.md) | PDF del acta con ReportLab y puerto ComponedorActa | Aceptado | CU-07, RN-01, EAC-02 |
+| [ADR-012](adr/ADR-012-lectura-excel-historico.md) | Histórico en Excel con openpyxl y puerto LectorExcel | Aceptado | CU-13, PA-07, S-04, RN-01 |
 
 Todos los drivers de [drivers.md](drivers.md) quedan cubiertos por al menos un ADR.
 
@@ -127,7 +133,7 @@ Un EAC sin escenario en ninguna spec queda en evidencia: nadie lo está verifica
 | DT-02 | PDF huérfanos si el worker falla entre guardar el archivo y actualizar la base de datos | ADR-003 | Inconsistencia entre almacenes | Proceso periódico de conciliación (pendiente) |
 | DT-03 | No hay una política de retención de la auditoría | ADR-006 | Crecimiento de la tabla con cada cohorte | Acordarla con el Coordinador y el DBA antes del primer cierre |
 | DT-04 | La seguridad del enlace de un solo uso depende del buzón del representante | ADR-005 | Un tercero con acceso al correo podría evaluar | Vida de 7 días, uso único y auditoría de cada uso |
-| DT-05 | La librería de generación de PDF no está decidida | ADR-001 | Bloquea la implementación de CU-07 | ADR nuevo al planear CU-07 (código abierto, RN-01) |
+| DT-05 | La librería de generación de PDF no está decidida | ADR-001 | Bloquea la implementación de CU-07 | **Resuelta** por [ADR-011](adr/ADR-011-libreria-pdf-actas.md): ReportLab (BSD) detrás del puerto ComponedorActa |
 
 ## 10. Glosario
 
@@ -154,6 +160,8 @@ Un EAC sin escenario en ninguna spec queda en evidencia: nadie lo está verifica
 | Repositorio de prácticas | Puerto de persistencia de las entidades del proceso | `RepositorioPracticas` |
 | Publicador de actas | Puerto que publica las solicitudes de acta en la cola | `PublicadorActas` |
 | Almacén de actas | Puerto para leer y guardar los PDF de las actas | `AlmacenActas` |
+| Componedor de actas | Puerto que compone el PDF del acta a partir de sus datos consolidados (ADR-011) | `ComponedorActa` |
+| Lector de Excel | Puerto que lee las hojas de un archivo .xlsx como filas por encabezado (ADR-012) | `LectorExcel` |
 | Notificador | Puerto para enviar correos y enlaces | `Notificador` |
 | Bitácora | Puerto para registrar la auditoría | `Bitacora` |
 | Solicitud de acta | Mensaje que la API publica para que el Worker de actas genere un acta | mensaje `SolicitudActa` |
