@@ -49,7 +49,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-RE, ESC-DI, ESC-AJ, ESC-ET
       Depende de: ninguna
 
-- [ ] T-07 DTO de salida HorasRevisadas
+- [x] T-07 DTO de salida HorasRevisadas
       Archivos: src/aplicacion/horas/horas_revisadas.py
       Escenarios: ESC-B, ESC-RE, ESC-HC, ESC-VR
       Depende de: ninguna
