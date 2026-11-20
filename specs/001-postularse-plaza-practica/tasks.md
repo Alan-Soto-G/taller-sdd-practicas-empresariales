@@ -115,7 +115,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TV, ESC-SR
       Depende de: T-12
 
-- [ ] T-19 Adaptador de entrada ValidadorToken
+- [x] T-19 Adaptador de entrada ValidadorToken
       Archivos: src/infraestructura/validador_token.py
       Escenarios: ESC-TV
       Depende de: T-12
