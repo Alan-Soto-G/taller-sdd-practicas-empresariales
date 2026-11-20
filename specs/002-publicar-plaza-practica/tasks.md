@@ -14,7 +14,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Entidad Empresa (id y razón social)
+- [x] T-01 Entidad Empresa (id y razón social)
       Archivos: src/dominio/empresa.py
       Escenarios: ESC-B, ESC-EN
       Depende de: ninguna
