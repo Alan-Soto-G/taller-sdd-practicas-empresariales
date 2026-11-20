@@ -2,12 +2,15 @@
 from typing import Protocol
 
 from dominio.empresa import Empresa
+from dominio.enlace_acceso import EnlaceAcceso
 from dominio.estudiante import Estudiante
+from dominio.evaluacion import Evaluacion
 from dominio.registro_horas import RegistroHoras
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
 from dominio.practica import Practica
 from dominio.regla_practica import ReglaPractica
+from dominio.representante_empresa import RepresentanteEmpresa
 from dominio.tutor import Tutor
 
 
@@ -86,4 +89,28 @@ class RepositorioPracticas(Protocol):
 
     def sumar_horas_aprobadas(self, id_practica: str) -> int:
         """Suma las horas de los RegistroHoras aprobados de la Practica (CU-05)."""
+        ...
+
+    def obtener_representante_de_empresa(self, id_empresa: str) -> RepresentanteEmpresa | None:
+        """Devuelve el RepresentanteEmpresa de la Empresa o None (CU-06)."""
+        ...
+
+    def guardar_enlace(self, enlace: EnlaceAcceso) -> None:
+        """Guarda un EnlaceAcceso nuevo (CU-06, ADR-005)."""
+        ...
+
+    def obtener_enlace_por_token(self, token: str) -> EnlaceAcceso | None:
+        """Devuelve el EnlaceAcceso del token o None (ADR-005)."""
+        ...
+
+    def invalidar_enlaces(self, id_practica: str, accion: str) -> None:
+        """Marca como usados los enlaces sin usar de la Practica para la accion; se usa al reemitir (ADR-005)."""
+        ...
+
+    def marcar_enlace_usado(self, id_enlace: str) -> bool:
+        """Marca el enlace como usado de forma atomica; devuelve False si ya estaba usado (un solo uso, ADR-005)."""
+        ...
+
+    def guardar_evaluacion(self, evaluacion: Evaluacion) -> None:
+        """Guarda la Evaluacion de la Practica (CU-06)."""
         ...

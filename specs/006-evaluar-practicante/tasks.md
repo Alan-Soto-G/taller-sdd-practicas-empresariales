@@ -71,7 +71,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-CI
       Depende de: ninguna
 
-- [ ] T-11 Puerto RepositorioPracticas: representantes, enlaces y evaluaciones
+- [x] T-11 Puerto RepositorioPracticas: representantes, enlaces y evaluaciones
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-03, T-04, T-05
