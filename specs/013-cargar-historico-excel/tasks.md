@@ -40,7 +40,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-RE, ESC-DO, ESC-HD
       Depende de: T-04
 
-- [ ] T-06 Caso de uso ImportarHistorico
+- [x] T-06 Caso de uso ImportarHistorico
       Archivos: src/aplicacion/configuracion/importar_historico.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01, T-02, T-03, T-05
