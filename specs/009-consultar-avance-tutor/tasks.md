@@ -45,7 +45,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-VAC
       Depende de: T-05
 
-- [ ] T-07 Caso de uso ConsultarAvanceTutor
+- [x] T-07 Caso de uso ConsultarAvanceTutor
       Archivos: src/aplicacion/seguimiento/consultar_avance_tutor.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01, T-03, T-04, T-06
