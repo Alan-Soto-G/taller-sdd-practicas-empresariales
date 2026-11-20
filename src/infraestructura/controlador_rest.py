@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-09: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-10: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
@@ -44,7 +44,9 @@ from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
 from aplicacion.postulaciones.solicitud_publicacion_plaza import SolicitudPublicacionPlaza
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
+from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
 from aplicacion.seguimiento.solicitud_avance_tutor import SolicitudAvanceTutor
+from aplicacion.seguimiento.solicitud_estado_practica import SolicitudEstadoPractica
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
 
@@ -90,6 +92,7 @@ class ControladorRest:
         aprobar_acta: AprobarActa,
         registrar_enlace_rechazado: RegistrarEnlaceRechazado,
         consultar_avance_tutor: ConsultarAvanceTutor,
+        consultar_estado_practica: ConsultarEstadoPractica,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -107,6 +110,7 @@ class ControladorRest:
         self._aprobar_acta = aprobar_acta
         self._registrar_enlace_rechazado = registrar_enlace_rechazado
         self._consultar_avance_tutor = consultar_avance_tutor
+        self._consultar_estado_practica = consultar_estado_practica
 
     def postular(
         self,
@@ -433,6 +437,47 @@ class ControladorRest:
                             "porcentaje": a.porcentaje,
                         }
                         for a in resultado.practicas
+                    ],
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def consultar_estado(
+        self,
+        token: str | None,
+        id_practica: str | None = None,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa GET /estudiantes/yo/practicas (sin id) y GET /practicas/{id}/estado (CU-10)."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._consultar_estado_practica.ejecutar(
+                SolicitudEstadoPractica(usuario, id_practica)
+            )
+            return (
+                200,
+                {
+                    "id_estudiante": resultado.id_estudiante,
+                    "practicas": [
+                        {
+                            "id_practica": e.id_practica,
+                            "id_empresa": e.id_empresa,
+                            "id_tutor": e.id_tutor,
+                            "estado": str(e.estado),
+                            "horas_aprobadas": e.horas_aprobadas,
+                            "horas_requeridas": e.horas_requeridas,
+                            "horas_pendientes": e.horas_pendientes,
+                            "porcentaje": e.porcentaje,
+                            "evaluacion_registrada": e.evaluacion_registrada,
+                            "acta": None
+                            if e.acta is None
+                            else {
+                                "id_acta": e.acta.id_acta,
+                                "estado": str(e.acta.estado),
+                                "aprobaciones": e.acta.aprobaciones,
+                            },
+                        }
+                        for e in resultado.practicas
                     ],
                 },
             )

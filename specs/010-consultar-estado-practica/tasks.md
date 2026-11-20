@@ -57,7 +57,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TO
       Depende de: T-01
 
-- [ ] T-09 ControladorRest: consultar_estado (GET /estudiantes/yo/practicas y GET /practicas/{id}/estado)
+- [x] T-09 ControladorRest: consultar_estado (GET /estudiantes/yo/practicas y GET /practicas/{id}/estado)
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-07
