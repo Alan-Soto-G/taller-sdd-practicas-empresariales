@@ -20,7 +20,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TO
       Depende de: ninguna
 
-- [ ] T-02 DTO ResumenActa
+- [x] T-02 DTO ResumenActa
       Archivos: src/aplicacion/actas/resumen_acta.py
       Escenarios: ESC-AC
       Depende de: ninguna
