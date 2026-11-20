@@ -83,7 +83,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN
       Depende de: T-11
 
-- [ ] T-13 DTO SolicitudImportacionExcel
+- [x] T-13 DTO SolicitudImportacionExcel
       Archivos: src/aplicacion/configuracion/solicitud_importacion_excel.py
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: ninguna
