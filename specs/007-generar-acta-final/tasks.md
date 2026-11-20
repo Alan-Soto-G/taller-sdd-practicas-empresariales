@@ -49,7 +49,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3
       Depende de: ninguna
 
-- [ ] T-07 Error AlmacenNoDisponible
+- [x] T-07 Error AlmacenNoDisponible
       Archivos: src/aplicacion/errores/almacen_no_disponible.py
       Escenarios: ESC-R1, ESC-R3, ESC-E2
       Depende de: ninguna
