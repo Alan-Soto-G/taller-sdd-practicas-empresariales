@@ -110,7 +110,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-SR
       Depende de: T-11
 
-- [ ] T-18 Adaptador ProveedorIdentidadSimulado (tokens de 15 minutos)
+- [x] T-18 Adaptador ProveedorIdentidadSimulado (tokens de 15 minutos)
       Archivos: src/infraestructura/proveedor_identidad_simulado.py
       Escenarios: ESC-TV, ESC-SR
       Depende de: T-12
