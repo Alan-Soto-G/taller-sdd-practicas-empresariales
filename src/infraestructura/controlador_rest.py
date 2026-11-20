@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-08: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-09: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
@@ -43,6 +43,8 @@ from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
 from aplicacion.postulaciones.solicitud_publicacion_plaza import SolicitudPublicacionPlaza
+from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
+from aplicacion.seguimiento.solicitud_avance_tutor import SolicitudAvanceTutor
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
 
@@ -87,6 +89,7 @@ class ControladorRest:
         emitir_enlace_aprobacion: EmitirEnlaceAprobacion,
         aprobar_acta: AprobarActa,
         registrar_enlace_rechazado: RegistrarEnlaceRechazado,
+        consultar_avance_tutor: ConsultarAvanceTutor,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -103,6 +106,7 @@ class ControladorRest:
         self._emitir_enlace_aprobacion = emitir_enlace_aprobacion
         self._aprobar_acta = aprobar_acta
         self._registrar_enlace_rechazado = registrar_enlace_rechazado
+        self._consultar_avance_tutor = consultar_avance_tutor
 
     def postular(
         self,
@@ -400,6 +404,38 @@ class ControladorRest:
             identidad = self._validar_enlace(enlace, ACCION_APROBAR_ACTA)
             resultado = self._aprobar_acta.aprobar_con_enlace(identidad)
             return (201, self._cuerpo_aprobacion(resultado))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def consultar_avance(
+        self,
+        token: str | None,
+        id_practica: str | None = None,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa GET /tutores/yo/avance (sin id) y GET /practicas/{id}/avance (CU-09)."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._consultar_avance_tutor.ejecutar(
+                SolicitudAvanceTutor(usuario, id_practica)
+            )
+            return (
+                200,
+                {
+                    "id_tutor": resultado.id_tutor,
+                    "practicas": [
+                        {
+                            "id_practica": a.id_practica,
+                            "id_estudiante": a.id_estudiante,
+                            "estado": str(a.estado),
+                            "horas_aprobadas": a.horas_aprobadas,
+                            "horas_requeridas": a.horas_requeridas,
+                            "horas_pendientes": a.horas_pendientes,
+                            "porcentaje": a.porcentaje,
+                        }
+                        for a in resultado.practicas
+                    ],
+                },
+            )
         except ErrorAplicacion as error:
             return self._responder_error(error)
 

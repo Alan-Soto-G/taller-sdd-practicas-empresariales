@@ -57,7 +57,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-UNA, ESC-VAC, ESC-VR
       Depende de: T-01
 
-- [ ] T-09 ControladorRest: consultar_avance (GET /tutores/yo/avance y GET /practicas/{id}/avance)
+- [x] T-09 ControladorRest: consultar_avance (GET /tutores/yo/avance y GET /practicas/{id}/avance)
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-07
