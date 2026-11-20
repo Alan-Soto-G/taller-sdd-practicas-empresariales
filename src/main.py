@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-13: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/013. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-14: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/014. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -42,6 +42,7 @@ from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
+from aplicacion.postulaciones.gestionar_empresas import GestionarEmpresas
 from aplicacion.horas.resumir_horas_practica import ResumirHorasPractica
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
 from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
@@ -105,6 +106,7 @@ def construir() -> dict[str, object]:
     )
     exportar_acta = ExportarActa(repositorio, bitacora, almacen_actas, reloj=datetime.now)
     importar_historico = ImportarHistorico(repositorio, bitacora, consultar_regla, reloj=datetime.now)
+    gestionar_empresas = GestionarEmpresas(repositorio, bitacora, reloj=datetime.now)
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -125,9 +127,10 @@ def construir() -> dict[str, object]:
         generar_reporte,
         exportar_acta,
         importar_historico,
+        gestionar_empresas,
     )
 
-    repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
+    repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S.", "900123456-7"))  # NIT desde CU-14
     repositorio.agregar_plaza(
         Plaza("PL-01", "EMP-ACME", "Practicante de desarrollo", 2, "2026-2")
     )
@@ -270,6 +273,7 @@ def construir() -> dict[str, object]:
         "generar_reporte": generar_reporte,
         "exportar_acta": exportar_acta,
         "importar_historico": importar_historico,
+        "gestionar_empresas": gestionar_empresas,
     }
 
 

@@ -77,7 +77,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos
       Depende de: T-09
 
-- [ ] T-12 Composición en main.py con GestionarEmpresas y el NIT de EMP-ACME
+- [x] T-12 Composición en main.py con GestionarEmpresas y el NIT de EMP-ACME
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-10, T-11
