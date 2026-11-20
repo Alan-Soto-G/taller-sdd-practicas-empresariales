@@ -78,7 +78,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-SC, ESC-RV
       Depende de: T-09, T-10
 
-- [ ] T-12 DTO de entrada SolicitudAsignacionTutor
+- [x] T-12 DTO de entrada SolicitudAsignacionTutor
       Archivos: src/aplicacion/asignacion/solicitud_asignacion_tutor.py
       Escenarios: ESC-B, ESC-VA, ESC-SR
       Depende de: ninguna
