@@ -43,7 +43,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos
       Depende de: T-04
 
-- [ ] T-06 Composición en main.py con ExportarActa
+- [x] T-06 Composición en main.py con ExportarActa
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-05

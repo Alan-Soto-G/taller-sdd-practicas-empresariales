@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-11: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/011. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-12: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/012. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -27,6 +27,7 @@ from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimul
 from infraestructura.validador_token import ValidadorToken
 from aplicacion.actas.aprobar_acta import AprobarActa
 from aplicacion.actas.emitir_enlace_aprobacion import EmitirEnlaceAprobacion
+from aplicacion.actas.exportar_acta import ExportarActa
 from aplicacion.actas.solicitar_actas import SolicitarActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.configuracion.consultar_criterios_evaluacion import ConsultarCriteriosEvaluacion
@@ -101,6 +102,7 @@ def construir() -> dict[str, object]:
     generar_reporte = GenerarReporte(
         repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
     )
+    exportar_acta = ExportarActa(repositorio, bitacora, almacen_actas, reloj=datetime.now)
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -119,6 +121,7 @@ def construir() -> dict[str, object]:
         consultar_avance_tutor,
         consultar_estado_practica,
         generar_reporte,
+        exportar_acta,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -262,6 +265,7 @@ def construir() -> dict[str, object]:
         "consultar_avance_tutor": consultar_avance_tutor,
         "consultar_estado_practica": consultar_estado_practica,
         "generar_reporte": generar_reporte,
+        "exportar_acta": exportar_acta,
     }
 
 
