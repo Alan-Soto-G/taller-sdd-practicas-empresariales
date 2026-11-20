@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-DI
       Depende de: ninguna
 
-- [ ] T-04 Error EmpresaNoPermitida con su motivo
+- [x] T-04 Error EmpresaNoPermitida con su motivo
       Archivos: src/aplicacion/errores/empresa_no_permitida.py
       Escenarios: ESC-EP, ESC-YE
       Depende de: ninguna
