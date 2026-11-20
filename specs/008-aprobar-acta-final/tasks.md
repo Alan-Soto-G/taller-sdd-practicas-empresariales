@@ -50,7 +50,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-01
 
-- [ ] T-07 DTO SolicitudEnlaceAprobacion
+- [x] T-07 DTO SolicitudEnlaceAprobacion
       Archivos: src/aplicacion/actas/solicitud_enlace_aprobacion.py
       Escenarios: ESC-B2, ESC-SR
       Depende de: ninguna
