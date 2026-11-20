@@ -15,13 +15,6 @@ Reglas permanentes del proyecto. Se le entregan al agente al inicio de cada sesi
 - Monolito modular (ADR-002), con Clean Architecture por dentro.
 - `dominio/` no importa nada de `aplicacion/` ni de `infraestructura/`.
 - Puertos como `Protocol` en `aplicacion/puertos/` (los define el caso de uso; los implementa `infraestructura/`).
-- La generación del acta final es asíncrona (ADR-001): la API solo encola; nunca compone el PDF del acta. Solo el Worker de actas lo hace.
-- PostgreSQL y repositorio de actas (ADR-003); en esta etapa, adaptadores en memoria.
-- Autenticación con el Directorio Activo / SSO institucional (ADR-004). El Representante de la Empresa no tiene cuenta institucional: accede solo con un enlace de un solo uso y con vencimiento (ADR-005).
-- Toda Práctica pertenece a un Estudiante. Solo la consultan su titular, su tutor asignado, el Representante de su empresa (con enlace) y el Coordinador de Prácticas; solo el tutor asignado aprueba sus horas (ADR-004).
-- Se audita cada cambio de estado, cada aprobación y cada acceso rechazado (ADR-006). Las firmas del acta son aprobaciones electrónicas internas, no un proveedor externo.
-- Errores de integración traducidos por los adaptadores a errores de aplicación (ADR-007).
-- Las reglas de la práctica (horas requeridas, carga por tutor, criterios de evaluación, plantilla del acta) son datos, no código (ADR-008).
 
 ## Convenciones de código
 
@@ -31,6 +24,8 @@ Reglas permanentes del proyecto. Se le entregan al agente al inicio de cada sesi
 - Sin base de datos real ni servicios externos reales en esta etapa: adaptadores en memoria o simulados.
 - Sin carpeta de pruebas automatizadas en esta etapa: la validación se hace escenario por escenario, con evidencia.
 
+---
+
 ## Forma de trabajar
 
 - Una tarea de `tasks.md` a la vez.
@@ -38,3 +33,40 @@ Reglas permanentes del proyecto. Se le entregan al agente al inicio de cada sesi
 - No inventar requisitos: lo que no esté en los documentos se marca en `spec.md` con `# [NECESITA ACLARACIÓN: <pregunta>]` o se pregunta.
 - No agregar librerías que ningún ADR haya aprobado.
 - Un commit por tarea, con el ID de la tarea en el mensaje.
+
+---
+
+## Flota de Obreros y Asignación de Tareas
+
+Distribuye las subtareas según su complejidad para equilibrar cuotas y evitar saturar una sola herramienta. **Ejecuta un solo obrero a la vez (nunca en paralelo sobre el mismo repositorio)** para evitar conflictos de escritura:
+
+### 1. GitHub Copilot CLI (`copilot`) — Obrero Principal (Lógica pesada y arquitectura)
+- **Cuándo usarlo:** Módulos nuevos, controladores/servicios Express complejos, consultas Prisma, integraciones con APIs externas, refactors de múltiples archivos y tests de integración.
+- **Selección de modelo:** usar `--model auto` (Copilot elige el modelo). Los nombres `claude-sonnet-5.5` y `claude-haiku-5.5` no están disponibles en la versión instalada (`Model "claude-haiku-5.5" is not available`).
+- **Comando:**
+  `copilot -p "<instrucción exacta con rutas, tipos y lógica>" --allow-all-tools --model auto`
+
+### 2. Antigravity CLI (`agy`) — Obrero Secundario (Iteración, tests y documentación)
+- **Cuándo usarlo:** Tests unitarios, anotaciones JSDoc/Swagger, actualización de colecciones Postman/README, endpoints CRUD sencillos y corrección de errores tras correr `npm run typecheck` o el linter.
+- **Control de cuota:** Usa siempre su modelo por defecto (`gemini-3.8-flash`). **No** fuerces modelos Opus en `agy` para no agotar la cuota de Google AI Plus antes de su reinicio.
+- **Comando:**
+  `agy -p "<instrucción exacta con rutas, tipos y lógica>"`
+
+### 3. OpenAI Codex CLI (`codex`) — Obrero Quirúrgico (Micro-tareas y respaldo)
+- **Cuándo usarlo:** Exclusivamente para tareas pequeñas y autocontenidas en **1 solo archivo (<100 líneas)**: creación de interfaces/tipos TypeScript desde `src/docs/*-index.md`, DTOs, validadores, mappers o utilidades puras.
+- **Control de cuota:** Cuenta gratuita con límite estricto; usa su modelo por defecto (`gpt-6-luna`) y nunca le pidas leer múltiples archivos.
+- **Comando:**
+  `codex exec -s workspace-write "<instrucción puntual sobre 1 archivo>"`
+- **Nota operativa (CU-01):** la versión instalada no acepta `--full-auto`, y `--approve-for-me` no se puede combinar con `-s`. En T-01 escribió el archivo con BOM UTF-8 (desde PowerShell) y hubo que quitarlo; en T-02 se quedó colgado más de 5 minutos sin escribir nada y se detuvo. Pedir siempre "UTF-8 sin BOM", ejecutarlo con un `timeout` y, si se cuelga, pasar la subtarea a `copilot` o `agy` según el protocolo de fallback.
+
+## Reglas de Orquestación, Balanceo y Fallback
+
+1. **Contexto en Claude, ejecución en los obreros:** Lee tú los archivos necesarios y entrega al obrero elegido un prompt autosuficiente con rutas exactas, firmas de funciones e interfaces TypeScript. Prohibido pedirle a un obrero que explore todo el proyecto.
+2. **Balanceo entre turnos:** Si una funcionalidad tiene varias subtareas medianas, altérnalas entre `copilot` (con `--model auto`) y `agy` para repartir el desgaste de cuotas.
+3. **Protocolo de Fallback (Error 429 / Cuota agotada):**
+   - Si un obrero falla por límite de cuota (`429`, *rate limit* o *quota exceeded*), **no detengas el plan**: reenvía inmediatamente la misma subtarea al siguiente obrero disponible (`copilot` ↔ `agy` → `codex`) y marca internamente al obrero agotado como no disponible por el resto de la sesión.
+   - Si en la primera ejecución de `copilot` o `codex` algún flag de CLI difiere por versión instalada, ejecuta `<cli> --help` una sola vez para ajustar el comando no interactivo.
+   - Si por alguna razón todos los Obreros se quedan con cuota agotada, tú (Claude Code) debes continuar con el desarrollo del plan.
+4. **Auditoría obligatoria tras cada orden:**
+   - Revisa `git diff` después de cada ejecución de cualquier obrero.
+   - Si hay errores o desviaciones del diseño, envía una orden correctiva puntual al obrero que tenga mejor cuota disponible.
