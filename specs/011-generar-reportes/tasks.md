@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura y composición
 
-- [ ] T-05 ControladorRest: generar_reporte (GET /reportes/practicas)
+- [x] T-05 ControladorRest: generar_reporte (GET /reportes/practicas)
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-04

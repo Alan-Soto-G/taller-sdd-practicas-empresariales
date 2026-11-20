@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-10: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-11: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
@@ -45,8 +45,10 @@ from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
 from aplicacion.postulaciones.solicitud_publicacion_plaza import SolicitudPublicacionPlaza
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
 from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
+from aplicacion.seguimiento.generar_reporte import GenerarReporte
 from aplicacion.seguimiento.solicitud_avance_tutor import SolicitudAvanceTutor
 from aplicacion.seguimiento.solicitud_estado_practica import SolicitudEstadoPractica
+from aplicacion.seguimiento.solicitud_reporte import SolicitudReporte
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
 
@@ -93,6 +95,7 @@ class ControladorRest:
         registrar_enlace_rechazado: RegistrarEnlaceRechazado,
         consultar_avance_tutor: ConsultarAvanceTutor,
         consultar_estado_practica: ConsultarEstadoPractica,
+        generar_reporte: GenerarReporte,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -111,6 +114,7 @@ class ControladorRest:
         self._registrar_enlace_rechazado = registrar_enlace_rechazado
         self._consultar_avance_tutor = consultar_avance_tutor
         self._consultar_estado_practica = consultar_estado_practica
+        self._generar_reporte = generar_reporte
 
     def postular(
         self,
@@ -479,6 +483,31 @@ class ControladorRest:
                         }
                         for e in resultado.practicas
                     ],
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def generar_reporte(
+        self,
+        token: str | None,
+        id_empresa: str | None = None,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa GET /reportes/practicas, con el filtro opcional ?empresa= (CU-11)."""
+        try:
+            usuario = self._validador.validar(token)
+            reporte = self._generar_reporte.ejecutar(SolicitudReporte(usuario, id_empresa))
+            return (
+                200,
+                {
+                    "id_empresa": reporte.id_empresa,
+                    "total_practicas": reporte.total_practicas,
+                    "por_estado": reporte.por_estado,
+                    "por_empresa": reporte.por_empresa,
+                    "por_tutor": reporte.por_tutor,
+                    "actas_por_estado": reporte.actas_por_estado,
+                    "horas_aprobadas": reporte.horas_aprobadas,
+                    "generado": reporte.generado.isoformat(),
                 },
             )
         except ErrorAplicacion as error:
