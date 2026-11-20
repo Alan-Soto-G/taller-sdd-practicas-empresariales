@@ -34,6 +34,7 @@ from aplicacion.configuracion.consultar_horas_requeridas import ConsultarHorasRe
 from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigente
 from aplicacion.evaluacion.emitir_enlace_evaluacion import EmitirEnlaceEvaluacion
 from aplicacion.evaluacion.consultar_formulario_evaluacion import ConsultarFormularioEvaluacion
+from aplicacion.evaluacion.registrar_enlace_rechazado import RegistrarEnlaceRechazado
 from aplicacion.evaluacion.registrar_evaluacion import RegistrarEvaluacion
 from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
@@ -63,7 +64,8 @@ def construir() -> dict[str, object]:
     aprobar_horas = AprobarHoras(
         repositorio, bitacora, consultar_horas, reloj=datetime.now
     )
-    validador_enlace = ValidadorEnlace(repositorio, bitacora, reloj=datetime.now)
+    validador_enlace = ValidadorEnlace(repositorio, reloj=datetime.now)
+    registrar_enlace_rechazado = RegistrarEnlaceRechazado(bitacora, reloj=datetime.now)
     consultar_criterios = ConsultarCriteriosEvaluacion(repositorio)
     emitir_enlace_evaluacion = EmitirEnlaceEvaluacion(
         repositorio, bitacora, notificador, reloj=datetime.now
@@ -97,6 +99,7 @@ def construir() -> dict[str, object]:
         solicitar_actas,
         emitir_enlace_aprobacion,
         aprobar_acta,
+        registrar_enlace_rechazado,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))

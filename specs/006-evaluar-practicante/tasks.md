@@ -190,7 +190,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV
       Depende de: T-29, T-30
 
-- [ ] T-32 Composición en main.py con RegistrarEnlaceRechazado
+- [x] T-32 Composición en main.py con RegistrarEnlaceRechazado
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-31
