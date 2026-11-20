@@ -24,7 +24,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-CI, ESC-E3
       Depende de: ninguna
 
-- [ ] T-02 ReglaPractica: criterios
+- [x] T-02 ReglaPractica: criterios
       Archivos: src/dominio/regla_practica.py
       Escenarios: ESC-B2, ESC-CI, ESC-E3
       Depende de: T-01
