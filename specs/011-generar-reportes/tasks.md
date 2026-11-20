@@ -23,7 +23,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: ninguna
 
-- [ ] T-03 DTO ReportePracticas
+- [x] T-03 DTO ReportePracticas
       Archivos: src/aplicacion/seguimiento/reporte_practicas.py
       Escenarios: ESC-B, ESC-CA, ESC-EM
       Depende de: ninguna
