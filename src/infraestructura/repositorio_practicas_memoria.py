@@ -4,6 +4,7 @@ from threading import Lock
 
 from dominio.empresa import Empresa
 from dominio.estado_postulacion import EstadoPostulacion
+from dominio.estado_registro_horas import EstadoRegistroHoras
 from dominio.estudiante import Estudiante
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
@@ -153,3 +154,31 @@ class RepositorioPracticasMemoria:
     def listar_registros_horas(self) -> list[RegistroHoras]:
         """Devuelve una copia de la lista de registros de horas."""
         return list(self._registros_horas)
+
+    def obtener_regla(self, version: str) -> ReglaPractica | None:
+        """Obtiene una regla de práctica por su versión."""
+        return self._reglas.get(version)
+
+    def obtener_registro_horas(self, id_registro: str) -> RegistroHoras | None:
+        """Obtiene un registro de horas por su identificador."""
+        for r in self._registros_horas:
+            if r.id == id_registro:
+                return r
+        return None
+
+    def actualizar_registro_horas(self, registro: RegistroHoras) -> None:
+        """Actualiza un registro de horas existente."""
+        with self._candado_horas:
+            for idx, r in enumerate(self._registros_horas):
+                if r.id == registro.id:
+                    self._registros_horas[idx] = registro
+                    break
+
+    def sumar_horas_aprobadas(self, id_practica: str) -> int:
+        """Calcula el total de horas aprobadas para una práctica."""
+        return sum(
+            r.horas
+            for r in self._registros_horas
+            if r.id_practica == id_practica and r.estado == EstadoRegistroHoras.APROBADO
+        )
+

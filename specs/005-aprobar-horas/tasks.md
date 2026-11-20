@@ -63,7 +63,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura: adaptadores
 
-- [ ] T-09 RepositorioPracticasMemoria: reglas por versión, registros por id, actualización y suma de horas aprobadas
+- [x] T-09 RepositorioPracticasMemoria: reglas por versión, registros por id, actualización y suma de horas aprobadas
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: todos menos ESC-TV
       Depende de: T-04
