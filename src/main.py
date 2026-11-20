@@ -52,6 +52,32 @@ from aplicacion.actas.consultar_acta_practica import ConsultarActaPractica
 from infraestructura.controlador_rest import ControladorRest
 
 
+def _pdf_de_prueba(texto: str) -> bytes:
+    """PDF minimo valido de una pagina, como dato precargado del Repositorio de actas (CU-08, CU-12).
+
+    No es la composicion del acta: esa solo la hace el Worker de actas con ReportLab (ADR-001, ADR-011).
+    """
+    contenido = f"BT /F1 12 Tf 72 720 Td ({texto}) Tj ET".encode("latin-1")
+    objetos = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R"
+        b" /Resources << /Font << /F1 5 0 R >> >> >>",
+        b"<< /Length %d >>\nstream\n" % len(contenido) + contenido + b"\nendstream",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    ]
+    pdf = b"%PDF-1.4\n"
+    posiciones = []
+    for numero, objeto in enumerate(objetos, start=1):
+        posiciones.append(len(pdf))
+        pdf += b"%d 0 obj\n" % numero + objeto + b"\nendobj\n"
+    inicio_xref = len(pdf)
+    pdf += b"xref\n0 %d\n0000000000 65535 f \n" % (len(objetos) + 1)
+    pdf += b"".join(b"%010d 00000 n \n" % posicion for posicion in posiciones)
+    pdf += b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (len(objetos) + 1, inicio_xref)
+    return pdf
+
+
 def construir() -> dict[str, object]:
     repositorio = RepositorioPracticasMemoria()
     bitacora = BitacoraMemoria()
@@ -208,7 +234,7 @@ def construir() -> dict[str, object]:
     repositorio.agregar_practica(
         Practica("PR-09", "E-1009", "EMP-ACME", "v1", EstadoPractica.ACTA_EN_TRAMITE, "T-400")
     )
-    ruta_ac09 = almacen_actas.guardar("AC-09", "%PDF-simulado\nACTA FINAL AC-09".encode("utf-8"))
+    ruta_ac09 = almacen_actas.guardar("AC-09", _pdf_de_prueba("Acta final AC-09 (precargada)"))
     repositorio.guardar_acta(
         ActaFinal("AC-09", "PR-09", datetime(2026, 11, 18, 10, 0), EstadoActa.GENERADA, ruta_ac09)
     )
