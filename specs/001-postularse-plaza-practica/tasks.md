@@ -34,7 +34,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: errores (ADR-007)
 
-- [ ] T-04 Error base ErrorAplicacion
+- [x] T-04 Error base ErrorAplicacion
       Archivos: src/aplicacion/errores/error_aplicacion.py
       Escenarios: ESC-SC, ESC-AP, ESC-MP, ESC-NE, ESC-SR, ESC-TV
       Depende de: ninguna
