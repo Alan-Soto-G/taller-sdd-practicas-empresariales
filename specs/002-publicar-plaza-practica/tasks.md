@@ -38,7 +38,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: DTO y puertos
 
-- [ ] T-05 Puerto RepositorioPracticas: obtener_empresa y guardar_plaza
+- [x] T-05 Puerto RepositorioPracticas: obtener_empresa y guardar_plaza
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: ESC-B, ESC-PO, ESC-DU, ESC-EN
       Depende de: T-01
