@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-10: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/010. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-11: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/011. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -43,6 +43,7 @@ from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.horas.resumir_horas_practica import ResumirHorasPractica
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
 from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
+from aplicacion.seguimiento.generar_reporte import GenerarReporte
 from aplicacion.actas.consultar_acta_practica import ConsultarActaPractica
 from infraestructura.controlador_rest import ControladorRest
 
@@ -97,6 +98,9 @@ def construir() -> dict[str, object]:
     consultar_estado_practica = ConsultarEstadoPractica(
         repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
     )
+    generar_reporte = GenerarReporte(
+        repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -114,6 +118,7 @@ def construir() -> dict[str, object]:
         registrar_enlace_rechazado,
         consultar_avance_tutor,
         consultar_estado_practica,
+        generar_reporte,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -256,6 +261,7 @@ def construir() -> dict[str, object]:
         "aprobar_acta": aprobar_acta,
         "consultar_avance_tutor": consultar_avance_tutor,
         "consultar_estado_practica": consultar_estado_practica,
+        "generar_reporte": generar_reporte,
     }
 
 
