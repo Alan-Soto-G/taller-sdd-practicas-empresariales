@@ -20,7 +20,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-UNA, ESC-VAC, ESC-VR
       Depende de: ninguna
 
-- [ ] T-02 DTO ResumenHoras
+- [x] T-02 DTO ResumenHoras
       Archivos: src/aplicacion/horas/resumen_horas.py
       Escenarios: ESC-B, ESC-UNA, ESC-VR
       Depende de: ninguna
