@@ -18,7 +18,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-CA, ESC-EM
       Depende de: ninguna
 
-- [ ] T-02 DTO SolicitudReporte
+- [x] T-02 DTO SolicitudReporte
       Archivos: src/aplicacion/seguimiento/solicitud_reporte.py
       Escenarios: todos menos ESC-TV
       Depende de: ninguna
