@@ -83,7 +83,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-VA, ESC-SR
       Depende de: ninguna
 
-- [ ] T-13 DTO ResultadoPractica
+- [x] T-13 DTO ResultadoPractica
       Archivos: src/aplicacion/asignacion/resultado_practica.py
       Escenarios: ESC-B, ESC-SC, ESC-CP, ESC-YT, ESC-PN
       Depende de: ninguna
