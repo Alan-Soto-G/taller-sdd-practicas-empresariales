@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-13: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-14: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
@@ -22,6 +22,8 @@ from aplicacion.errores.almacen_no_disponible import AlmacenNoDisponible
 from aplicacion.errores.aprobacion_no_permitida import AprobacionNoPermitida
 from aplicacion.errores.enlace_no_valido import EnlaceNoValido
 from aplicacion.errores.empresa_no_encontrada import EmpresaNoEncontrada
+from aplicacion.errores.empresa_no_permitida import EmpresaNoPermitida
+from aplicacion.errores.empresa_no_valida import EmpresaNoValida
 from aplicacion.errores.error_aplicacion import ErrorAplicacion
 from aplicacion.errores.evaluacion_no_permitida import EvaluacionNoPermitida
 from aplicacion.errores.evaluacion_no_valida import EvaluacionNoValida
@@ -45,9 +47,13 @@ from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.horas.solicitud_registro_horas import SolicitudRegistroHoras
 from aplicacion.horas.solicitud_revision_horas import SolicitudRevisionHoras
 from aplicacion.identidad_enlace import IdentidadEnlace
+from aplicacion.postulaciones.empresa_gestionada import EmpresaGestionada
+from aplicacion.postulaciones.gestionar_empresas import GestionarEmpresas
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
+from aplicacion.postulaciones.solicitud_empresa import SolicitudEmpresa
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
+from aplicacion.postulaciones.solicitud_representante import SolicitudRepresentante
 from aplicacion.postulaciones.solicitud_publicacion_plaza import SolicitudPublicacionPlaza
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
 from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
@@ -55,6 +61,7 @@ from aplicacion.seguimiento.generar_reporte import GenerarReporte
 from aplicacion.seguimiento.solicitud_avance_tutor import SolicitudAvanceTutor
 from aplicacion.seguimiento.solicitud_estado_practica import SolicitudEstadoPractica
 from aplicacion.seguimiento.solicitud_reporte import SolicitudReporte
+from aplicacion.usuario_autenticado import UsuarioAutenticado
 from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
 
@@ -79,6 +86,8 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     AprobacionNoPermitida: 409,
     ActaNoExportable: 409,
     AlmacenNoDisponible: 503,
+    EmpresaNoValida: 400,
+    EmpresaNoPermitida: 409,
 }
 
 
@@ -106,6 +115,7 @@ class ControladorRest:
         generar_reporte: GenerarReporte,
         exportar_acta: ExportarActa,
         importar_historico: ImportarHistorico,
+        gestionar_empresas: GestionarEmpresas,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -127,6 +137,7 @@ class ControladorRest:
         self._generar_reporte = generar_reporte
         self._exportar_acta = exportar_acta
         self._importar_historico = importar_historico
+        self._gestionar_empresas = gestionar_empresas
 
     def postular(
         self,
@@ -569,6 +580,81 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def crear_empresa(self, token: str | None, cuerpo: dict[str, object]) -> tuple[int, dict[str, object]]:
+        """Representa POST /empresas (CU-14)."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = self._solicitud_empresa(usuario, str(cuerpo.get("id", "")), cuerpo)
+            return (201, self._cuerpo_empresa(self._gestionar_empresas.crear(solicitud)))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def listar_empresas(self, token: str | None) -> tuple[int, dict[str, object]]:
+        """Representa GET /empresas (CU-14)."""
+        try:
+            usuario = self._validador.validar(token)
+            empresas = self._gestionar_empresas.listar(usuario)
+            return (200, {"empresas": [self._cuerpo_empresa(e) for e in empresas]})
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def actualizar_empresa(
+        self, token: str | None, id_empresa: str, cuerpo: dict[str, object]
+    ) -> tuple[int, dict[str, object]]:
+        """Representa PUT /empresas/{id} (CU-14)."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = self._solicitud_empresa(usuario, id_empresa, cuerpo)
+            return (200, self._cuerpo_empresa(self._gestionar_empresas.actualizar(solicitud)))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def eliminar_empresa(self, token: str | None, id_empresa: str) -> tuple[int, dict[str, object]]:
+        """Representa DELETE /empresas/{id}; responde 204 sin cuerpo (CU-14)."""
+        try:
+            usuario = self._validador.validar(token)
+            self._gestionar_empresas.eliminar(SolicitudEmpresa(usuario, id_empresa))
+            return (204, {})
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def registrar_representante(
+        self, token: str | None, id_empresa: str, cuerpo: dict[str, object]
+    ) -> tuple[int, dict[str, object]]:
+        """Representa PUT /empresas/{id}/representante (CU-14, ADR-005)."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = SolicitudRepresentante(
+                usuario, id_empresa, str(cuerpo.get("nombre", "")), str(cuerpo.get("correo", ""))
+            )
+            return (200, self._cuerpo_empresa(self._gestionar_empresas.registrar_representante(solicitud)))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def _solicitud_empresa(
+        self, usuario: UsuarioAutenticado, id_empresa: str, cuerpo: dict[str, object]
+    ) -> SolicitudEmpresa:
+        """Arma la solicitud de empresa con los campos del cuerpo."""
+        return SolicitudEmpresa(
+            usuario, id_empresa, str(cuerpo.get("razon_social", "")), str(cuerpo.get("nit", ""))
+        )
+
+    def _cuerpo_empresa(self, empresa: EmpresaGestionada) -> dict[str, object]:
+        """Arma la respuesta de una empresa con su representante."""
+        representante = None
+        if empresa.id_representante is not None:
+            representante = {
+                "id": empresa.id_representante,
+                "nombre": empresa.nombre_representante,
+                "correo": empresa.correo_representante,
+            }
+        return {
+            "id": empresa.id,
+            "razon_social": empresa.razon_social,
+            "nit": empresa.nit,
+            "representante": representante,
+        }
+
     def _validar_enlace(self, enlace: str, accion: str) -> IdentidadEnlace:
         """Valida el enlace; si se rechaza, el caso de uso audita el intento antes de responder (ADR-005, ADR-006)."""
         try:
@@ -612,6 +698,8 @@ class ControladorRest:
                 EvaluacionNoValida,
                 AprobacionNoPermitida,
                 ActaNoExportable,
+                EmpresaNoValida,
+                EmpresaNoPermitida,
             ),
         ):
             cuerpo["motivo"] = error.motivo

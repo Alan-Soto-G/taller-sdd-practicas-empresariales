@@ -72,7 +72,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-LI, ESC-CO, ESC-EL, ESC-EP
       Depende de: T-05
 
-- [ ] T-11 ControladorRest: CRUD de empresas y representante
+- [x] T-11 ControladorRest: CRUD de empresas y representante
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-09
