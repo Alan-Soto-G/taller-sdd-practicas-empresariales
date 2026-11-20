@@ -71,7 +71,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-OS, ESC-SR2, ESC-CA, ESC-DU
       Depende de: T-05
 
-- [ ] T-10 ControladorRest: registrar_horas (POST /practicas/{id}/horas) con 201, 404 y 422
+- [x] T-10 ControladorRest: registrar_horas (POST /practicas/{id}/horas) con 201, 404 y 422
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B, ESC-SR2, ESC-DI, ESC-NC, ESC-PN, ESC-AJ, ESC-SR, ESC-TV, ESC-DU
       Depende de: T-08

@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01, CU-02 y CU-03: traduce POST /postulaciones, POST /plazas y POST /asignaciones a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007)."""
+"""Adaptador de entrada REST de CU-01 a CU-04: traduce POST /postulaciones, POST /plazas, POST /asignaciones y POST /practicas/{id}/horas a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007)."""
 
 from uuid import uuid4
 
@@ -11,7 +11,11 @@ from aplicacion.errores.no_autenticado import NoAutenticado
 from aplicacion.errores.plaza_no_encontrada import PlazaNoEncontrada
 from aplicacion.errores.plaza_no_valida import PlazaNoValida
 from aplicacion.errores.postulacion_no_permitida import PostulacionNoPermitida
+from aplicacion.errores.practica_no_encontrada import PracticaNoEncontrada
+from aplicacion.errores.registro_no_valido import RegistroNoValido
 from aplicacion.errores.tutor_no_encontrado import TutorNoEncontrado
+from aplicacion.horas.registrar_horas import RegistrarHoras
+from aplicacion.horas.solicitud_registro_horas import SolicitudRegistroHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
@@ -24,13 +28,15 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     PlazaNoEncontrada: 404,
     EmpresaNoEncontrada: 404,
     TutorNoEncontrado: 404,
+    PracticaNoEncontrada: 404,
     PlazaNoValida: 400,
     PostulacionNoPermitida: 409,
+    RegistroNoValido: 422,
 }
 
 
 class ControladorRest:
-    """Controlador REST de postulaciones, plazas y asignaciones."""
+    """Controlador REST de postulaciones, plazas, asignaciones y horas."""
 
     def __init__(
         self,
@@ -38,12 +44,14 @@ class ControladorRest:
         postularse_plaza: PostularsePlaza,
         publicar_plaza: PublicarPlaza,
         asignar_tutor: AsignarTutor,
+        registrar_horas: RegistrarHoras,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
         self._postularse_plaza = postularse_plaza
         self._publicar_plaza = publicar_plaza
         self._asignar_tutor = asignar_tutor
+        self._registrar_horas = registrar_horas
 
     def postular(
         self,
@@ -129,6 +137,38 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def registrar_horas(
+        self,
+        token: str | None,
+        id_practica: str,
+        cuerpo: dict[str, object],
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /practicas/{id}/horas."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = SolicitudRegistroHoras(
+                usuario,
+                id_practica,
+                str(cuerpo.get("semana", "")),
+                cuerpo.get("horas", 0),
+                str(cuerpo.get("actividades", "")),
+            )
+            resultado = self._registrar_horas.ejecutar(solicitud)
+            return (
+                201,
+                {
+                    "id": resultado.id,
+                    "id_practica": resultado.id_practica,
+                    "semana": resultado.semana,
+                    "horas": resultado.horas,
+                    "estado": str(resultado.estado),
+                    "fecha": resultado.fecha.isoformat(),
+                    "mensaje": "horas reportadas, pendientes de aprobación del tutor",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
     def _responder_error(
         self,
         error: ErrorAplicacion,
@@ -140,6 +180,6 @@ class ControladorRest:
             "mensaje": error.mensaje,
             "correlacion": uuid4().hex,
         }
-        if isinstance(error, (PostulacionNoPermitida, PlazaNoValida)):
+        if isinstance(error, (PostulacionNoPermitida, PlazaNoValida, RegistroNoValido)):
             cuerpo["motivo"] = error.motivo
         return (estado, cuerpo)
