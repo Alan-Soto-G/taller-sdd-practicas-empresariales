@@ -110,7 +110,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-06
 
-- [ ] T-18 Adaptador AlmacenActasMemoria con fallas simuladas
+- [x] T-18 Adaptador AlmacenActasMemoria con fallas simuladas
       Archivos: src/infraestructura/almacen_actas_memoria.py
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-07
