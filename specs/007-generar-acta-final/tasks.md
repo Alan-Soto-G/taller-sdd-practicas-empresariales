@@ -153,7 +153,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita y registrarla en un ADR. La clave nueva es ESC-RC: "Flujo alterno - falla la composición del PDF y se reintenta".
 
-- [ ] T-25 DTO DatosActa
+- [x] T-25 DTO DatosActa
       Archivos: src/aplicacion/actas/datos_acta.py
       Escenarios: ESC-B2, ESC-E2
       Depende de: ninguna
