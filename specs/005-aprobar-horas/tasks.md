@@ -68,7 +68,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-04
 
-- [ ] T-10 ControladorRest: revisar_horas (POST /registros-horas/{id}/revision) con 200 y 404
+- [x] T-10 ControladorRest: revisar_horas (POST /registros-horas/{id}/revision) con 200 y 404
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B, ESC-RE, ESC-YR, ESC-DI, ESC-RN, ESC-AJ, ESC-ET, ESC-TV
       Depende de: T-08

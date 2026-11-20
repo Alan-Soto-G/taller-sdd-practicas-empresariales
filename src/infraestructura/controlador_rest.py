@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-04: traduce POST /postulaciones, POST /plazas, POST /asignaciones y POST /practicas/{id}/horas a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007)."""
+"""Adaptador de entrada REST de CU-01 a CU-05: traduce POST /postulaciones, POST /plazas, POST /asignaciones, POST /practicas/{id}/horas y POST /registros-horas/{id}/revision a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007)."""
 
 from uuid import uuid4
 
@@ -12,10 +12,13 @@ from aplicacion.errores.plaza_no_encontrada import PlazaNoEncontrada
 from aplicacion.errores.plaza_no_valida import PlazaNoValida
 from aplicacion.errores.postulacion_no_permitida import PostulacionNoPermitida
 from aplicacion.errores.practica_no_encontrada import PracticaNoEncontrada
+from aplicacion.errores.registro_no_encontrado import RegistroNoEncontrado
 from aplicacion.errores.registro_no_valido import RegistroNoValido
 from aplicacion.errores.tutor_no_encontrado import TutorNoEncontrado
+from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.horas.solicitud_registro_horas import SolicitudRegistroHoras
+from aplicacion.horas.solicitud_revision_horas import SolicitudRevisionHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.postulaciones.solicitud_postulacion import SolicitudPostulacion
@@ -29,6 +32,7 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     EmpresaNoEncontrada: 404,
     TutorNoEncontrado: 404,
     PracticaNoEncontrada: 404,
+    RegistroNoEncontrado: 404,
     PlazaNoValida: 400,
     PostulacionNoPermitida: 409,
     RegistroNoValido: 422,
@@ -36,7 +40,7 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
 
 
 class ControladorRest:
-    """Controlador REST de postulaciones, plazas, asignaciones y horas."""
+    """Controlador REST de postulaciones, plazas, asignaciones, horas y revisiones."""
 
     def __init__(
         self,
@@ -45,6 +49,7 @@ class ControladorRest:
         publicar_plaza: PublicarPlaza,
         asignar_tutor: AsignarTutor,
         registrar_horas: RegistrarHoras,
+        aprobar_horas: AprobarHoras,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -52,6 +57,7 @@ class ControladorRest:
         self._publicar_plaza = publicar_plaza
         self._asignar_tutor = asignar_tutor
         self._registrar_horas = registrar_horas
+        self._aprobar_horas = aprobar_horas
 
     def postular(
         self,
@@ -164,6 +170,36 @@ class ControladorRest:
                     "estado": str(resultado.estado),
                     "fecha": resultado.fecha.isoformat(),
                     "mensaje": "horas reportadas, pendientes de aprobación del tutor",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def revisar_horas(
+        self,
+        token: str | None,
+        id_registro: str,
+        cuerpo: dict[str, object],
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /registros-horas/{id}/revision."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = SolicitudRevisionHoras(
+                usuario,
+                id_registro,
+                str(cuerpo.get("decision", "")),
+            )
+            resultado = self._aprobar_horas.ejecutar(solicitud)
+            mensaje = "horas aprobadas" if str(resultado.estado) == "aprobado" else "horas rechazadas"
+            return (
+                200,
+                {
+                    "id": resultado.id,
+                    "id_practica": resultado.id_practica,
+                    "estado": str(resultado.estado),
+                    "horas_aprobadas": resultado.horas_aprobadas,
+                    "estado_practica": str(resultado.estado_practica),
+                    "mensaje": mensaje,
                 },
             )
         except ErrorAplicacion as error:
