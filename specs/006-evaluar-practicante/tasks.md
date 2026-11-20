@@ -132,7 +132,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura
 
-- [ ] T-22 Adaptador de entrada ValidadorEnlace
+- [x] T-22 Adaptador de entrada ValidadorEnlace
       Archivos: src/infraestructura/validador_enlace.py
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV, ESC-E5
       Depende de: T-04, T-07, T-08, T-11
