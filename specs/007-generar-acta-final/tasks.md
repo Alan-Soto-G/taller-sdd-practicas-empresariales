@@ -59,7 +59,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-E2
       Depende de: T-06
 
-- [ ] T-09 Puerto AlmacenActas
+- [x] T-09 Puerto AlmacenActas
       Archivos: src/aplicacion/puertos/almacen_actas.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3
       Depende de: T-07
