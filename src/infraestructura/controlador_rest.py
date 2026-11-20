@@ -1,7 +1,9 @@
-"""Adaptador de entrada REST de CU-01 a CU-06: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-07: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
+from aplicacion.actas.solicitar_actas import SolicitarActas
+from aplicacion.actas.solicitud_generacion_actas import SolicitudGeneracionActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
 from aplicacion.errores.acceso_denegado import AccesoDenegado
@@ -54,7 +56,7 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
 
 
 class ControladorRest:
-    """Controlador REST de postulaciones, plazas, asignaciones, horas y evaluaciones."""
+    """Controlador REST de postulaciones, plazas, asignaciones, horas, evaluaciones y actas."""
 
     def __init__(
         self,
@@ -68,6 +70,7 @@ class ControladorRest:
         emitir_enlace_evaluacion: EmitirEnlaceEvaluacion,
         consultar_formulario_evaluacion: ConsultarFormularioEvaluacion,
         registrar_evaluacion: RegistrarEvaluacion,
+        solicitar_actas: SolicitarActas,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -80,6 +83,7 @@ class ControladorRest:
         self._emitir_enlace_evaluacion = emitir_enlace_evaluacion
         self._consultar_formulario_evaluacion = consultar_formulario_evaluacion
         self._registrar_evaluacion = registrar_evaluacion
+        self._solicitar_actas = solicitar_actas
 
     def postular(
         self,
@@ -294,6 +298,36 @@ class ControladorRest:
                     "id_practica": resultado.id_practica,
                     "estado_practica": str(resultado.estado_practica),
                     "mensaje": "evaluación enviada",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def solicitar_actas(
+        self,
+        token: str | None,
+        cuerpo: dict[str, object],
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /actas; responde 202 porque el Worker de actas genera las actas después (ADR-001)."""
+        try:
+            usuario = self._validador.validar(token)
+            solicitud = SolicitudGeneracionActas(
+                usuario,
+                tuple(str(i) for i in cuerpo.get("ids_practicas", [])),
+            )
+            resultado = self._solicitar_actas.ejecutar(solicitud)
+            return (
+                202,
+                {
+                    "resultados": [
+                        {
+                            "id_practica": r.id_practica,
+                            "id_acta": r.id_acta,
+                            "resultado": r.resultado,
+                        }
+                        for r in resultado.resultados
+                    ],
+                    "mensaje": "actas en generación; se le notificará",
                 },
             )
         except ErrorAplicacion as error:

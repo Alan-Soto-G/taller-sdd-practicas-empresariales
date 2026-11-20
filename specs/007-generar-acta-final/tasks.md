@@ -125,7 +125,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: T-10
 
-- [ ] T-21 ControladorRest: solicitar_actas (POST /actas) con 202
+- [x] T-21 ControladorRest: solicitar_actas (POST /actas) con 202
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B1, ESC-NE, ESC-PN, ESC-SR, ESC-TV, ESC-E2
       Depende de: T-14
