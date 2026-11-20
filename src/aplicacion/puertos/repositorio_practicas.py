@@ -150,3 +150,11 @@ class RepositorioPracticas(Protocol):
     def obtener_acta_de_practica(self, id_practica: str) -> ActaFinal | None:
         """Devuelve el ActaFinal mas reciente de la Practica o None (CU-08)."""
         ...
+
+    def listar_practicas_de_tutor(self, id_tutor: str) -> list[Practica]:
+        """Devuelve las Practicas asignadas al Tutor, ordenadas por id (CU-09)."""
+        ...
+
+    def listar_registros_horas_de_practica(self, id_practica: str) -> list[RegistroHoras]:
+        """Devuelve los RegistroHoras de la Practica (CU-09)."""
+        ...
