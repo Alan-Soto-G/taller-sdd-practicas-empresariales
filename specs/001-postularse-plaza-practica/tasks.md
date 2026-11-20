@@ -120,7 +120,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-TV
       Depende de: T-12
 
-- [ ] T-20 ControladorRest con la respuesta unificada (201, 401, 403, 404, 409)
+- [x] T-20 ControladorRest con la respuesta unificada (201, 401, 403, 404, 409)
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B, ESC-SC, ESC-AP, ESC-MP, ESC-NE, ESC-SR, ESC-TV
       Depende de: T-15, T-19
