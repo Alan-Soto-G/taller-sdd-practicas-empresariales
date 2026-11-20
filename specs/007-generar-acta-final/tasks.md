@@ -173,7 +173,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
       Depende de: T-25, T-26, T-27
 
-- [ ] T-29 Adaptador ComponedorActaReportlab
+- [x] T-29 Adaptador ComponedorActaReportlab
       Archivos: src/infraestructura/componedor_acta_reportlab.py
       Escenarios: ESC-B2, ESC-RC, ESC-E2
       Depende de: T-27
