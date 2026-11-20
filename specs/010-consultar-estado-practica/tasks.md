@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: todos menos ESC-TV
       Depende de: ninguna
 
-- [ ] T-05 DTO EstadoPracticaConsultado
+- [x] T-05 DTO EstadoPracticaConsultado
       Archivos: src/aplicacion/seguimiento/estado_practica_consultado.py
       Escenarios: ESC-B, ESC-EC, ESC-AC
       Depende de: T-02
