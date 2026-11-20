@@ -59,7 +59,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: caso de uso
 
-- [ ] T-08 Caso de uso RegistrarHoras
+- [x] T-08 Caso de uso RegistrarHoras
       Archivos: src/aplicacion/horas/registrar_horas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-02, T-03, T-04, T-05, T-06, T-07
