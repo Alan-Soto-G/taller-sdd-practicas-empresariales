@@ -55,7 +55,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: caso de uso
 
-- [ ] T-08 Caso de uso PublicarPlaza
+- [x] T-08 Caso de uso PublicarPlaza
       Archivos: src/aplicacion/postulaciones/publicar_plaza.py
       Escenarios: ESC-B, ESC-PO, ESC-DU, ESC-EN, ESC-DI, ESC-SR
       Depende de: T-01, T-02, T-03, T-04, T-05, T-06, T-07
