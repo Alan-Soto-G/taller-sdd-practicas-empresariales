@@ -27,7 +27,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-01
 
-- [ ] T-03 Entidad IntentoGeneracion con MAX_INTENTOS y espera_tras
+- [x] T-03 Entidad IntentoGeneracion con MAX_INTENTOS y espera_tras
       Archivos: src/dominio/intento_generacion.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: ninguna
