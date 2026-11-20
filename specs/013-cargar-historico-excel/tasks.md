@@ -88,7 +88,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: ninguna
 
-- [ ] T-14 ImportarHistorico: ejecutar_excel con el LectorExcel
+- [x] T-14 ImportarHistorico: ejecutar_excel con el LectorExcel
       Archivos: src/aplicacion/configuracion/importar_historico.py
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-12, T-13

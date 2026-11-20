@@ -1,4 +1,4 @@
-"""Caso de uso CU-13 (Modulo Configuracion): importa el historico de Excel ya leido; valida cada fila, carga las validas y reporta las rechazadas sin cargarlas en silencio (PA-07, S-04, ADR-004, ADR-006, ADR-008)."""
+"""Caso de uso CU-13 (Modulo Configuracion): importa el historico de Excel ya leido; valida cada fila, carga las validas y reporta las rechazadas sin cargarlas en silencio (PA-07, S-04, ADR-004, ADR-006, ADR-008, ADR-012)."""
 
 from collections.abc import Callable
 from datetime import datetime
@@ -7,8 +7,10 @@ from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigen
 from aplicacion.configuracion.fila_rechazada import FilaRechazada
 from aplicacion.configuracion.resultado_importacion import ResultadoImportacion
 from aplicacion.configuracion.solicitud_importacion import SolicitudImportacion
+from aplicacion.configuracion.solicitud_importacion_excel import SolicitudImportacionExcel
 from aplicacion.errores.acceso_denegado import AccesoDenegado
 from aplicacion.puertos.bitacora import Bitacora
+from aplicacion.puertos.lector_excel import LectorExcel
 from aplicacion.puertos.repositorio_practicas import RepositorioPracticas
 from aplicacion.usuario_autenticado import UsuarioAutenticado
 from dominio.correo import Correo
@@ -38,20 +40,20 @@ class ImportarHistorico:
         repositorio: RepositorioPracticas,
         bitacora: Bitacora,
         consultar_regla: ConsultarReglaVigente,
+        lector: LectorExcel,
         reloj: Callable[[], datetime] = datetime.now,
     ) -> None:
         self._repositorio = repositorio
         self._bitacora = bitacora
         self._consultar_regla = consultar_regla
+        self._lector = lector
         self._reloj = reloj
 
     def ejecutar(self, solicitud: SolicitudImportacion) -> ResultadoImportacion:
         """Carga las filas validas y devuelve, por hoja, cuantas se cargaron y cuales se rechazaron y por que."""
         usuario = solicitud.usuario
         ahora = self._reloj()
-        if usuario.rol != ROL_COORDINADOR:
-            self._bitacora.registrar(usuario.id, usuario.rol, "importacion", "importar histórico", ahora)
-            raise AccesoDenegado()
+        self._autorizar(usuario, ahora)
 
         rechazadas = [FilaRechazada(hoja, 1, "hoja desconocida") for hoja in solicitud.hojas if hoja not in CAMPOS]
         cargadas = {hoja: 0 for hoja in CAMPOS}
@@ -78,6 +80,21 @@ class ImportarHistorico:
             ahora,
         )
         return ResultadoImportacion(cargadas, tuple(rechazadas))
+
+    def ejecutar_excel(self, solicitud: SolicitudImportacionExcel) -> ResultadoImportacion:
+        """Lee el .xlsx subido con el LectorExcel e importa sus hojas con las mismas reglas (ADR-012).
+
+        Autoriza antes de leer el archivo; si no es un .xlsx valido, el adaptador lanza ArchivoNoValido y no se carga nada.
+        """
+        self._autorizar(solicitud.usuario, self._reloj())
+        hojas = self._lector.leer(solicitud.contenido)
+        return self.ejecutar(SolicitudImportacion(solicitud.usuario, hojas))
+
+    def _autorizar(self, usuario: UsuarioAutenticado, ahora: datetime) -> None:
+        """Solo el Coordinador importa; el rechazo se audita (ADR-004, ADR-006)."""
+        if usuario.rol != ROL_COORDINADOR:
+            self._bitacora.registrar(usuario.id, usuario.rol, "importacion", "importar histórico", ahora)
+            raise AccesoDenegado()
 
     def _cargar(
         self, hoja: str, d: dict[str, str], version: str, usuario: UsuarioAutenticado, ahora: datetime
