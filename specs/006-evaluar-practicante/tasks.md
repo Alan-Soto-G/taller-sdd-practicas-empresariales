@@ -66,7 +66,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-HC
       Depende de: ninguna
 
-- [ ] T-10 Error EvaluacionNoValida con su motivo
+- [x] T-10 Error EvaluacionNoValida con su motivo
       Archivos: src/aplicacion/errores/evaluacion_no_valida.py
       Escenarios: ESC-CI
       Depende de: ninguna
