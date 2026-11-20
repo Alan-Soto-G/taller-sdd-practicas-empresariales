@@ -67,7 +67,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-PO, ESC-DU, ESC-EN
       Depende de: T-05
 
-- [ ] T-10 ControladorRest: publicar_plaza (POST /plazas) con 201, 400 y 404
+- [x] T-10 ControladorRest: publicar_plaza (POST /plazas) con 201, 400 y 404
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: ESC-B, ESC-EN, ESC-DI, ESC-SR, ESC-TV
       Depende de: T-08
