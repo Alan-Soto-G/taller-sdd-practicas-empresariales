@@ -180,7 +180,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: ESC-EV, ESC-RE
       Depende de: T-28
 
-- [ ] T-30 ValidadorEnlace sin Bitacora
+- [x] T-30 ValidadorEnlace sin Bitacora
       Archivos: src/infraestructura/validador_enlace.py
       Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV, ESC-E5
       Depende de: T-27
