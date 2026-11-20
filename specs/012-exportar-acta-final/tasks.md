@@ -16,7 +16,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación
 
-- [ ] T-01 Error ActaNoExportable con su motivo
+- [x] T-01 Error ActaNoExportable con su motivo
       Archivos: src/aplicacion/errores/acta_no_exportable.py
       Escenarios: ESC-SP
       Depende de: ninguna
