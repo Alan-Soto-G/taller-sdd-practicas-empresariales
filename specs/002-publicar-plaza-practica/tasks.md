@@ -81,7 +81,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Validación
 
-- [ ] T-12 Validar escenario por escenario y registrar la evidencia
+- [x] T-12 Validar escenario por escenario y registrar la evidencia
       Archivos: specs/002-publicar-plaza-practica/validacion.md
       Escenarios: todos (ESC-B, ESC-PO, ESC-DU, ESC-EN, ESC-DI, ESC-SR, ESC-TV)
       Depende de: T-11
