@@ -31,7 +31,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-EN
       Depende de: ninguna
 
-- [ ] T-04 Error PlazaNoValida con su motivo
+- [x] T-04 Error PlazaNoValida con su motivo
       Archivos: src/aplicacion/errores/plaza_no_valida.py
       Escenarios: ESC-DI
       Depende de: ninguna
