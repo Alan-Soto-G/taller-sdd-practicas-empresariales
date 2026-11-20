@@ -66,7 +66,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura: adaptadores
 
-- [ ] T-09 RepositorioPracticasMemoria: registros de horas con guardado atómico
+- [x] T-09 RepositorioPracticasMemoria: registros de horas con guardado atómico
       Archivos: src/infraestructura/repositorio_practicas_memoria.py
       Escenarios: ESC-B, ESC-OS, ESC-SR2, ESC-CA, ESC-DU
       Depende de: T-05

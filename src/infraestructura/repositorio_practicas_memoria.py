@@ -1,11 +1,14 @@
 """Adaptador en memoria de RepositorioPracticas (sustituye al Adaptador PostgreSQL en esta etapa; ADR-003)."""
 
+from threading import Lock
+
 from dominio.empresa import Empresa
 from dominio.estado_postulacion import EstadoPostulacion
 from dominio.estudiante import Estudiante
 from dominio.plaza import Plaza
 from dominio.postulacion import Postulacion
 from dominio.practica import Practica
+from dominio.registro_horas import RegistroHoras
 from dominio.regla_practica import ReglaPractica
 from dominio.tutor import Tutor
 
@@ -23,6 +26,8 @@ class RepositorioPracticasMemoria:
         self._tutores: dict[str, Tutor] = {}
         self._estudiantes: dict[str, Estudiante] = {}
         self._practicas: dict[str, Practica] = {}
+        self._registros_horas: list[RegistroHoras] = []
+        self._candado_horas = Lock()
 
     def agregar_plaza(self, plaza: Plaza) -> None:
         """Precarga una plaza en el repositorio."""
@@ -129,3 +134,22 @@ class RepositorioPracticasMemoria:
     def listar_practicas(self) -> list[Practica]:
         """Devuelve una copia de las prácticas registradas."""
         return list(self._practicas.values())
+
+    def existe_registro_horas(self, id_practica: str, semana: str) -> bool:
+        """Indica si existe un registro de horas para la práctica y semana."""
+        return any(
+            r.id_practica == id_practica and r.semana == semana
+            for r in self._registros_horas
+        )
+
+    def guardar_registro_horas(self, registro: RegistroHoras) -> bool:
+        """Guarda de forma atomica (equivale a la restriccion unica de PostgreSQL); False si ya hay un registro de la practica y la semana."""
+        with self._candado_horas:
+            if self.existe_registro_horas(registro.id_practica, registro.semana):
+                return False
+            self._registros_horas.append(registro)
+            return True
+
+    def listar_registros_horas(self) -> list[RegistroHoras]:
+        """Devuelve una copia de la lista de registros de horas."""
+        return list(self._registros_horas)
