@@ -188,7 +188,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2
       Depende de: T-29
 
-- [ ] T-32 Revalidar CU-07 con el PDF real y actualizar la evidencia
+- [x] T-32 Revalidar CU-07 con el PDF real y actualizar la evidencia
       Archivos: specs/007-generar-acta-final/validacion.md
       Escenarios: todos
       Depende de: T-30, T-31
