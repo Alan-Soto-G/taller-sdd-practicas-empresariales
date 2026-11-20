@@ -1,12 +1,18 @@
-"""Adaptador de entrada REST de CU-01 a CU-07: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-08: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
+from aplicacion.actas.aprobar_acta import AprobarActa
+from aplicacion.actas.emitir_enlace_aprobacion import EmitirEnlaceAprobacion
 from aplicacion.actas.solicitar_actas import SolicitarActas
+from aplicacion.actas.solicitud_aprobacion_acta import SolicitudAprobacionActa
+from aplicacion.actas.solicitud_enlace_aprobacion import SolicitudEnlaceAprobacion
 from aplicacion.actas.solicitud_generacion_actas import SolicitudGeneracionActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
 from aplicacion.errores.acceso_denegado import AccesoDenegado
+from aplicacion.errores.acta_no_encontrada import ActaNoEncontrada
+from aplicacion.errores.aprobacion_no_permitida import AprobacionNoPermitida
 from aplicacion.errores.enlace_no_valido import EnlaceNoValido
 from aplicacion.errores.empresa_no_encontrada import EmpresaNoEncontrada
 from aplicacion.errores.error_aplicacion import ErrorAplicacion
@@ -37,6 +43,7 @@ from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.validador_token import ValidadorToken
 
 ACCION_EVALUAR = "evaluar"
+ACCION_APROBAR_ACTA = "aprobar acta"
 
 ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     NoAutenticado: 401,
@@ -52,6 +59,8 @@ ESTADOS_HTTP: dict[type[ErrorAplicacion], int] = {
     EnlaceNoValido: 410,
     EvaluacionNoPermitida: 409,
     EvaluacionNoValida: 422,
+    ActaNoEncontrada: 404,
+    AprobacionNoPermitida: 409,
 }
 
 
@@ -71,6 +80,8 @@ class ControladorRest:
         consultar_formulario_evaluacion: ConsultarFormularioEvaluacion,
         registrar_evaluacion: RegistrarEvaluacion,
         solicitar_actas: SolicitarActas,
+        emitir_enlace_aprobacion: EmitirEnlaceAprobacion,
+        aprobar_acta: AprobarActa,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -84,6 +95,8 @@ class ControladorRest:
         self._consultar_formulario_evaluacion = consultar_formulario_evaluacion
         self._registrar_evaluacion = registrar_evaluacion
         self._solicitar_actas = solicitar_actas
+        self._emitir_enlace_aprobacion = emitir_enlace_aprobacion
+        self._aprobar_acta = aprobar_acta
 
     def postular(
         self,
@@ -333,6 +346,68 @@ class ControladorRest:
         except ErrorAplicacion as error:
             return self._responder_error(error)
 
+    def emitir_enlace_aprobacion(
+        self,
+        token: str | None,
+        id_acta: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /actas/{id}/enlaces-aprobacion."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._emitir_enlace_aprobacion.ejecutar(
+                SolicitudEnlaceAprobacion(usuario, id_acta)
+            )
+            return (
+                201,
+                {
+                    "id_enlace": resultado.id_enlace,
+                    "id_practica": resultado.id_practica,
+                    "vence": resultado.vence.isoformat(),
+                    "correo_representante": resultado.correo_representante,
+                    "mensaje": "enlace de aprobación enviado",
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def aprobar_acta(
+        self,
+        token: str | None,
+        id_acta: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /actas/{id}/aprobaciones del Tutor o del Coordinador."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._aprobar_acta.aprobar_con_token(
+                SolicitudAprobacionActa(usuario, id_acta)
+            )
+            return (201, self._cuerpo_aprobacion(resultado))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def aprobar_acta_con_enlace(
+        self,
+        enlace: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Representa la petición POST /aprobaciones-acta/{enlace}; no pide token institucional (ADR-005)."""
+        try:
+            identidad = self._validador_enlace.validar(enlace, ACCION_APROBAR_ACTA)
+            resultado = self._aprobar_acta.aprobar_con_enlace(identidad)
+            return (201, self._cuerpo_aprobacion(resultado))
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def _cuerpo_aprobacion(self, resultado: object) -> dict[str, object]:
+        """Arma la respuesta de una aprobación registrada."""
+        return {
+            "id_acta": resultado.id_acta,
+            "rol": resultado.rol,
+            "aprobaciones": resultado.aprobaciones,
+            "estado_acta": str(resultado.estado_acta),
+            "estado_practica": str(resultado.estado_practica),
+            "mensaje": "aprobación registrada",
+        }
+
     def _responder_error(
         self,
         error: ErrorAplicacion,
@@ -353,6 +428,7 @@ class ControladorRest:
                 EnlaceNoValido,
                 EvaluacionNoPermitida,
                 EvaluacionNoValida,
+                AprobacionNoPermitida,
             ),
         ):
             cuerpo["motivo"] = error.motivo
