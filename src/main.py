@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-08: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/008. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-09: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/009. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -40,6 +40,8 @@ from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
+from aplicacion.horas.resumir_horas_practica import ResumirHorasPractica
+from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
 from infraestructura.controlador_rest import ControladorRest
 
 
@@ -85,6 +87,10 @@ def construir() -> dict[str, object]:
         repositorio, bitacora, notificador, reloj=datetime.now
     )
     aprobar_acta = AprobarActa(repositorio, bitacora, reloj=datetime.now)
+    resumir_horas = ResumirHorasPractica(repositorio, consultar_horas)
+    consultar_avance_tutor = ConsultarAvanceTutor(
+        repositorio, bitacora, resumir_horas, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -100,6 +106,7 @@ def construir() -> dict[str, object]:
         emitir_enlace_aprobacion,
         aprobar_acta,
         registrar_enlace_rechazado,
+        consultar_avance_tutor,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -182,6 +189,27 @@ def construir() -> dict[str, object]:
         ActaFinal("AC-09", "PR-09", datetime(2026, 11, 18, 10, 0), EstadoActa.GENERADA, ruta_ac09)
     )
 
+    # Antecedentes de specs/009 (CU-09)
+    repositorio.agregar_tutor(Tutor("T-500", "t500@universidad.edu.co"))
+    repositorio.agregar_estudiante(Estudiante("E-1010", "e1010@universidad.edu.co"))
+    repositorio.agregar_estudiante(Estudiante("E-1011", "e1011@universidad.edu.co"))
+    repositorio.agregar_practica(
+        Practica("PR-10", "E-1010", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-500")
+    )
+    repositorio.agregar_practica(
+        Practica("PR-11", "E-1011", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-500")
+    )
+    for semana in (40, 41, 42):
+        repositorio.guardar_registro_horas(
+            RegistroHoras(
+                f"RH-10-{semana}", "PR-10", f"2026-W{semana}", 20, "Desarrollo",
+                date(2026, 10, 1), EstadoRegistroHoras.APROBADO,
+            )
+        )
+    repositorio.guardar_registro_horas(
+        RegistroHoras.reportar("RH-10-43", "PR-10", "2026-W43", 20, "Pruebas", date(2026, 10, 23))
+    )
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
@@ -191,6 +219,8 @@ def construir() -> dict[str, object]:
     proveedor.emitir("tok-T-300", "T-300", "Tutor", ahora)
     proveedor.emitir("tok-T-400", "T-400", "Tutor", ahora)
     proveedor.emitir("tok-E-1009", "E-1009", "Estudiante", ahora)
+    proveedor.emitir("tok-T-500", "T-500", "Tutor", ahora)
+    proveedor.emitir("tok-E-1010", "E-1010", "Estudiante", ahora)
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
     proveedor.emitir(
         "tok-vencido",
@@ -216,6 +246,7 @@ def construir() -> dict[str, object]:
         "almacen_actas": almacen_actas,
         "solicitar_actas": solicitar_actas,
         "aprobar_acta": aprobar_acta,
+        "consultar_avance_tutor": consultar_avance_tutor,
     }
 
 
