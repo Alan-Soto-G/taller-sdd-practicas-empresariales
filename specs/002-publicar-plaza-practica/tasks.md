@@ -74,7 +74,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-11 Composición en main.py con PublicarPlaza y los datos de los Antecedentes
+- [x] T-11 Composición en main.py con PublicarPlaza y los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-09, T-10
