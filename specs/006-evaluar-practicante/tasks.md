@@ -19,7 +19,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Entidad CriterioEvaluacion
+- [x] T-01 Entidad CriterioEvaluacion
       Archivos: src/dominio/criterio_evaluacion.py
       Escenarios: ESC-B2, ESC-CI, ESC-E3
       Depende de: ninguna
