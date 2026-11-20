@@ -40,7 +40,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-EP, ESC-YE
       Depende de: ninguna
 
-- [ ] T-05 Puerto RepositorioPracticas: empresas, plazas y representantes
+- [x] T-05 Puerto RepositorioPracticas: empresas, plazas y representantes
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: ESC-B, ESC-LI, ESC-CO, ESC-EL, ESC-EP
       Depende de: ninguna

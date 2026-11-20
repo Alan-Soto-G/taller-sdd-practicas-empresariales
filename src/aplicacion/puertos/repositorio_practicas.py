@@ -178,3 +178,19 @@ class RepositorioPracticas(Protocol):
     def guardar_estudiante(self, estudiante: Estudiante) -> None:
         """Guarda un Estudiante nuevo (CU-13)."""
         ...
+
+    def listar_empresas(self) -> list[Empresa]:
+        """Devuelve todas las Empresas (CU-14)."""
+        ...
+
+    def eliminar_empresa(self, id_empresa: str) -> None:
+        """Elimina la Empresa (CU-14)."""
+        ...
+
+    def listar_plazas(self) -> list[Plaza]:
+        """Devuelve todas las Plazas (CU-14)."""
+        ...
+
+    def guardar_representante(self, representante: RepresentanteEmpresa) -> None:
+        """Guarda el RepresentanteEmpresa, nuevo o modificado (CU-14)."""
+        ...
