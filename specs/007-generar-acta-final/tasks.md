@@ -54,7 +54,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-R1, ESC-R3, ESC-E2
       Depende de: ninguna
 
-- [ ] T-08 Puerto PublicadorActas
+- [x] T-08 Puerto PublicadorActas
       Archivos: src/aplicacion/puertos/publicador_actas.py
       Escenarios: ESC-B1, ESC-E2
       Depende de: T-06
