@@ -60,7 +60,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-LI, ESC-AC, ESC-CO
       Depende de: ninguna
 
-- [ ] T-09 Caso de uso GestionarEmpresas
+- [x] T-09 Caso de uso GestionarEmpresas
       Archivos: src/aplicacion/postulaciones/gestionar_empresas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01 a T-08
