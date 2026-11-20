@@ -125,7 +125,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B3
       Depende de: ninguna
 
-- [ ] T-21 Caso de uso RegistrarEvaluacion
+- [x] T-21 Caso de uso RegistrarEvaluacion
       Archivos: src/aplicacion/evaluacion/registrar_evaluacion.py
       Escenarios: ESC-B3, ESC-CI, ESC-E5
       Depende de: T-05, T-06, T-08, T-09, T-10, T-11, T-13, T-19, T-20
