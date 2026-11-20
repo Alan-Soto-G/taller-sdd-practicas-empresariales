@@ -108,7 +108,7 @@ Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo
       Escenarios: ESC-XL, ESC-AN, ESC-XS
       Depende de: T-15, T-16
 
-- [ ] T-18 Dependencia openpyxl==3.1.5
+- [x] T-18 Dependencia openpyxl==3.1.5
       Archivos: src/requirements.txt
       Escenarios: ESC-XL
       Depende de: T-15
