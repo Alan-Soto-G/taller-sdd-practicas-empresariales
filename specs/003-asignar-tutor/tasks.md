@@ -102,7 +102,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Infraestructura: adaptadores
 
-- [ ] T-16 Adaptador NotificadorSimulado (enviados y pendientes de reenvío)
+- [x] T-16 Adaptador NotificadorSimulado (enviados y pendientes de reenvío)
       Archivos: src/infraestructura/notificador_simulado.py
       Escenarios: ESC-B, ESC-CO, ESC-SC, ESC-TN
       Depende de: T-07
