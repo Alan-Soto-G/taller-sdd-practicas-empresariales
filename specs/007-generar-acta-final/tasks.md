@@ -158,7 +158,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2, ESC-E2
       Depende de: ninguna
 
-- [ ] T-26 Error ActaNoComponible
+- [x] T-26 Error ActaNoComponible
       Archivos: src/aplicacion/errores/acta_no_componible.py
       Escenarios: ESC-RC
       Depende de: ninguna
