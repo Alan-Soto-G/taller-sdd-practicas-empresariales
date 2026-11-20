@@ -149,7 +149,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-25 Composición en main.py con el Módulo Evaluación y los datos de los Antecedentes
+- [x] T-25 Composición en main.py con el Módulo Evaluación y los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-23, T-24

@@ -1,23 +1,30 @@
-"""Composicion de CU-01 a CU-05: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/005."""
+"""Composicion de CU-01 a CU-06: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/006."""
 
 from datetime import date, datetime, timedelta
 
 from dominio.empresa import Empresa
 from dominio.estado_practica import EstadoPractica
 from dominio.estudiante import Estudiante
+from dominio.criterio_evaluacion import CriterioEvaluacion
 from dominio.plaza import Plaza
 from dominio.practica import Practica
+from dominio.representante_empresa import RepresentanteEmpresa
 from dominio.regla_practica import ReglaPractica
 from dominio.registro_horas import RegistroHoras
 from dominio.tutor import Tutor
+from infraestructura.validador_enlace import ValidadorEnlace
 from infraestructura.notificador_simulado import NotificadorSimulado
 from infraestructura.repositorio_practicas_memoria import RepositorioPracticasMemoria
 from infraestructura.bitacora_memoria import BitacoraMemoria
 from infraestructura.proveedor_identidad_simulado import ProveedorIdentidadSimulado
 from infraestructura.validador_token import ValidadorToken
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
+from aplicacion.configuracion.consultar_criterios_evaluacion import ConsultarCriteriosEvaluacion
 from aplicacion.configuracion.consultar_horas_requeridas import ConsultarHorasRequeridas
 from aplicacion.configuracion.consultar_regla_vigente import ConsultarReglaVigente
+from aplicacion.evaluacion.emitir_enlace_evaluacion import EmitirEnlaceEvaluacion
+from aplicacion.evaluacion.consultar_formulario_evaluacion import ConsultarFormularioEvaluacion
+from aplicacion.evaluacion.registrar_evaluacion import RegistrarEvaluacion
 from aplicacion.horas.aprobar_horas import AprobarHoras
 from aplicacion.horas.registrar_horas import RegistrarHoras
 from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
@@ -46,6 +53,17 @@ def construir() -> dict[str, object]:
     aprobar_horas = AprobarHoras(
         repositorio, bitacora, consultar_horas, reloj=datetime.now
     )
+    validador_enlace = ValidadorEnlace(repositorio, bitacora, reloj=datetime.now)
+    consultar_criterios = ConsultarCriteriosEvaluacion(repositorio)
+    emitir_enlace_evaluacion = EmitirEnlaceEvaluacion(
+        repositorio, bitacora, notificador, reloj=datetime.now
+    )
+    consultar_formulario_evaluacion = ConsultarFormularioEvaluacion(
+        repositorio, consultar_criterios
+    )
+    registrar_evaluacion = RegistrarEvaluacion(
+        repositorio, bitacora, consultar_criterios, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -53,6 +71,10 @@ def construir() -> dict[str, object]:
         asignar_tutor,
         registrar_horas,
         aprobar_horas,
+        validador_enlace,
+        emitir_enlace_evaluacion,
+        consultar_formulario_evaluacion,
+        registrar_evaluacion,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -62,7 +84,17 @@ def construir() -> dict[str, object]:
 
     # Antecedentes de specs/003 (CU-03)
     repositorio.agregar_regla(
-        ReglaPractica("v1", 160, 2, "plantilla-acta-v1")
+        ReglaPractica(
+            "v1",
+            160,
+            2,
+            "plantilla-acta-v1",
+            (
+                CriterioEvaluacion("Responsabilidad", 5),
+                CriterioEvaluacion("Trabajo en equipo", 5),
+                CriterioEvaluacion("Calidad técnica", 5),
+            ),
+        )
     )
     repositorio.agregar_tutor(Tutor("T-200", "t200@universidad.edu.co"))
     repositorio.agregar_tutor(Tutor("T-300", "t300@universidad.edu.co"))
@@ -101,6 +133,12 @@ def construir() -> dict[str, object]:
     repositorio.agregar_practica(Practica("PR-05", "E-1005", "EMP-ACME", "v1", EstadoPractica.EN_CURSO, "T-300"))
     repositorio.guardar_registro_horas(RegistroHoras.reportar("RH-05", "PR-05", "2026-W46", 20, "Desarrollo de la API", date(2026, 11, 13)))
 
+    # Antecedentes de specs/006 (CU-06)
+    repositorio.agregar_representante(RepresentanteEmpresa("R-01", "EMP-ACME", "Representante de Acme", "representante@acme.example"))
+    repositorio.agregar_tutor(Tutor("T-400", "t400@universidad.edu.co"))
+    repositorio.agregar_estudiante(Estudiante("E-1006", "e1006@universidad.edu.co"))
+    repositorio.agregar_practica(Practica("PR-06", "E-1006", "EMP-ACME", "v1", EstadoPractica.HORAS_COMPLETAS, "T-400"))
+
     ahora = datetime.now()
     proveedor.emitir("tok-E-1001", "E-1001", "Estudiante", ahora)
     proveedor.emitir("tok-E-1002", "E-1002", "Estudiante", ahora)
@@ -126,6 +164,9 @@ def construir() -> dict[str, object]:
         "asignar_tutor": asignar_tutor,
         "registrar_horas": registrar_horas,
         "aprobar_horas": aprobar_horas,
+        "validador_enlace": validador_enlace,
+        "emitir_enlace_evaluacion": emitir_enlace_evaluacion,
+        "registrar_evaluacion": registrar_evaluacion,
     }
 
 
