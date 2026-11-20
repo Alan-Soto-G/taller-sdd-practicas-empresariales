@@ -73,7 +73,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 Aprobado por el usuario el 2026-11-20. Claves nuevas de escenario: ESC-XL "Flujo alterno - el Coordinador sube el archivo .xlsx", ESC-AN "Excepción - el archivo no es un Excel válido", ESC-XS "Excepción - un usuario sin el rol CoordinadorPracticas sube el archivo".
 
-- [ ] T-11 Error ArchivoNoValido con su motivo
+- [x] T-11 Error ArchivoNoValido con su motivo
       Archivos: src/aplicacion/errores/archivo_no_valido.py
       Escenarios: ESC-AN
       Depende de: ninguna
