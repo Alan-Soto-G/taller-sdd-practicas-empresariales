@@ -1,0 +1,2 @@
+# Dependencias externas aprobadas por ADR. Instalar con: python -m pip install -r src/requirements.txt
+reportlab==5.1.0  # ADR-011: PDF del acta final (licencia BSD)

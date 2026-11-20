@@ -183,7 +183,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
       Depende de: T-28, T-29
 
-- [ ] T-31 Dependencia reportlab==5.1.0
+- [x] T-31 Dependencia reportlab==5.1.0
       Archivos: src/requirements.txt
       Escenarios: ESC-B2
       Depende de: T-29
