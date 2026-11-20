@@ -88,7 +88,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-SC, ESC-CP, ESC-YT, ESC-PN
       Depende de: ninguna
 
-- [ ] T-14 DTO de salida AsignacionRealizada
+- [x] T-14 DTO de salida AsignacionRealizada
       Archivos: src/aplicacion/asignacion/asignacion_realizada.py
       Escenarios: ESC-B, ESC-VA, ESC-CP
       Depende de: T-13
