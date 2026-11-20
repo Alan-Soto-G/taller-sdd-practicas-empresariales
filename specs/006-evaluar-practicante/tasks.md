@@ -170,7 +170,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: ESC-EV, ESC-RE
       Depende de: T-08
 
-- [ ] T-28 DTO IntentoEnlaceRechazado
+- [x] T-28 DTO IntentoEnlaceRechazado
       Archivos: src/aplicacion/evaluacion/intento_enlace_rechazado.py
       Escenarios: ESC-EV, ESC-RE
       Depende de: ninguna
