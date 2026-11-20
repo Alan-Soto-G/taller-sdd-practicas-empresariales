@@ -178,7 +178,7 @@ Pedido del usuario el 2026-11-20: usar una librería de PDF funcional y gratuita
       Escenarios: ESC-B2, ESC-RC, ESC-E2
       Depende de: T-27
 
-- [ ] T-30 Composición del Worker con ComponedorActaReportlab
+- [x] T-30 Composición del Worker con ComponedorActaReportlab
       Archivos: src/worker.py
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-RC, ESC-CO, ESC-E2
       Depende de: T-28, T-29
