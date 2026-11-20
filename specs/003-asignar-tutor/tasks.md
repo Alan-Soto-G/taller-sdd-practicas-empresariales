@@ -19,7 +19,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Enum EstadoPractica
+- [x] T-01 Enum EstadoPractica
       Archivos: src/dominio/estado_practica.py
       Escenarios: ESC-B, ESC-SC, ESC-CE, ESC-YT
       Depende de: ninguna
