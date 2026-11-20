@@ -127,7 +127,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-21 Composición en main.py con los datos de los Antecedentes
+- [x] T-21 Composición en main.py con los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-16, T-17, T-18, T-20
