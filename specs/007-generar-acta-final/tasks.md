@@ -22,7 +22,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-B2, ESC-R3
       Depende de: ninguna
 
-- [ ] T-02 Entidad ActaFinal con solicitar, marcar_generada y marcar_con_error
+- [x] T-02 Entidad ActaFinal con solicitar, marcar_generada y marcar_con_error
       Archivos: src/dominio/acta_final.py
       Escenarios: ESC-B1, ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: T-01
