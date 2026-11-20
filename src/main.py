@@ -1,4 +1,4 @@
-"""Composicion de la API para CU-01 a CU-09: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/009. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
+"""Composicion de la API para CU-01 a CU-10: conecta dominio, aplicacion e infraestructura con adaptadores en memoria y carga los datos de los Antecedentes de specs/001 a specs/010. El Worker de actas tiene su propia composicion en worker.py (ADR-001, ADR-002)."""
 
 from datetime import date, datetime, timedelta
 
@@ -42,6 +42,8 @@ from aplicacion.postulaciones.postularse_plaza import PostularsePlaza
 from aplicacion.postulaciones.publicar_plaza import PublicarPlaza
 from aplicacion.horas.resumir_horas_practica import ResumirHorasPractica
 from aplicacion.seguimiento.consultar_avance_tutor import ConsultarAvanceTutor
+from aplicacion.seguimiento.consultar_estado_practica import ConsultarEstadoPractica
+from aplicacion.actas.consultar_acta_practica import ConsultarActaPractica
 from infraestructura.controlador_rest import ControladorRest
 
 
@@ -91,6 +93,10 @@ def construir() -> dict[str, object]:
     consultar_avance_tutor = ConsultarAvanceTutor(
         repositorio, bitacora, resumir_horas, reloj=datetime.now
     )
+    consultar_acta = ConsultarActaPractica(repositorio)
+    consultar_estado_practica = ConsultarEstadoPractica(
+        repositorio, bitacora, resumir_horas, consultar_acta, reloj=datetime.now
+    )
     controlador = ControladorRest(
         validador,
         caso_de_uso,
@@ -107,6 +113,7 @@ def construir() -> dict[str, object]:
         aprobar_acta,
         registrar_enlace_rechazado,
         consultar_avance_tutor,
+        consultar_estado_practica,
     )
 
     repositorio.agregar_empresa(Empresa("EMP-ACME", "Acme S.A.S."))
@@ -221,6 +228,7 @@ def construir() -> dict[str, object]:
     proveedor.emitir("tok-E-1009", "E-1009", "Estudiante", ahora)
     proveedor.emitir("tok-T-500", "T-500", "Tutor", ahora)
     proveedor.emitir("tok-E-1010", "E-1010", "Estudiante", ahora)
+    proveedor.emitir("tok-E-1008", "E-1008", "Estudiante", ahora)  # CU-10
     proveedor.emitir("tok-C-01", "C-01", "CoordinadorPracticas", ahora)
     proveedor.emitir(
         "tok-vencido",
@@ -247,6 +255,7 @@ def construir() -> dict[str, object]:
         "solicitar_actas": solicitar_actas,
         "aprobar_acta": aprobar_acta,
         "consultar_avance_tutor": consultar_avance_tutor,
+        "consultar_estado_practica": consultar_estado_practica,
     }
 
 
