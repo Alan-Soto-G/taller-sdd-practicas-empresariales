@@ -29,7 +29,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-VA, ESC-CE, ESC-YT
       Depende de: T-01
 
-- [ ] T-03 Entidad Tutor con la regla tiene_cupo
+- [x] T-03 Entidad Tutor con la regla tiene_cupo
       Archivos: src/dominio/tutor.py
       Escenarios: ESC-B, ESC-SC, ESC-CP, ESC-RV
       Depende de: ninguna
