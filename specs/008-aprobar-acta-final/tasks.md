@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación
 
-- [ ] T-04 Error ActaNoEncontrada
+- [x] T-04 Error ActaNoEncontrada
       Archivos: src/aplicacion/errores/acta_no_encontrada.py
       Escenarios: ESC-AN
       Depende de: ninguna
