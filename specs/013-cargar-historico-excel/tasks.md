@@ -52,7 +52,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-RE, ESC-DO
       Depende de: T-02
 
-- [ ] T-08 ControladorRest: importar_historico (POST /importaciones/historico)
+- [x] T-08 ControladorRest: importar_historico (POST /importaciones/historico)
       Archivos: src/infraestructura/controlador_rest.py
       Escenarios: todos
       Depende de: T-06

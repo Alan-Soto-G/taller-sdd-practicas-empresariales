@@ -1,4 +1,4 @@
-"""Adaptador de entrada REST de CU-01 a CU-12: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
+"""Adaptador de entrada REST de CU-01 a CU-13: traduce las peticiones HTTP a los casos de uso y los errores de aplicacion a la respuesta unificada (ADR-007). Los usuarios institucionales entran con token (ADR-004) y el Representante de la Empresa con enlace (ADR-005)."""
 
 from uuid import uuid4
 
@@ -13,6 +13,8 @@ from aplicacion.actas.solicitud_exportacion_acta import SolicitudExportacionActa
 from aplicacion.actas.solicitud_generacion_actas import SolicitudGeneracionActas
 from aplicacion.asignacion.asignar_tutor import AsignarTutor
 from aplicacion.asignacion.solicitud_asignacion_tutor import SolicitudAsignacionTutor
+from aplicacion.configuracion.importar_historico import ImportarHistorico
+from aplicacion.configuracion.solicitud_importacion import SolicitudImportacion
 from aplicacion.errores.acceso_denegado import AccesoDenegado
 from aplicacion.errores.acta_no_encontrada import ActaNoEncontrada
 from aplicacion.errores.acta_no_exportable import ActaNoExportable
@@ -103,6 +105,7 @@ class ControladorRest:
         consultar_estado_practica: ConsultarEstadoPractica,
         generar_reporte: GenerarReporte,
         exportar_acta: ExportarActa,
+        importar_historico: ImportarHistorico,
     ) -> None:
         """Inicializa el controlador con sus dependencias."""
         self._validador = validador
@@ -123,6 +126,7 @@ class ControladorRest:
         self._consultar_estado_practica = consultar_estado_practica
         self._generar_reporte = generar_reporte
         self._exportar_acta = exportar_acta
+        self._importar_historico = importar_historico
 
     def postular(
         self,
@@ -536,6 +540,30 @@ class ControladorRest:
                     "nombre_archivo": acta.nombre_archivo,
                     "tipo_contenido": acta.tipo_contenido,
                     "contenido": acta.contenido,
+                },
+            )
+        except ErrorAplicacion as error:
+            return self._responder_error(error)
+
+    def importar_historico(
+        self,
+        token: str | None,
+        cuerpo: dict[str, object],
+    ) -> tuple[int, dict[str, object]]:
+        """Representa POST /importaciones/historico con el libro ya leido: {"hojas": {hoja: [fila, ...]}} (CU-13)."""
+        try:
+            usuario = self._validador.validar(token)
+            resultado = self._importar_historico.ejecutar(
+                SolicitudImportacion(usuario, dict(cuerpo.get("hojas", {})))
+            )
+            return (
+                200,
+                {
+                    "cargadas": resultado.cargadas,
+                    "rechazadas": [
+                        {"hoja": f.hoja, "fila": f.fila, "motivo": f.motivo}
+                        for f in resultado.rechazadas
+                    ],
                 },
             )
         except ErrorAplicacion as error:
