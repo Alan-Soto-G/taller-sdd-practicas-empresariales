@@ -10,7 +10,7 @@ Aterriza [spec.md](spec.md) (CU-06) en la arquitectura de [docs/arquitectura.md]
 | ADR-003 | RepositorioPracticas en memoria con representantes, enlaces y evaluaciones. Usar el enlace es atómico, para que no se use dos veces. |
 | ADR-004 | El Coordinador emite el enlace con su token del SSO; la autorización por rol está en el caso de uso. |
 | ADR-005 | El **Validador de enlace** (adaptador de entrada) valida el enlace y entrega una identidad acotada a una práctica y a una acción (`IdentidadEnlace`). El enlace vence a los 7 días, se invalida al usarse o al reemitirlo y no da acceso a otra acción. |
-| ADR-006 | Se auditan el uso del enlace, la creación de la Evaluacion, el paso de la Práctica a "evaluada", cada acceso rechazado y cada intento con un enlace vencido, usado o inválido. Como el Validador de enlace es el único que ve ese intento, recibe el puerto `Bitacora` además de RepositorioPracticas: la vista de desarrollo solo nombra RepositorioPracticas, pero ADR-005 y la secuencia ESC-04 exigen registrar el intento. |
+| ADR-006 | Se auditan el uso del enlace, la creación de la Evaluacion, el paso de la Práctica a "evaluada", cada acceso rechazado y cada intento con un enlace vencido, usado o inválido. ADR-006 dice que "los casos de uso escriben a través del puerto `Bitacora`": el Validador de enlace (adaptador) depende solo de RepositorioPracticas, como en la vista de desarrollo, y lanza `EnlaceNoValido` con el enlace y el representante; el controlador entrega ese intento al caso de uso `RegistrarEnlaceRechazado`, que lo audita (ajuste del 2026-11-20, tareas T-27 a T-33). |
 | ADR-007 | Errores `EnlaceNoValido` (410), `EvaluacionNoPermitida` (409), `EvaluacionNoValida` (422) y `PracticaNoEncontrada` (404). Si el correo falla, el enlace no se revierte. |
 | ADR-008 | Los criterios (`CriterioEvaluacion`) son datos de la ReglaPractica con la que empezó la Práctica. Agregar uno es agregar una versión de la regla (EAC-03). |
 | Vista lógica | CriterioEvaluacion, RepresentanteEmpresa, EnlaceAcceso (acción, vencimiento, usado), Evaluacion (una por práctica, califica todos los criterios) y la transición "horas completas" → "evaluada". |
@@ -55,9 +55,11 @@ Python 3.12, una clase por archivo, sin `__init__.py`. **(nuevo)** o **(cambia)*
 
 | Archivo | Clase | Responsabilidad |
 |---------|-------|-----------------|
-| `validador_enlace.py` **(nuevo)** | `ValidadorEnlace` | `validar(token, accion) -> IdentidadEnlace`. Busca el enlace; si no existe o `motivo_rechazo` da un motivo, audita (usuario: el representante o "desconocido"; rol `RepresentanteEmpresa`; recurso `enlace:<id>` o `enlace:desconocido`; acción "usar enlace rechazado: <motivo>") y lanza `EnlaceNoValido(motivo)` |
+| `validador_enlace.py` **(nuevo)** | `ValidadorEnlace` | `validar(token, accion) -> IdentidadEnlace`. Recibe solo RepositorioPracticas y el reloj. Busca el enlace; si no existe o `motivo_rechazo` da un motivo, lanza `EnlaceNoValido(motivo, id_enlace, id_representante)`; no escribe en la bitácora (ADR-006) |
 | `repositorio_practicas_memoria.py` **(cambia)** | `RepositorioPracticasMemoria` | Representantes, enlaces y evaluaciones; `agregar_representante`, `listar_enlaces`, `listar_evaluaciones`; `marcar_enlace_usado` dentro de un `Lock` |
 | `controlador_rest.py` **(cambia)** | `ControladorRest` | Recibe `ValidadorEnlace`, `EmitirEnlaceEvaluacion`, `ConsultarFormularioEvaluacion` y `RegistrarEvaluacion`. `emitir_enlace_evaluacion(token, id_practica)` (POST /practicas/{id}/enlaces-evaluacion, 201), `abrir_evaluacion(enlace)` (GET /evaluaciones/{enlace}, 200) y `enviar_evaluacion(enlace, cuerpo)` (POST /evaluaciones/{enlace}, 201 "evaluación enviada"). Agrega 410, 409 y 422 de los errores nuevos, con su motivo |
+| `aplicacion/evaluacion/intento_enlace_rechazado.py` **(nuevo, ajuste)** | `IntentoEnlaceRechazado` (DTO) | `id_enlace \| None`, `id_representante \| None`, `motivo` |
+| `aplicacion/evaluacion/registrar_enlace_rechazado.py` **(nuevo, ajuste)** | `RegistrarEnlaceRechazado` | Caso de uso que audita el intento rechazado: usuario el representante o "desconocido", rol `RepresentanteEmpresa`, recurso `enlace:<id>` o `enlace:desconocido`, acción "usar enlace rechazado: <motivo>" (ADR-005, ADR-006) |
 | `src/main.py` **(cambia)** | (composición) | Precarga los tres criterios en la regla "v1", el RepresentanteEmpresa "R-01" de "EMP-ACME", el Tutor "T-400", el Estudiante "E-1006" y la Practica "PR-06" ("horas completas", "T-400", "v1"); crea el Validador de enlace y los casos de uso |
 
 Vista de usos: Módulo Evaluación → Módulo Configuración → dominio. Sin ciclos.
@@ -72,7 +74,7 @@ Secuencia [cu06-evaluar-practicante.puml](../../docs/diagramas/secuencias/cu06-e
    - no está en "horas completas" → `EvaluacionNoPermitida("la práctica no tiene las horas completas")`;
    - no hay representante → `EvaluacionNoPermitida("la empresa no tiene representante registrado")`;
    - si todo va bien: `invalidar_enlaces(practica, "evaluar")`; `EnlaceAcceso.emitir` con id `EN-<8 hex>` y token `secrets.token_urlsafe(16)`; `guardar_enlace`; correo al representante con la ruta `/evaluaciones/<token>` (si lanza `CorreoNoEnviado`, se ignora); devuelve `EnlaceEmitido`.
-2. **Abrir:** el controlador llama `ValidadorEnlace.validar(token, "evaluar")` (410 si falla) y `ConsultarFormularioEvaluacion` devuelve los criterios de `practica.version_regla`.
+2. **Abrir:** el controlador llama `ValidadorEnlace.validar(token, "evaluar")`; si lanza `EnlaceNoValido`, llama `RegistrarEnlaceRechazado` y responde 410 y `ConsultarFormularioEvaluacion` devuelve los criterios de `practica.version_regla`.
 3. **Enviar:** el controlador valida el enlace igual que al abrir. `RegistrarEvaluacion`:
    - la práctica no está en "horas completas" → `EvaluacionNoPermitida("la práctica no está lista para evaluar")`;
    - `Evaluacion.motivo_invalidez` con las escalas de los criterios → `EvaluacionNoValida(motivo)`, sin consumir el enlace;

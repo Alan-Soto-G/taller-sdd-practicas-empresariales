@@ -160,3 +160,42 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Archivos: specs/006-evaluar-practicante/validacion.md
       Escenarios: todos
       Depende de: T-25
+
+## Ajuste: la auditoría del enlace rechazado la escribe un caso de uso (ADR-006)
+
+Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que los casos de uso escriben en la `Bitacora`, y la vista de desarrollo dice que el Validador de enlace solo depende de RepositorioPracticas.
+
+- [ ] T-27 EnlaceNoValido lleva el enlace y el representante
+      Archivos: src/aplicacion/errores/enlace_no_valido.py
+      Escenarios: ESC-EV, ESC-RE
+      Depende de: T-08
+
+- [ ] T-28 DTO IntentoEnlaceRechazado
+      Archivos: src/aplicacion/evaluacion/intento_enlace_rechazado.py
+      Escenarios: ESC-EV, ESC-RE
+      Depende de: ninguna
+
+- [ ] T-29 Caso de uso RegistrarEnlaceRechazado
+      Archivos: src/aplicacion/evaluacion/registrar_enlace_rechazado.py
+      Escenarios: ESC-EV, ESC-RE
+      Depende de: T-28
+
+- [ ] T-30 ValidadorEnlace sin Bitacora
+      Archivos: src/infraestructura/validador_enlace.py
+      Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV, ESC-E5
+      Depende de: T-27
+
+- [ ] T-31 ControladorRest audita el enlace rechazado con el caso de uso
+      Archivos: src/infraestructura/controlador_rest.py
+      Escenarios: ESC-B2, ESC-B3, ESC-RE, ESC-EV
+      Depende de: T-29, T-30
+
+- [ ] T-32 Composición en main.py con RegistrarEnlaceRechazado
+      Archivos: src/main.py
+      Escenarios: todos
+      Depende de: T-31
+
+- [ ] T-33 Revalidar CU-06 (y CU-08) y actualizar la evidencia
+      Archivos: specs/006-evaluar-practicante/validacion.md
+      Escenarios: todos
+      Depende de: T-32
