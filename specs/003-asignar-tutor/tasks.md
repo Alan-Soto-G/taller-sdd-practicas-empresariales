@@ -119,7 +119,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Composición
 
-- [ ] T-19 Composición en main.py con AsignarTutor y los datos de los Antecedentes
+- [x] T-19 Composición en main.py con AsignarTutor y los datos de los Antecedentes
       Archivos: src/main.py
       Escenarios: todos
       Depende de: T-11, T-15, T-16, T-17, T-18
