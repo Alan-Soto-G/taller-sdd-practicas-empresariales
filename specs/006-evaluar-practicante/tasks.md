@@ -195,7 +195,7 @@ Pedido del usuario el 2026-11-20 ("haz lo que diga el ADR"): ADR-006 dice que lo
       Escenarios: todos
       Depende de: T-31
 
-- [ ] T-33 Revalidar CU-06 (y CU-08) y actualizar la evidencia
+- [x] T-33 Revalidar CU-06 (y CU-08) y actualizar la evidencia
       Archivos: specs/006-evaluar-practicante/validacion.md
       Escenarios: todos
       Depende de: T-32

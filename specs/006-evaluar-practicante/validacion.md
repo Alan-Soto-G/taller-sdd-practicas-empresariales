@@ -1,6 +1,6 @@
 # Validación: 006 Evaluar el desempeño del practicante
 
-Fecha: 2026-11-20. Código validado: `src/` en el commit `20c527d` (006 T-25).
+Fecha: 2026-11-20. Código validado: `src/` en el commit `20c527d` (006 T-25) y revalidado en `0e13449` (006 T-32), después del ajuste que mueve la auditoría del enlace rechazado a un caso de uso (ADR-006).
 
 Método: cada escenario se ejecutó contra la composición real de `src/main.py` (`construir()`), con una aplicación nueva por escenario y los datos de los Antecedentes de [spec.md](spec.md):
 - ReglaPractica "v1" con tres criterios de escala 5;
@@ -22,9 +22,9 @@ El token del enlace se lee del repositorio en memoria (en producción solo viaja
 | ESC-TV Token de hace 16 minutos | Cumple | `HTTP 401 {'codigo': 'no_autenticado', …}`. Enlaces `[]` |
 | ESC-RE Reemitir | Cumple | Enlaces `[('EN-8accdbca', True), ('EN-30813b52', False)]`, el nuevo es distinto. Abrir el anterior: `HTTP 410 {'codigo': 'enlace_no_valido', 'mensaje': 'enlace vencido: solicite uno nuevo a la Coordinación', …, 'motivo': 'enlace usado'}`. Abrir el nuevo: `HTTP 200`. Código: `emitir_enlace_evaluacion.py:72-74`, `src/infraestructura/repositorio_practicas_memoria.py:220-229` |
 | ESC-CO Falla el correo | Cumple | `HTTP 201 {… 'mensaje': 'enlace de evaluación enviado'}`. Enlaces `[('PR-06', False)]`; enviados `[]`; pendientes `[['representante@acme.example']]`. Código: `emitir_enlace_evaluacion.py:85-93` |
-| ESC-EV enlace vencido | Cumple | `HTTP 410 {… 'motivo': 'enlace vencido'}`. PR-06 `horas completas`. Bitácora nueva `('R-01', 'RepresentanteEmpresa', 'enlace:EN-viejo', 'usar enlace rechazado: enlace vencido')`. Código: `src/infraestructura/validador_enlace.py:27-52`, `enlace_acceso.py:24-32` |
+| ESC-EV enlace vencido | Cumple | `HTTP 410 {… 'motivo': 'enlace vencido'}`. PR-06 `horas completas`. Bitácora nueva `('R-01', 'RepresentanteEmpresa', 'enlace:EN-viejo', 'usar enlace rechazado: enlace vencido')`. Código: `src/infraestructura/validador_enlace.py` (lanza `EnlaceNoValido` con el enlace y el representante), `src/infraestructura/controlador_rest.py:406-414` (`_validar_enlace`), `src/aplicacion/evaluacion/registrar_enlace_rechazado.py` (escribe en la bitácora), `enlace_acceso.py:24-32` |
 | ESC-EV enlace usado | Cumple | `HTTP 410 {… 'motivo': 'enlace usado'}`. PR-06 sigue `evaluada` (el uso anterior la evaluó; el intento no la cambia). Bitácora nueva `('R-01', 'RepresentanteEmpresa', 'enlace:EN-3eeb61fa', 'usar enlace rechazado: enlace usado')` |
-| ESC-EV enlace inexistente | Cumple | `HTTP 410 {… 'motivo': 'enlace inválido'}`. PR-06 `horas completas`. Bitácora nueva `('desconocido', 'RepresentanteEmpresa', 'enlace:desconocido', 'usar enlace rechazado: enlace inválido')`. Código: `validador_enlace.py:31-32` |
+| ESC-EV enlace inexistente | Cumple | `HTTP 410 {… 'motivo': 'enlace inválido'}`. PR-06 `horas completas`. Bitácora nueva `('desconocido', 'RepresentanteEmpresa', 'enlace:desconocido', 'usar enlace rechazado: enlace inválido')`. Código: `validador_enlace.py` (enlace inexistente, sin id ni representante) y `registrar_enlace_rechazado.py` (usuario y recurso "desconocido") |
 | ESC-CI falta un criterio | Cumple | `HTTP 422 {'codigo': 'evaluacion_no_valida', 'mensaje': 'evaluación no válida', …, 'motivo': 'falta calificar el criterio Calidad técnica'}`. Evaluaciones `[]`, enlace usado `False`. Código: `src/dominio/evaluacion.py:16-28`, `registrar_evaluacion.py:53-54` |
 | ESC-CI calificación 6 | Cumple | `HTTP 422 … 'motivo': 'la calificación de Responsabilidad debe estar entre 1 y 5'`. Evaluaciones `[]`, enlace usado `False` |
 | ESC-CI calificación 0 | Cumple | `HTTP 422 … 'motivo': 'la calificación de Responsabilidad debe estar entre 1 y 5'`. Evaluaciones `[]`, enlace usado `False` |
@@ -41,10 +41,10 @@ El token del enlace se lee del repositorio en memoria (en producción solo viaja
   - ADR-003: `marcar_enlace_usado` es atómico con `Lock` (`repositorio_practicas_memoria.py:231-238`).
   - ADR-004: la autorización del Coordinador está en el caso de uso (`emitir_enlace_evaluacion.py:47`).
   - ADR-005: el Validador de enlace entrega `IdentidadEnlace` (práctica y acción) y no pide token institucional; el enlace vence a los 7 días (`enlace_acceso.py:6`), es de un solo uso (`registrar_evaluacion.py:56-57`) y se invalida al reemitirlo.
-  - ADR-006: se auditan el uso del enlace, la evaluación, el cambio de estado (`registrar_evaluacion.py:71-82`), el acceso rechazado y cada intento con un enlace no válido (`validador_enlace.py:43-52`).
+  - ADR-006: se auditan el uso del enlace, la evaluación, el cambio de estado (`registrar_evaluacion.py:71-82`), el acceso rechazado y cada intento con un enlace no válido, que audita el caso de uso `RegistrarEnlaceRechazado` (`src/aplicacion/evaluacion/registrar_enlace_rechazado.py`). Ningún adaptador escribe en la bitácora: `src/infraestructura/validador_enlace.py` solo depende de `RepositorioPracticas` ("los casos de uso escriben a través del puerto `Bitacora`", ADR-006).
   - ADR-007: 410, 409 y 422 con motivo en `controlador_rest.py:50-52`; si el correo falla, el enlace no se revierte.
   - ADR-008: los criterios son datos de la versión de la regla de la práctica (`registrar_evaluacion.py:48-52`, ESC-E3).
-- **Desviación declarada en el plan:** el Validador de enlace recibe el puerto `Bitacora` además de RepositorioPracticas, que es lo que nombra la vista de desarrollo. Lo exigen ADR-005 ("cada intento con un enlace vencido o inválido se audita") y la secuencia ESC-04 ("registra el intento rechazado"). No es un componente nuevo.
+- **Cumple la vista de desarrollo y ADR-006:** el Validador de enlace depende solo de RepositorioPracticas, como dice la vista. El intento rechazado que exige ADR-005 lo audita un caso de uso, como exige ADR-006. La primera versión (hasta `006 T-26`) auditaba desde el adaptador; se corrigió con las tareas T-27 a T-33.
 - **Convenciones de AGENTS.md: cumplen.** Una clase por archivo, cero `__init__.py`, ningún archivo con BOM; en el índice de git todo está en LF. DTO en la entrada y la salida de los casos de uso. Nombres del glosario (`EnlaceAcceso`, `Evaluacion`, `CriterioEvaluacion`, `RepresentanteEmpresa`). Solo librería estándar (`secrets` para el token).
 
 ### Observaciones
@@ -53,6 +53,10 @@ El token del enlace se lee del repositorio en memoria (en producción solo viaja
 2. **CU-01 a CU-05 no se rompieron.** Los scripts de los Anexos dan los mismos códigos: CU-01 `201, 409, 409, 201, 409, 409, 201, 404, 403, 401, [201, 201]`; CU-02 `201×3, 404, 400×5, 403, 401`; CU-03 `200×9, 404, 403, 401`; CU-04 `201, 201, 422×8, 404, 403, 403, 401, {201: 300}`; CU-05 `200×4, 422×3, 404, 403, 403, 401`.
 3. **Datos de prueba:** las prácticas precargadas no pasan por CU-03, así que el Tutor "T-300" tiene 3 prácticas activas (PR-03, PR-04 y PR-05) con carga máxima 2. No afecta a ningún escenario: la carga solo se revisa al asignar, y los escenarios de CU-03 usan "T-200". Para PR-06 se usa el Tutor "T-400".
 4. **Proceso:** en T-17, agy se quedó colgado sin escribir el archivo; la tarea pasó a copilot (protocolo de fallback). Algunos obreros escriben con CRLF; `git` lo normaliza a LF en el índice.
+
+### Revalidación tras el ajuste (T-27 a T-33)
+
+El mismo script del Anexo, ejecutado contra `0e13449`, da los mismos códigos: `201, 200, 201, 409, 403, 401, 410, 200, 201, 410, 410, 410, 422, 422, 422, 422`, con la misma huella de `src/` antes y después de ESC-E3. La bitácora tiene los mismos registros: `('R-01', 'RepresentanteEmpresa', 'enlace:EN-viejo', 'usar enlace rechazado: enlace vencido')`, `('R-01', …, 'usar enlace rechazado: enlace usado')` y `('desconocido', 'RepresentanteEmpresa', 'enlace:desconocido', 'usar enlace rechazado: enlace inválido')`. El script de [008](../008-aprobar-acta-final/validacion.md), que usa el mismo validador para el enlace "aprobar acta", también da los mismos códigos: `201×4, 409×3, 404, 403×3, 410×3, 401`, con los mismos registros de enlace rechazado.
 
 ## Anexo: script de ejecución
 
