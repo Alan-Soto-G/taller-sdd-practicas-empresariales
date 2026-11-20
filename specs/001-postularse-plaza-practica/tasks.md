@@ -61,7 +61,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: DTO y puertos
 
-- [ ] T-09 DTO UsuarioAutenticado
+- [x] T-09 DTO UsuarioAutenticado
       Archivos: src/aplicacion/usuario_autenticado.py
       Escenarios: ESC-B, ESC-SR, ESC-TV
       Depende de: ninguna
