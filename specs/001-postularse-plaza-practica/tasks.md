@@ -93,7 +93,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación: caso de uso
 
-- [ ] T-15 Caso de uso PostularsePlaza
+- [x] T-15 Caso de uso PostularsePlaza
       Archivos: src/aplicacion/postulaciones/postularse_plaza.py
       Escenarios: ESC-B, ESC-SC, ESC-AP, ESC-OP, ESC-MP, ESC-VP, ESC-NE, ESC-SR, ESC-CC
       Depende de: T-02, T-03, T-06, T-07, T-08, T-10, T-11, T-13, T-14
