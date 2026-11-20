@@ -44,7 +44,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B3, ESC-CI
       Depende de: ninguna
 
-- [ ] T-06 Practica: evaluar
+- [x] T-06 Practica: evaluar
       Archivos: src/dominio/practica.py
       Escenarios: ESC-B3
       Depende de: ninguna

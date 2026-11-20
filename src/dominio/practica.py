@@ -27,3 +27,9 @@ class Practica:
         if self.estado != EstadoPractica.EN_CURSO:
             raise ValueError('la practica no esta en curso')
         return replace(self, estado=EstadoPractica.HORAS_COMPLETAS)
+
+    def evaluar(self) -> 'Practica':
+        """Regla de CU-06: una Practica con horas completas pasa a evaluada al registrarse la evaluacion de la empresa."""
+        if self.estado != EstadoPractica.HORAS_COMPLETAS:
+            raise ValueError('la practica no tiene las horas completas')
+        return replace(self, estado=EstadoPractica.EVALUADA)
