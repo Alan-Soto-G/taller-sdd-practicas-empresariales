@@ -13,7 +13,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Aplicación
 
-- [ ] T-01 Puerto RepositorioPracticas: listar_practicas
+- [x] T-01 Puerto RepositorioPracticas: listar_practicas
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: ESC-B, ESC-CA, ESC-EM
       Depende de: ninguna
