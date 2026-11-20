@@ -40,7 +40,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-EC, ESC-AC
       Depende de: T-02
 
-- [ ] T-06 DTO EstadoPracticasEstudiante
+- [x] T-06 DTO EstadoPracticasEstudiante
       Archivos: src/aplicacion/seguimiento/estado_practicas_estudiante.py
       Escenarios: ESC-B, ESC-TO
       Depende de: T-05
