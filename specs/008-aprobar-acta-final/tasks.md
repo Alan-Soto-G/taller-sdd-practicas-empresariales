@@ -18,7 +18,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Dominio
 
-- [ ] T-01 Entidad Aprobacion con APROBACIONES_REQUERIDAS
+- [x] T-01 Entidad Aprobacion con APROBACIONES_REQUERIDAS
       Archivos: src/dominio/aprobacion.py
       Escenarios: ESC-B1, ESC-B2, ESC-B3, ESC-DO
       Depende de: ninguna
