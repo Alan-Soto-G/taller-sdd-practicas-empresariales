@@ -35,7 +35,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-UNA, ESC-AJ, ESC-SR
       Depende de: ninguna
 
-- [ ] T-05 DTO AvancePractica
+- [x] T-05 DTO AvancePractica
       Archivos: src/aplicacion/seguimiento/avance_practica.py
       Escenarios: ESC-B, ESC-UNA, ESC-VR
       Depende de: ninguna
