@@ -32,7 +32,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-R1, ESC-R3, ESC-E2
       Depende de: ninguna
 
-- [ ] T-04 Entidad CoordinadorPracticas
+- [x] T-04 Entidad CoordinadorPracticas
       Archivos: src/dominio/coordinador_practicas.py
       Escenarios: ESC-B2
       Depende de: ninguna
