@@ -25,7 +25,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B, ESC-UNA, ESC-VR
       Depende de: ninguna
 
-- [ ] T-03 Caso de uso ResumirHorasPractica (Módulo Horas, solo lectura)
+- [x] T-03 Caso de uso ResumirHorasPractica (Módulo Horas, solo lectura)
       Archivos: src/aplicacion/horas/resumir_horas_practica.py
       Escenarios: ESC-B, ESC-UNA, ESC-VR
       Depende de: T-01, T-02
