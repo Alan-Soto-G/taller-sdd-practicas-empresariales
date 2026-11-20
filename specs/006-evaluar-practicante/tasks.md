@@ -34,7 +34,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B1, ESC-CO
       Depende de: ninguna
 
-- [ ] T-04 Entidad EnlaceAcceso con emitir, motivo_rechazo y usar
+- [x] T-04 Entidad EnlaceAcceso con emitir, motivo_rechazo y usar
       Archivos: src/dominio/enlace_acceso.py
       Escenarios: ESC-B1, ESC-B3, ESC-RE, ESC-EV
       Depende de: ninguna
