@@ -29,7 +29,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-B2, ESC-CI, ESC-E3
       Depende de: T-01
 
-- [ ] T-03 Entidad RepresentanteEmpresa
+- [x] T-03 Entidad RepresentanteEmpresa
       Archivos: src/dominio/representante_empresa.py
       Escenarios: ESC-B1, ESC-CO
       Depende de: ninguna
