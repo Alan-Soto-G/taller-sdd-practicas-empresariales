@@ -71,3 +71,19 @@ class RepositorioPracticas(Protocol):
     def guardar_registro_horas(self, registro: RegistroHoras) -> bool:
         """Guarda el RegistroHoras de forma atomica; devuelve False, sin guardar, si ya hay uno de la misma Practica y semana (CU-04, EAC-01)."""
         ...
+
+    def obtener_regla(self, version: str) -> ReglaPractica | None:
+        """Devuelve la ReglaPractica de esa version o None (CU-05, ADR-008)."""
+        ...
+
+    def obtener_registro_horas(self, id_registro: str) -> RegistroHoras | None:
+        """Devuelve el RegistroHoras o None si no existe (CU-05)."""
+        ...
+
+    def actualizar_registro_horas(self, registro: RegistroHoras) -> None:
+        """Reemplaza el RegistroHoras con el mismo id (CU-05)."""
+        ...
+
+    def sumar_horas_aprobadas(self, id_practica: str) -> int:
+        """Suma las horas de los RegistroHoras aprobados de la Practica (CU-05)."""
+        ...

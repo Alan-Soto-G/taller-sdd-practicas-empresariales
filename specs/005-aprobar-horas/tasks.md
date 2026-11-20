@@ -34,7 +34,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-RN
       Depende de: ninguna
 
-- [ ] T-04 Puerto RepositorioPracticas: obtener_regla, obtener_registro_horas, actualizar_registro_horas y sumar_horas_aprobadas
+- [x] T-04 Puerto RepositorioPracticas: obtener_regla, obtener_registro_horas, actualizar_registro_horas y sumar_horas_aprobadas
       Archivos: src/aplicacion/puertos/repositorio_practicas.py
       Escenarios: todos menos ESC-TV
       Depende de: T-01
