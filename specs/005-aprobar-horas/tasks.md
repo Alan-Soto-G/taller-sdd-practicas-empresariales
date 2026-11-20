@@ -82,7 +82,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
 
 ## Validación
 
-- [ ] T-12 Validar escenario por escenario y registrar la evidencia
+- [x] T-12 Validar escenario por escenario y registrar la evidencia
       Archivos: specs/005-aprobar-horas/validacion.md
       Escenarios: todos
       Depende de: T-11
