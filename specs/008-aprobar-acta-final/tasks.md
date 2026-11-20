@@ -40,7 +40,7 @@ Derivadas de [plan.md](plan.md). Una tarea por clase o archivo, de adentro hacia
       Escenarios: ESC-AN
       Depende de: ninguna
 
-- [ ] T-05 Error AprobacionNoPermitida con su motivo
+- [x] T-05 Error AprobacionNoPermitida con su motivo
       Archivos: src/aplicacion/errores/aprobacion_no_permitida.py
       Escenarios: ESC-DO, ESC-NG
       Depende de: ninguna
