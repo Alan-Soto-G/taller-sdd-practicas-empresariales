@@ -329,3 +329,10 @@ class RepositorioPracticasMemoria:
     def listar_registros_horas_de_practica(self, id_practica: str) -> list[RegistroHoras]:
         """Devuelve los registros de horas de la práctica."""
         return [r for r in self._registros_horas if r.id_practica == id_practica]
+
+    def listar_practicas_de_estudiante(self, id_estudiante: str) -> list[Practica]:
+        """Devuelve las prácticas del estudiante, ordenadas por id."""
+        return sorted(
+            (p for p in self._practicas.values() if p.id_estudiante == id_estudiante),
+            key=lambda p: p.id,
+        )
